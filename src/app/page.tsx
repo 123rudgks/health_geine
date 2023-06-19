@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import Button from "@/components/Button";
 import Image from "next/image";
 
@@ -112,4 +113,11 @@ export default function Home() {
       </div>
     </main>
   );
+=======
+import { useState } from 'react';
+
+export default function Home() {
+  const [tabState, set_tabState] = useState<'single' | 'multi'>('single');
+  return <main></main>;
+>>>>>>> origin/feature/init-setting
 }
