@@ -1,0 +1,13 @@
+.input-container {
+  @apply relative bg-red-50;
+}
+.input-label {
+  @apply absolute bottom-0 text-[#D2D2D2] transition-transform;
+}
+.input-label--focused {
+  @apply bottom-auto top-0 -translate-y-[100%] text-xs;
+}
+
+#textField {
+  @apply w-full bg-transparent  outline-none;
+}
