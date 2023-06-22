@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import { COLORS, FONT_FAMILY } from './tailwind.config.types.ts';
+
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -7,24 +9,8 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        hiragino: [
-          'ヒラギノ角ゴシック',
-          'Hiragino Sans',
-          'ヒラギノ角ゴ ProN',
-          'Hiragino Kaku Gothic ProN',
-          'メイリオ',
-          'Meiryo',
-          'ＭＳ Ｐゴシック',
-          'MS PGothic',
-          'sans-serif',
-        ],
-      },
-      colors: {
-        MainColor: '#4B76F4',
-        SubColor1: '#A6BCFF',
-        SubColor2: '#7596FA',
-      },
+      fontFamily: FONT_FAMILY,
+      colors: COLORS,
     },
   },
   plugins: [],
