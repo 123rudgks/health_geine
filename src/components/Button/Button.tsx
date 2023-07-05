@@ -1,37 +1,53 @@
 import classNames from 'classnames';
+import { KeyofColors } from '../../../tailwind.config.types';
 
-interface ButtonProps {
-  impact: 'bold' | 'light' | 'none';
+export interface ButtonProps {
+  font: 'bold' | 'light' | 'normal';
   size: 'small' | 'medium' | 'large';
-  shape: 'square' | 'rounded' | 'pill';
-  tone: 'default' | 'danger' | 'success';
+  impact:
+    | 'none'
+    | 'shadow-primary-100'
+    | 'shadow-primary-200'
+    | 'shadow-primary-300'
+    | 'shadow-primary-400'
+    | 'shadow-primary-500';
+  shape: 'square' | 'rounded' | 'full';
+  ring: 'none' | 'yellow' | 'gray-100' | KeyofColors;
+  color: 'gray-200' | 'gray-300' | 'gray-400' | 'white' | KeyofColors;
+  background: 'white' | 'yellow' | 'gray-100' | KeyofColors;
 }
-const baseClasses =
-  'font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50';
+const baseClasses = 'ring-2 font-light text-white bg-primary-400';
 
-const impactClasses: Record<
-  ButtonProps['tone'],
-  Record<ButtonProps['impact'], string>
-> = {
-  default: {
-    bold: 'bg-indigo-500 text-white shadow-md hover:bg-indigo-600 focus-visible:ring-indigo-500',
-    light:
-      'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 focus-visible:ring-indigo-500',
-    none: 'bg-transparent text-indigo-700 hover:bg-indigo-50 focus-visible:ring-indigo-500',
-  },
-  danger: {
-    bold: 'bg-red-500 text-white shadow-md hover:bg-red-600 focus-visible:ring-red-500',
-    light:
-      'bg-red-100 text-red-700 hover:bg-red-200 focus-visible:ring-red-500',
-    none: 'bg-transparent text-red-700 hover:bg-red-50 focus-visible:ring-red-500',
-  },
-  success: {
-    bold: 'bg-green-500 text-white shadow-md hover:bg-green-600 focus-visible:ring-green-500',
-    light:
-      'bg-green-100 text-green-700 hover:bg-green-200 focus-visible:ring-green-500',
-    none: 'bg-transparent text-green-700 hover:bg-green-50 focus-visible:ring-green-500',
-  },
+// ring 없이 배경만 - 컬러 (primary 4, yellow, #e9e9e9)
+// 텍스트만 - text (#5a5a5a,#959595, #353535, #fff, primary-400)
+// ring 없이 그림자 - shadow(#5580FF,primary-100, )
+
+const colorClasses: Record<ButtonProps['color'], string> = {
+  white: 'text-[#fff]',
+  'gray-200': 'text-[#959595]',
+  'gray-300': 'text-[#5a5a5a]',
+  'gray-400': 'text-[#353535]',
+  'primary-100': 'text-primary-100',
+  'primary-200': 'text-primary-200',
+  'primary-300': 'text-primary-300',
+  'primary-400': 'text-primary-400',
 };
+
+const impactClasses: Record<ButtonProps['impact'], string> = {
+  none: 'shadow-none',
+  'shadow-primary-100': 'shadow-2xl shadow-primary-100',
+  'shadow-primary-200': 'shadow-2xl shadow-primary-200',
+  'shadow-primary-300': 'shadow-2xl shadow-primary-300',
+  'shadow-primary-400': 'shadow-2xl shadow-primary-400',
+  'shadow-primary-500': 'shadow-2xl shadow-[#5580FF]',
+};
+
+const fontClasses: Record<ButtonProps['font'], string> = {
+  bold: 'ring-2 font-bold text-primary-400 ',
+  light: 'ring-2 font-light text-primary-400 ',
+  normal: 'ring-2 font-normal text-primary-400 ',
+};
+
 const sizeClasses: Record<ButtonProps['size'], string> = {
   large: 'px-7 py-2.5 text-lg',
   medium: 'px-5 py-2 text-base',
@@ -41,27 +57,54 @@ const sizeClasses: Record<ButtonProps['size'], string> = {
 const shapeClasses: Record<ButtonProps['shape'], string> = {
   square: 'rounded-none',
   rounded: 'rounded-md',
-  pill: 'rounded-full',
+  full: 'rounded-full',
+};
+
+const ringClasses: Record<ButtonProps['ring'], string> = {
+  none: 'ring-white',
+  yellow: 'ring-[#FAE54C]',
+  'gray-100': 'ring-[#e9e9e9]',
+  'primary-100': 'ring-primary-100',
+  'primary-200': 'ring-primary-200',
+  'primary-300': 'ring-primary-300',
+  'primary-400': 'ring-primary-400',
+};
+
+const backgroundClasses: Record<ButtonProps['background'], string> = {
+  white: 'bg-white',
+  yellow: 'bg-[#FAE54C]',
+  'gray-100': 'bg-[#e9e9e9]',
+  'primary-100': 'bg-primary-100',
+  'primary-200': 'bg-primary-200',
+  'primary-300': 'bg-primary-300',
+  'primary-400': 'bg-primary-400',
 };
 
 const Button = ({
-  size = 'medium',
-  impact = 'bold',
-  shape = 'rounded',
-  tone = 'default',
-  ...restProps
+  size,
+  shape,
+  background,
+  impact,
+  ring,
+  font,
+  color,
+  ...props
 }: ButtonProps & React.ComponentProps<'button'>) => {
   return (
     <button
       className={classNames(
         baseClasses,
-        impactClasses,
-        sizeClasses,
-        shapeClasses
+        colorClasses[color],
+        impactClasses[impact],
+        fontClasses[font],
+        backgroundClasses[background],
+        sizeClasses[size],
+        shapeClasses[shape],
+        ringClasses[ring]
       )}
-      {...restProps}
+      {...props}
     >
-      버튼
+      {props.children}
     </button>
   );
 };
