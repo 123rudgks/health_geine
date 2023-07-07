@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { KeyofColors } from '../../../tailwind.config.types';
 
 export interface ButtonProps {
-  font: 'bold' | 'light' | 'normal';
+  font: 'light' | 'normal' | 'bold';
   size: 'small' | 'medium' | 'large';
   impact:
     | 'none'
@@ -13,14 +13,10 @@ export interface ButtonProps {
     | 'shadow-primary-500';
   shape: 'square' | 'rounded' | 'full';
   ring: 'none' | 'yellow' | 'gray-100' | KeyofColors;
-  color: 'gray-200' | 'gray-300' | 'gray-400' | 'white' | KeyofColors;
+  color: 'white' | 'gray-200' | 'gray-300' | 'gray-400' | KeyofColors;
   background: 'white' | 'yellow' | 'gray-100' | KeyofColors;
 }
-const baseClasses = 'ring-2 font-light text-white bg-primary-400';
-
-// ring 없이 배경만 - 컬러 (primary 4, yellow, #e9e9e9)
-// 텍스트만 - text (#5a5a5a,#959595, #353535, #fff, primary-400)
-// ring 없이 그림자 - shadow(#5580FF,primary-100, )
+const baseClasses = 'ring-2';
 
 const colorClasses: Record<ButtonProps['color'], string> = {
   white: 'text-[#fff]',
@@ -43,9 +39,9 @@ const impactClasses: Record<ButtonProps['impact'], string> = {
 };
 
 const fontClasses: Record<ButtonProps['font'], string> = {
-  bold: 'ring-2 font-bold text-primary-400 ',
-  light: 'ring-2 font-light text-primary-400 ',
-  normal: 'ring-2 font-normal text-primary-400 ',
+  bold: 'font-semibold',
+  light: 'font-light',
+  normal: 'font-normal',
 };
 
 const sizeClasses: Record<ButtonProps['size'], string> = {
