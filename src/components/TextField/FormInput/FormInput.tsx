@@ -12,6 +12,7 @@ interface FormInputProps {
   _value: string;
   _setValue: (value: string) => void;
   _onCancel?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  _placeholder?: string;
   _disabled?: boolean;
 }
 
@@ -19,6 +20,7 @@ const FormInput = ({
   _value,
   _setValue,
   _onCancel,
+  _placeholder,
   _disabled,
   className,
   ...props
@@ -41,6 +43,7 @@ const FormInput = ({
     >
       <input
         className="flex-1 bg-transparent text-[13px] text-[#5A5A5A]  outline-none"
+        placeholder={_placeholder}
         value={_value}
         onChange={(e) => {
           _setValue(e.target.value);

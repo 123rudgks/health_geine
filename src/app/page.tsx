@@ -1,5 +1,5 @@
 'use client';
-import Box from '@/components/Box/Box';
+import FormInput from '@/components/TextField/FormInput/FormInput';
 import { useState } from 'react';
 
 export default function Home() {
@@ -7,12 +7,15 @@ export default function Home() {
   return (
     <main>
       <div className="container mx-auto flex h-screen flex-col justify-center">
-        {/* <FormInput
-          _value={inputValue}
-          _setValue={(value) => setInputValue(value)}
-          _onCancel={() => setInputValue('')}
-        /> */}
-        <Box ring={'primary-100'}>sdfsdf</Box>
+        <div className="w-15">
+          <FormInput
+            _value={inputValue}
+            _setValue={(value) => setInputValue(value)}
+            _onCancel={() => {
+              setInputValue('');
+            }}
+          />
+        </div>
       </div>
     </main>
   );
