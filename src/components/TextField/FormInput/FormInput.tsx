@@ -23,6 +23,10 @@ const FormInput = ({
   className,
   ...props
 }: FormInputProps & React.ComponentProps<'div'>) => {
+  // https://www.youtube.com/watch?v=aSlK3GhRuXA
+  // tailwind plug in 사용법
+  // tailwind color 세팅
+  // tailwind merge 조사
   return (
     <Box
       ring={'primary-400'}

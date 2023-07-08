@@ -84,6 +84,7 @@ const Button = ({
   ring,
   font,
   color,
+  children,
   ...props
 }: ButtonProps & React.ComponentProps<'button'>) => {
   return (
@@ -100,7 +101,7 @@ const Button = ({
       )}
       {...props}
     >
-      {props.children}
+      {children}
     </button>
   );
 };

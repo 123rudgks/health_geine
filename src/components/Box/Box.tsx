@@ -10,22 +10,19 @@ interface BoxProps {
 
 const ringClasses: Record<BoxProps['ring'], string> = {
   none: 'ring-0',
-  'primary-100': 'ring-primary-100',
-  'primary-200': 'ring-primary-200',
-  'primary-300': 'ring-primary-300',
-  'primary-400': 'ring-primary-400',
+  'primary-100': 'ring-2 ring-primary-100',
+  'primary-200': 'ring-2 ring-primary-200',
+  'primary-300': 'ring-2 ring-primary-300',
+  'primary-400': 'ring-2 ring-primary-400',
 };
-const baseClasses = 'ring-2';
+// const baseClasses = 'ring-2';
 const Box = ({
   ring,
   className,
   ...props
 }: BoxProps & React.ComponentProps<'div'>) => {
   return (
-    <div
-      className={classNames(className, baseClasses, ringClasses[ring])}
-      {...props}
-    >
+    <div className={classNames(className, ringClasses[ring])} {...props}>
       {props.children}
     </div>
   );
