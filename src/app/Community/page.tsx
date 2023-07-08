@@ -1,7 +1,3 @@
-import React from 'react'
-
-export default function CommunityPage() {
-  return (
-    <div>CommunityPage</div>
-  )
+export default function page() {
+  return <div>커뮤니티</div>;
 }
