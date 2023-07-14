@@ -43,7 +43,7 @@ const CheckBox = ({
           )}
         >
           {checked ? <CheckCircleFill /> : <CheckCircleEmpty />}
-          <span className="ml-2">{text}</span>
+          <span className={classNames('ml-2', className)}>{text}</span>
         </label>
       ) : null}
     </div>
