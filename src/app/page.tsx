@@ -1,5 +1,9 @@
 'use client';
+
 import Link from 'next/link';
+
+import SelectBox from '@/components/SelectBox/SelectBox';
+
 import { useState } from 'react';
 
 export default function Home() {
@@ -15,7 +19,7 @@ export default function Home() {
         <Link href={'/custom-request'}>나만의 요청서 작성</Link>
         <Link href={'/health-profile'}>건강상태 보기</Link>
         <Link href={'/login'}>로그인</Link>
-      </div>
+      </div>{' '}
     </main>
   );
 }
