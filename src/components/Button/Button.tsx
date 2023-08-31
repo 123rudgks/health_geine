@@ -2,19 +2,9 @@ import classNames from 'classnames';
 import { KeyofColors } from '../../../tailwind.config.types';
 
 export interface ButtonProps {
-  font: 'light' | 'normal' | 'bold';
-  size: 'small' | 'medium' | 'large';
-  impact:
-    | 'none'
-    | 'shadow-primary-100'
-    | 'shadow-primary-200'
-    | 'shadow-primary-300'
-    | 'shadow-primary-400'
-    | 'shadow-primary-500';
-  shape: 'square' | 'rounded' | 'full';
   ring: 'none' | 'yellow' | 'gray-100' | KeyofColors;
   color: 'white' | 'gray-200' | 'gray-300' | 'gray-400' | KeyofColors;
-  background: 'white' | 'yellow' | 'gray-100' | KeyofColors;
+  background: 'none' | 'white' | 'yellow' | 'gray-100' | KeyofColors;
 }
 const baseClasses = 'ring-2';
 
@@ -29,35 +19,8 @@ const colorClasses: Record<ButtonProps['color'], string> = {
   'primary-400': 'text-primary-400',
 };
 
-const impactClasses: Record<ButtonProps['impact'], string> = {
-  none: 'shadow-none',
-  'shadow-primary-100': 'shadow-2xl shadow-primary-100',
-  'shadow-primary-200': 'shadow-2xl shadow-primary-200',
-  'shadow-primary-300': 'shadow-2xl shadow-primary-300',
-  'shadow-primary-400': 'shadow-2xl shadow-primary-400',
-  'shadow-primary-500': 'shadow-2xl shadow-[#5580FF]',
-};
-
-const fontClasses: Record<ButtonProps['font'], string> = {
-  bold: 'font-semibold',
-  light: 'font-light',
-  normal: 'font-normal',
-};
-
-const sizeClasses: Record<ButtonProps['size'], string> = {
-  large: 'px-7 py-2.5 text-lg',
-  medium: 'px-5 py-2 text-base',
-  small: 'px-3 py-1 text-sm',
-};
-
-const shapeClasses: Record<ButtonProps['shape'], string> = {
-  square: 'rounded-none',
-  rounded: 'rounded-md',
-  full: 'rounded-full',
-};
-
 const ringClasses: Record<ButtonProps['ring'], string> = {
-  none: 'ring-white',
+  none: 'ring-transparent',
   yellow: 'ring-[#FAE54C]',
   'gray-100': 'ring-[#e9e9e9]',
   'primary-100': 'ring-primary-100',
@@ -69,6 +32,7 @@ const ringClasses: Record<ButtonProps['ring'], string> = {
 const backgroundClasses: Record<ButtonProps['background'], string> = {
   white: 'bg-white',
   yellow: 'bg-[#FAE54C]',
+  none: 'bg-transparent',
   'gray-100': 'bg-[#e9e9e9]',
   'primary-100': 'bg-primary-100',
   'primary-200': 'bg-primary-200',
@@ -77,14 +41,11 @@ const backgroundClasses: Record<ButtonProps['background'], string> = {
 };
 
 const Button = ({
-  size,
-  shape,
   background,
-  impact,
   ring,
-  font,
   color,
   children,
+  className,
   ...props
 }: ButtonProps & React.ComponentProps<'button'>) => {
   return (
@@ -92,12 +53,9 @@ const Button = ({
       className={classNames(
         baseClasses,
         colorClasses[color],
-        impactClasses[impact],
-        fontClasses[font],
         backgroundClasses[background],
-        sizeClasses[size],
-        shapeClasses[shape],
-        ringClasses[ring]
+        ringClasses[ring],
+        className
       )}
       {...props}
     >

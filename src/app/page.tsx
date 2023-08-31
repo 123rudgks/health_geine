@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 
-import SelectBox from '@/components/SelectBox/SelectBox';
-
 import { useState } from 'react';
 
 export default function Home() {

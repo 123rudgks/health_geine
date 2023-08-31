@@ -20,7 +20,7 @@ const ProgressBar = ({
 
   return (
     <div className="grid">
-      <span className="text-end text-[8px] font-[600] text-primary-400">
+      <span className="text-end font-[600] text-primary-400">
         {percentage}% 완료!
       </span>
       <div

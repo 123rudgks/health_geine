@@ -19,7 +19,7 @@ const CheckBox = ({
   ...props
 }: CheckBoxProps & React.InputHTMLAttributes<HTMLInputElement>) => {
   return (
-    <div className="flex">
+    <div className="flex pt-[15.3px]">
       <label htmlFor={id} className="flex">
         <input
           id={id}
@@ -34,7 +34,7 @@ const CheckBox = ({
         <label
           htmlFor={id}
           className={classNames(
-            'flex cursor-pointer items-center font-bold transition duration-200',
+            'flex cursor-pointer items-center text-[14px] font-[600] transition duration-200',
             {
               'text-[#4B76F4]': checked,
               'text-[#000]': !checked,
