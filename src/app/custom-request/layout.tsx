@@ -10,6 +10,7 @@ import Box from '@/components/Box/Box';
 import CheckBoxList from './CheckBoxList';
 import Button from '@/components/Button/Button';
 import { Question } from './page';
+import BottomNaviationbar from '@/components/BottomNavigationBar/BottomNavigationBar';
 
 // interface LayoutProps {
 //   id: string;
@@ -75,7 +76,7 @@ const Layout: React.FC<LayoutProps> = () => {
             <p className="text-[10px] font-[300] text-[#898989]">
               질문에 응하시면 맞춤형 견적을 보내드려요 !
             </p>
-            
+
             <CheckBoxList />
           </Box>
           <Button
