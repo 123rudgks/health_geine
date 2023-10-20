@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
+import { twMerge } from 'tailwind-merge';
 import './globals.css';
 
 const mainFont = localFont({
@@ -19,8 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
-      <body className={`${mainFont.className} ${inter.className}}`}>
+    <html lang="ko" className="h-screen w-screen bg-[#f9f9f9]">
+      <body
+        className={twMerge(
+          `${mainFont.className} ${inter.className}}`,
+          'm-auto min-h-full w-[500px] bg-white'
+        )}
+      >
         {children}
       </body>
     </html>

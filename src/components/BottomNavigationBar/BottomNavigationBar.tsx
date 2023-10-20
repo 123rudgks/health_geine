@@ -1,17 +1,17 @@
 'use client';
-import { useState, ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import Box from '../Box/Box';
 
-import FillHome from './icon/FillHome.svg';
-import FillStar from './icon/FillStar.svg';
-import FillHealth from './icon/FillHealth.svg';
-import FillChatting from './icon/FillChatting.svg';
-import FillMypage from './icon/FillMypage.svg';
-import EmptyHome from './icon/EmptyHome.svg';
-import EmptyStar from './icon/EmptyStar.svg';
-import EmptyHealth from './icon/EmptyHealth.svg';
 import EmptyChatting from './icon/EmptyChatting.svg';
+import EmptyHealth from './icon/EmptyHealth.svg';
+import EmptyHome from './icon/EmptyHome.svg';
 import EmptyMypage from './icon/EmptyMypage.svg';
+import EmptyStar from './icon/EmptyStar.svg';
+import FillChatting from './icon/FillChatting.svg';
+import FillHealth from './icon/FillHealth.svg';
+import FillHome from './icon/FillHome.svg';
+import FillMypage from './icon/FillMypage.svg';
+import FillStar from './icon/FillStar.svg';
 
 type IconToggleProps = {
   filledIcon: ReactNode;
@@ -36,7 +36,7 @@ const IconToggle: React.FC<IconToggleProps> = ({
   );
 };
 
-const BottomNaviationbar = () => {
+const BottomNavigationBar = () => {
   const [activeToggle, setActiveToggle] = useState<number | null>(null);
 
   const handleToggleClick = (index: number) => {
@@ -93,4 +93,4 @@ const BottomNaviationbar = () => {
   );
 };
 
-export default BottomNaviationbar;
+export default BottomNavigationBar;
