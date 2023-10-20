@@ -1,6 +1,5 @@
 'use client';
 import { ReactNode, useState } from 'react';
-import Box from '../Box/Box';
 
 import EmptyChatting from './icon/EmptyChatting.svg';
 import EmptyHealth from './icon/EmptyHealth.svg';
@@ -48,11 +47,8 @@ const BottomNavigationBar = () => {
   };
 
   return (
-    <>
-      <Box
-        ring="none"
-        className="align-center flex h-[80px] w-[100%] items-center justify-center gap-[20px] bg-white"
-      >
+    <div className="fixed bottom-0 h-[90px] w-[500px] shadow-[0px_-2px_15px_rgba(0,0,0,0.1)]">
+      <nav className="flex h-full w-full  items-center justify-around ">
         <IconToggle
           filledIcon={<FillHome />}
           emptyIcon={<EmptyHome />}
@@ -88,8 +84,8 @@ const BottomNavigationBar = () => {
           active={activeToggle === 4}
           onClick={() => handleToggleClick(4)}
         />
-      </Box>
-    </>
+      </nav>
+    </div>
   );
 };
 

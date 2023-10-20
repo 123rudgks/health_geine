@@ -24,7 +24,7 @@ export default function RootLayout({
       <body
         className={twMerge(
           `${mainFont.className} ${inter.className}}`,
-          'm-auto min-h-full w-[500px] bg-white'
+          'relative m-auto min-h-full w-[500px] bg-white'
         )}
       >
         {children}
