@@ -1,6 +1,7 @@
 'use client';
 
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
+import Box from '@/components/Box/Box';
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
 
@@ -37,6 +38,7 @@ export default function Home() {
         <Link href={'/custom-request'}>나만의 요청서 작성</Link>
         <Link href={'/health-profile'}>건강상태 보기</Link>
         <Link href={'/login'}>로그인</Link>
+        <Box className="bg-red-500">sdf</Box>
         <BottomNavigationBar />
       </div>{' '}
     </main>

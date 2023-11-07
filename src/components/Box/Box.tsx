@@ -1,29 +1,18 @@
-import classNames from 'classnames';
-import { KeyofColors } from '../../../tailwind.config.types';
+import { twMerge } from 'tailwind-merge';
 
-/* ------------------------------------------------------------ 
-ring : Box 컴포넌트의 외각선 색상
- ------------------------------------------------------------ */
-interface BoxProps {
-  ring: 'none' | KeyofColors;
+interface BoxProps extends React.ComponentProps<'div'> {
+  // 향후 필요시 추가
 }
 
-const ringClasses: Record<BoxProps['ring'], string> = {
-  none: 'ring-0',
-  'primary-100': 'ring-2 ring-primary-100',
-  'primary-200': 'ring-2 ring-primary-200',
-  'primary-300': 'ring-2 ring-primary-300',
-  'primary-400': 'ring-2 ring-primary-400',
-};
-// const baseClasses = 'ring-2';
-const Box = ({
-  ring,
-  className,
-  ...props
-}: BoxProps & React.ComponentProps<'div'>) => {
+/**
+ * Box 컴포넌트 : 박스 형태의 container 혹은 wrapper의 용도로 사용한다.
+ * 박스의 경우 통일된 디자인이 없어서 기본 형태를 참고하여 className을 통해 style 변경하여 사용하도록 한다.
+ */
+const basicClasses = 'bg-white rounded-md p-3';
+const Box = ({ children, className, ...rest }: BoxProps) => {
   return (
-    <div className={classNames(className, ringClasses[ring])} {...props}>
-      {props.children}
+    <div className={twMerge(basicClasses, className)} {...rest}>
+      {children}
     </div>
   );
 };
