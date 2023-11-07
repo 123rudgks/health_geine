@@ -17,4 +17,15 @@ export const FONT_FAMILY = {
     'MS PGothic',
     'sans-serif',
   ],
+  noto: [
+    'Noto Sans KR',
+    'YuGothic',
+    '游ゴシック体',
+    'Yu Gothic',
+    'メイリオ',
+    'Meiryo',
+    'ＭＳ Ｐゴシック',
+    'MS PGothic',
+    'sans-serif',
+  ],
 } as const;

@@ -1,6 +1,7 @@
 'use client';
 
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
+import BasicInput from '@/components/Input/BasicInput';
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
 
@@ -38,6 +39,11 @@ export default function Home() {
         <Link href={'/health-profile'}>건강상태 보기</Link>
         <Link href={'/login'}>로그인</Link>
         <BottomNavigationBar />
+        <BasicInput
+          _inputProps={{ placeholder: '인증 코드를 입력하세요' }}
+          _state="error"
+          _rightNode={<div>인증코드</div>}
+        />
       </div>{' '}
     </main>
   );
