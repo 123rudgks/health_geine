@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 interface TopBottomBarTemplateProps extends React.ComponentProps<'div'> {
   _topNode?: React.ReactNode;
   _bottomNode?: React.ReactNode;
+  _contentDivProps?: React.ComponentProps<'div'>;
 }
 
 /**
@@ -12,6 +13,7 @@ interface TopBottomBarTemplateProps extends React.ComponentProps<'div'> {
 const TopBottomBarTemplate = ({
   _topNode,
   _bottomNode,
+  _contentDivProps,
   children,
   ...divProps
 }: TopBottomBarTemplateProps) => {
@@ -26,10 +28,12 @@ const TopBottomBarTemplate = ({
         </div>
       )}
       <div
+        {..._contentDivProps}
         className={twMerge(
-          'h-full w-full',
+          'w-full',
           _topNode ? 'pt-[108px]' : '',
-          _bottomNode ? 'pb-[90px]' : ''
+          _bottomNode ? 'pb-[90px]' : '',
+          _contentDivProps?.className
         )}
       >
         {children}

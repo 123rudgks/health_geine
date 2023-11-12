@@ -21,8 +21,9 @@ const TrainerListPage = (props: Props) => {
         </div>
       }
       _bottomNode={<BottomNavigationBar />}
+      _contentDivProps={{ className: 'bg-white' }}
     >
-      <div className=" h-full w-full px-5 pt-10">
+      <div className=" h-full w-full  px-5 pt-10">
         <div>검색바</div>
         <div className="mt-7">
           <div className="flex items-center justify-between">
