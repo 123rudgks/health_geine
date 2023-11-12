@@ -38,13 +38,14 @@ export default function Home() {
         <Link href={'/custom-request'}>나만의 요청서 작성</Link>
         <Link href={'/health-profile'}>건강상태 보기</Link>
         <Link href={'/login'}>로그인</Link>
+        <Link href={'/trainer-list'}>트레이너 페이지</Link>
         <BottomNavigationBar />
         <BasicInput
           _inputProps={{ placeholder: '인증 코드를 입력하세요' }}
           _state="error"
           _rightNode={<div>인증코드</div>}
         />
-      </div>{' '}
+      </div>
     </main>
   );
 }
