@@ -1,6 +1,6 @@
 'use client';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
-import CheckBox from '@/components/CheckBox/CheckBox';
+import RoundCheckBox from '@/components/RoundCheckBox/RoundCheckBox';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import TrainerListItem from '@/components/pages/trainer/TrainerListItem';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
@@ -27,7 +27,7 @@ const TrainerListPage = (props: Props) => {
         <div>검색바</div>
         <div className="mt-7">
           <div className="flex items-center justify-between">
-            <CheckBox
+            <RoundCheckBox
               id={''}
               checked={true}
               onChange={() => {}}
