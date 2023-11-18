@@ -1,6 +1,6 @@
 'use client';
 import { ReactNode, useState } from 'react';
-
+import { useRouter } from 'next/navigation';
 import EmptyChatting from './icon/EmptyChatting.svg';
 import EmptyHealth from './icon/EmptyHealth.svg';
 import EmptyHome from './icon/EmptyHome.svg';
@@ -36,6 +36,7 @@ const IconToggle: React.FC<IconToggleProps> = ({
 };
 
 const BottomNavigationBar = () => {
+  const router = useRouter();
   const [activeToggle, setActiveToggle] = useState<number | null>(null);
 
   const handleToggleClick = (index: number) => {
@@ -47,7 +48,7 @@ const BottomNavigationBar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 h-[90px] w-[500px] shadow-[0px_-2px_15px_rgba(0,0,0,0.1)]">
+    <div className="fixed bottom-0 h-[90px] w-[500px] bg-white shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)]">
       <nav className="flex h-full w-full  items-center justify-around ">
         <IconToggle
           filledIcon={<FillHome />}
