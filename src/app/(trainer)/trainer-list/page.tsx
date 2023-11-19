@@ -1,9 +1,12 @@
 'use client';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
+import BasicInput from '@/components/Input/BasicInput';
 import RoundCheckBox from '@/components/RoundCheckBox/RoundCheckBox';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import TrainerListItem from '@/components/pages/trainer/TrainerListItem';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
+import MagnifyingGlasses from '@/svgs/MagnifyingGlasses.svg';
+import NavArrowLeft from '@/svgs/NavArrowLeft.svg';
 
 type Props = {};
 
@@ -24,7 +27,18 @@ const TrainerListPage = (props: Props) => {
       _contentDivProps={{ className: 'bg-white' }}
     >
       <div className=" h-full w-full  px-5 pt-10">
-        <div>검색바</div>
+        <div className="flex h-10 rounded-[10px] bg-[#E2E2E2] px-3">
+          <div className="flex w-10 items-center justify-center">
+            <MagnifyingGlasses />
+          </div>
+          <BasicInput
+            _wrapperProps={{ className: 'ring-0 flex-1' }}
+            _inputProps={{
+              className: 'bg-transparent',
+              placeholder: '트레이너 검색',
+            }}
+          />
+        </div>
         <div className="mt-7">
           <div className="flex items-center justify-between">
             <RoundCheckBox
@@ -34,8 +48,20 @@ const TrainerListPage = (props: Props) => {
               text="우리학교 트레이너"
               className="font-noto text-[17px] font-bold "
             />
-            <div>인기순</div>
+            <div className="relative w-[60px] font-noto text-xs font-bold">
+              <div className="flex w-full items-center justify-center gap-1 rounded-[4px] bg-[#7596FA] p-1  text-white">
+                <div className="pt-1">
+                  <NavArrowLeft />
+                </div>
+                인기순
+              </div>
+              <div className="absolute left-0 top-full w-full translate-y-[1px] overflow-hidden rounded bg-[#F3F3F3] py-1 ">
+                <div className=" p-1 pl-[22px] text-[#7596FA]">인기순</div>
+                <div className=" p-1 pl-[22px] text-[#7596FA]">최신순</div>
+              </div>
+            </div>
           </div>
+
           <div className="mt-8 flex flex-col gap-5  ">
             {Array.from({ length: 10 }).map((_, index) => (
               <TrainerListItem key={index} />
