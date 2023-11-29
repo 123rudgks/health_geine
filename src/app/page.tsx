@@ -39,6 +39,7 @@ export default function Home() {
         <Link href={'/health-profile'}>건강상태 보기</Link>
         <Link href={'/login'}>로그인</Link>
         <Link href={'/trainer-list'}>트레이너 페이지</Link>
+        <Link href={'/trainer-detail'}>트레이너 상세 페이지</Link>
         <BottomNavigationBar />
         <BasicInput
           _inputProps={{ placeholder: '인증 코드를 입력하세요' }}
