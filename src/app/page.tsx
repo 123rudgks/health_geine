@@ -2,6 +2,7 @@
 
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import BasicInput from '@/components/Input/BasicInput';
+import BasicTextarea from '@/components/Input/BasicTextarea';
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
 
@@ -46,6 +47,7 @@ export default function Home() {
           _state="error"
           _rightNode={<div>인증코드</div>}
         />
+        <BasicTextarea placeholder="sdf" />
       </div>
     </main>
   );
