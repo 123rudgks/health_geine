@@ -183,40 +183,23 @@ const Page = (props: Props) => {
               <div className="flex h-[14px] flex-col justify-end bg-primary-200">
                 <h1 className="text-[19px] font-[700] text-black">수업 리뷰</h1>
               </div>
-              <div className="-mt-2 flex gap-1">
+              <button
+                className="-mt-2 flex gap-1"
+                onClick={() => router.push('/trainer-review')}
+              >
                 <h1 className="text-[15px] font-[500] text-[#979797] underline">
                   전체보기
                 </h1>
-              </div>
+              </button>
             </div>
             <Box className="flex flex-col rounded-[21px] font-[500] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
               <h1 className="text-[15px]">정수영 트레이너</h1>
-              <div className="flex">
-                <Image
-                  src={FillReviewStar}
-                  alt="FillReviewStar"
-                  className="w-[14.93px]"
-                />
-                <Image
-                  src={FillReviewStar}
-                  alt="FillReviewStar"
-                  className="w-[14.93px]"
-                />
-                <Image
-                  src={FillReviewStar}
-                  alt="FillReviewStar"
-                  className="w-[14.93px]"
-                />
-                <Image
-                  src={FillReviewStar}
-                  alt="FillReviewStar"
-                  className="w-[14.93px]"
-                />
-                <Image
-                  src={EmptyReviewStar}
-                  alt="EmptyReviewStar"
-                  className="w-[14.93px]"
-                />
+              <div className="flex py-2">
+                <FillReviewStar />
+                <FillReviewStar />
+                <FillReviewStar />
+                <EmptyReviewStar />
+                <EmptyReviewStar />
               </div>
               <p className="text-[13px]">
                 오늘도 너무 친절하게 잘 알려주셔서, 감사했습니다. 하지만

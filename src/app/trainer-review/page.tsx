@@ -5,6 +5,7 @@ import Box from '@/components/Box/Box';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import FillReviewStar from '../health-management/icon/FillReviewStar.svg';
 import EmptyReviewStar from '../health-management/icon/EmptyReviewStar.svg';
+import Fab from '@/components/FAB/Fab';
 
 const Page = () => {
   const router = useRouter();
@@ -14,9 +15,9 @@ const Page = () => {
         _topNode={
           <div className="h-full w-full bg-[#FDFDFF] pt-16 shadow-[0_6px_6px_-6px_rgba(0,0,0,0.13)]">
             <div className="grid justify-items-center">
-              <div className="flex h-[14px] w-[142px] flex-col justify-end bg-primary-200">
+              <div className="flex h-[14px] w-[154px] flex-col justify-end bg-primary-200">
                 <h1 className="text-center text-[19px] font-[700] text-black">
-                  PT 일지 전체보기
+                  수업 리뷰 전체보기
                 </h1>
               </div>
             </div>
@@ -61,6 +62,13 @@ const Page = () => {
               </p>
             </div>
           </Box>
+          <div className="flex items-center justify-end">
+            <Fab
+              _onClick={() => router.push('/trainer-review-write')}
+              _imageName="edit"
+              _bottomNode={<p>후기 작성하기</p>}
+            />
+          </div>
         </div>
       </TopBottomBarTemplate>
     </>

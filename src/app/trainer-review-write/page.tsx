@@ -21,7 +21,7 @@ const Page = () => {
                 <Back />
               </button>
               <h1 className="text-center text-[19px] font-[700] text-black">
-                수업 리뷰 수정하기
+                수업 리뷰 작성하기
               </h1>
               <div />
             </div>
@@ -45,8 +45,8 @@ const Page = () => {
             </Button>
             <Button
               color="white"
-              background="primary-400"
-              ring="primary-400"
+              background="primary-200"
+              ring="primary-200"
               className="flex h-[31px] w-[170px] items-center justify-center rounded-[6px] text-[14px] font-[600]"
             >
               PT 진행을 완료하였나요?
@@ -56,9 +56,7 @@ const Page = () => {
           <div className="my-2">
             <BasicTextArea
               className="px-4 text-[13px] font-[500] placeholder:text-[#000] "
-              placeholder="오늘도 너무 친절하게 잘 알려주셔서, 감사했습니다. 하지만
-                트레이너님 팔뚝을 볼때 마다 너무 무서워서 헬스에 집중하기가
-                어려웠네요 ㅠ 그래서 별점 1개 깎았습니다."
+              placeholder="내용을 입력해주세요."
             />
           </div>
           <Box className="flex flex-col justify-start bg-gray-100">
@@ -70,12 +68,12 @@ const Page = () => {
           <Box className="flex flex-col justify-start bg-gray-100">
             <h1 className="text-[15px] font-[700] text-black">평점</h1>
             <div className="flex items-center gap-2">
-              <p className="text-[13px] font-[400] text-gray-300">4점/5점</p>
+              <p className="text-[13px] font-[400] text-gray-300">__점/5점</p>
               <div className="flex gap-1 py-2">
-                <FillReviewStar />
-                <FillReviewStar />
-                <FillReviewStar />
-                <FillReviewStar />
+                <EmptyReviewStar />
+                <EmptyReviewStar />
+                <EmptyReviewStar />
+                <EmptyReviewStar />
                 <EmptyReviewStar />
               </div>
             </div>

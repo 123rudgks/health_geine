@@ -7,12 +7,16 @@ import classNames from 'classnames';
 interface BasicFabProps {
   _imageName?: 'edit' | 'chat';
   _bottomNode?: React.ReactNode;
+  _onClick(): void;
 }
 
-const Fab = ({ _imageName, _bottomNode }: BasicFabProps) => {
+const Fab = ({ _imageName, _bottomNode, _onClick }: BasicFabProps) => {
   return (
     <>
-      <div className="align-center flex flex-col items-center">
+      <button
+        onClick={_onClick}
+        className="align-center flex flex-col items-center"
+      >
         <div
           className="flex h-[57px] w-[57px] items-center justify-center rounded-full bg-primary-400
         shadow-[rgba(0,_0,_0,_0.3)_0px_2px_20px_1px]"
@@ -30,7 +34,7 @@ const Fab = ({ _imageName, _bottomNode }: BasicFabProps) => {
             {_bottomNode}
           </div>
         </div>
-      </div>
+      </button>
     </>
   );
 };

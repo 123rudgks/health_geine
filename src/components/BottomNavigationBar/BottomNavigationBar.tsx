@@ -51,8 +51,8 @@ const BottomNavigationBar = () => {
   };
 
   return (
-    <div className="fixed bottom-0 h-[90px] w-[500px] bg-white shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)]">
-      <nav className="flex h-full w-full  items-center justify-around ">
+    <div className="fixed bottom-0 h-[90px] bg-white shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)] sm:w-full md:w-[500px]">
+      <nav className="flex h-full w-full items-center justify-around ">
         <IconToggle
           filledIcon={<FillCalendar />}
           emptyIcon={<EmptyCalendar />}
