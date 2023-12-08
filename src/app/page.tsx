@@ -1,8 +1,9 @@
 'use client';
 
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
-import BasicInput from '@/components/Input/BasicInput';
+import Calendar from '@/components/Calendar/Calendar';
 import BasicTextarea from '@/components/Input/BasicTextarea';
+import { parseDate } from '@internationalized/date';
 import { setCookie } from 'cookies-next';
 import Link from 'next/link';
 
@@ -12,6 +13,7 @@ import { twMerge } from 'tailwind-merge';
 export default function Home() {
   const [inputValue, setInputValue] = useState<string>('');
   const [isTrainerMode, setIsTrainerMode] = useState<boolean>(false);
+  const [calendarValue, setCalendarValue] = useState(parseDate('2020-02-03'));
   useEffect(() => {
     isTrainerMode
       ? setCookie('isTrainerMode', 'true')
@@ -42,11 +44,10 @@ export default function Home() {
         <Link href={'/trainer-list'}>트레이너 페이지</Link>
         <Link href={'/trainer-detail'}>트레이너 상세 페이지</Link>
         <BottomNavigationBar />
-        <BasicInput
-          _inputProps={{ placeholder: '인증 코드를 입력하세요' }}
-          _state="error"
-          _rightNode={<div>인증코드</div>}
-        />
+        <div className="bg-primary-400 p-8">
+          <Calendar />
+        </div>
+
         <BasicTextarea placeholder="sdf" />
       </div>
     </main>

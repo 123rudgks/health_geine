@@ -8,7 +8,6 @@ interface BasicTextAreaProps extends React.ComponentProps<'textarea'> {
  * @param textarea 기본 props 사용 가능
  * @className : textarea의 className, 주로 styling에 사용됨
  * @_wrapperClasses : textarea를 감싸는 div의 className, 주로 styling에 사용됨
- * @returns
  */
 const BasicTextArea = ({
   className,
