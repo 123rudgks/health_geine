@@ -28,6 +28,7 @@ export default function RootLayout({
         )}
       >
         {children}
+        <div id="modal-root" className=" z-40 " />
       </body>
     </html>
   );
