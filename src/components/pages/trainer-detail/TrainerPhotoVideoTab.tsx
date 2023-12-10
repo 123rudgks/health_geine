@@ -15,17 +15,15 @@ const TrainerPhotoVideoTab = (props: Props) => {
               setModal(false);
             }}
           >
-            <div className="flex h-full w-full items-center justify-center">
-              <div className="relative h-[217px] w-[325px] bg-blue-300">
-                <span
-                  className="absolute -bottom-4 left-1/2 flex h-7 w-7 -translate-x-1/2 translate-y-full items-center justify-center rounded-full bg-white"
-                  onClick={() => {
-                    setModal(false);
-                  }}
-                >
-                  <Cancel />
-                </span>
-              </div>
+            <div className="relative h-[217px] w-[325px] bg-blue-300">
+              <span
+                className="absolute -bottom-4 left-1/2 flex h-7 w-7 -translate-x-1/2 translate-y-full items-center justify-center rounded-full bg-white"
+                onClick={() => {
+                  setModal(false);
+                }}
+              >
+                <Cancel />
+              </span>
             </div>
           </ModalBackground>
         </ModalPortal>
