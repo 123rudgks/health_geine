@@ -1,10 +1,19 @@
+'use client';
 import ChatProfile from '@/components/pages/chatting/ChatProfile';
+import { useRouter } from 'next/navigation';
 
 type Props = {};
 
 const ChatListItem = (props: Props) => {
+  const router = useRouter();
+
   return (
-    <div className=" flex gap-[15px] py-[13px]">
+    <div
+      className=" flex gap-[15px] py-[13px]"
+      onClick={() => {
+        router.push('/chatting/room/2');
+      }}
+    >
       <ChatProfile _src="" _size="large" />
       <div className="relative flex flex-1 flex-col justify-center">
         <div className="flex items-baseline gap-2">

@@ -1,10 +1,11 @@
 import Image from 'next/image';
+import { HTMLAttributes } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-type Props = {
+interface Props extends HTMLAttributes<HTMLSpanElement> {
   _size?: 'large' | 'small';
   _src: string;
-};
+}
 
 const ChatProfile = ({ _size, _src }: Props) => {
   return (
