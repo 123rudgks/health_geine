@@ -1,18 +1,16 @@
 'use client';
 import { ReactNode, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import EmptyChatting from './icon/EmptyChatting.svg';
-import EmptyHealth from './icon/EmptyHealth.svg';
-import EmptyHome from './icon/EmptyHome.svg';
-import EmptyMypage from './icon/EmptyMypage.svg';
-import EmptyStar from './icon/EmptyStar.svg';
-import EmptyCalendar from './icon/EmptyCalendar.svg';
-import FillCalendar from './icon/FillCalendar.svg';
-import FillChatting from './icon/FillChatting.svg';
-import FillHealth from './icon/FillHealth.svg';
-import FillHome from './icon/FillHome.svg';
-import FillMypage from './icon/FillMypage.svg';
-import FillStar from './icon/FillStar.svg';
+import EmptyHealth from '@/svgs/EmptyHealth.svg';
+import EmptyHome from '@/svgs/EmptyHome.svg';
+import EmptyMypage from '@/svgs/EmptyMypage.svg';
+import EmptyStar from '@/svgs/EmptyStar.svg';
+import EmptyCalendar from '@/svgs/EmptyCalendar.svg';
+import FillCalendar from '@/svgs/FillCalendar.svg';
+import FillHealth from '@/svgs/FillHealth.svg';
+import FillHome from '@/svgs/FillHome.svg';
+import FillMypage from '@/svgs/FillMypage.svg';
+import FillStar from '@/svgs/FillStar.svg';
 
 type IconToggleProps = {
   filledIcon: ReactNode;

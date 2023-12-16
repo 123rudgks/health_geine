@@ -39,7 +39,7 @@ const TopBottomBarTemplate = ({
         {children}
       </div>
       {_bottomNode && (
-        <div className="fixed bottom-0 left-0 right-0 z-20 mx-auto h-[90px]  w-full max-w-[500px]">
+        <div className="fixed bottom-0 left-0 right-0 z-20 mx-auto h-[90px] w-full max-w-[500px]">
           {_bottomNode}
         </div>
       )}
