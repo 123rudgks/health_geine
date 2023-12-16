@@ -1,7 +1,5 @@
 'use client';
 
-import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
-import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import MainLogo from '@/svgs/MainLogo.svg';
 
 interface Props {}
