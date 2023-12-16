@@ -43,6 +43,7 @@ export default function Home() {
         <Link href={'/login'}>로그인</Link>
         <Link href={'/trainer-list'}>트레이너 페이지</Link>
         <Link href={'/trainer-detail'}>트레이너 상세 페이지</Link>
+        <Link href={'/chatting/list'}>채팅</Link>
         <BottomNavigationBar />
         <div className="bg-primary-400 p-8">
           <Calendar />
