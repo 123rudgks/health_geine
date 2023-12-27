@@ -41,6 +41,7 @@ export default function Home() {
         <Link href={'/custom-request'}>나만의 요청서 작성</Link>
         <Link href={'/health-profile'}>건강상태 보기</Link>
         <Link href={'/login'}>로그인</Link>
+        <Link href={'/trainer-select'}>회원/트레이너 선택 페이지</Link>
         <Link href={'/trainer-list'}>트레이너 페이지</Link>
         <Link href={'/trainer-detail'}>트레이너 상세 페이지</Link>
         <Link href={'/chatting/list'}>채팅</Link>
