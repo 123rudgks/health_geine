@@ -3,7 +3,7 @@ import Image from 'next/image';
 import FillReviewStar from './icon/FillReviewStar.svg';
 import EmptyReviewStar from './icon/EmptyReviewStar.svg';
 import BackgroundCircle from './icon/BackgroundCircle.png';
-import EmptyCalendar from '../../components/BottomNavigationBar/icon/EmptyCalendar.svg';
+import EmptyCalendar from '@/svgs/EmptyCalendar.svg';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import Box from '@/components/Box/Box';
 import { useState } from 'react';
@@ -42,11 +42,7 @@ const Page = (props: Props) => {
               <h1 className="text-[16px] font-[700]">
                 오늘, 정수영 트레이너와 PT가 있습니다.
               </h1>
-              <Image
-                className="h-[17px] w-[17px]"
-                src={EmptyCalendar}
-                alt="EmptyCalendar"
-              />
+              <EmptyCalendar />
             </div>
             <div className="py-2">
               <div className="text-gray-4 flex text-[16px]">
