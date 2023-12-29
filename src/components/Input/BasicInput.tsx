@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface BasicInputProps {
@@ -5,15 +6,18 @@ interface BasicInputProps {
   _inputProps?: React.ComponentProps<'input'>;
   _state?: 'error' | 'default';
   _rightNode?: React.ReactNode;
+  _onChange?: (value: string) => void;
+  _value?: string;
 }
 
 const inputWrapperClasses = {
-  common: 'rounded-lg ring-1 ring-primary-400 p-2 flex',
-  default: 'ring-[#787878] focus-within:ring-primary-400',
-  error: 'ring-[#F44B4B]',
+  common:
+    'rounded-lg ring-1 ring-primary-400 p-2 flex focus-within:bg-[#f3f3f3]',
+  default: 'ring-[#f3f3f3] focus-within:bg-[#f3f3f3]',
+  error: 'ring-[#F44B4B] focus-within:bg-[#f3f3f3]',
 };
 const inputClasses = {
-  default: 'outline-none flex-1',
+  default: 'outline-none flex-1 focus-within:bg-[#f3f3f3]',
   'default-font':
     'font-noto placeholder:text-[#787878] text-[15px] font-normal leading-normal',
   'default-ring': '',
@@ -25,31 +29,49 @@ const inputClasses = {
  * @param _inputProps : input의 props
  * @param _state : input의 상태 (default, error), undefined일 자유롭게 스타일링 가능
  * @param _rightNode : input 오른쪽에 위치할 노드, x 아이콘 등 필요한 부분 추가 가능
+ * @param _onChange : input의 상태 변화 감지
+ * @param _value : input의 값
  */
 const BasicInput = ({
   _wrapperProps,
   _inputProps,
   _state,
   _rightNode,
-}: BasicInputProps) => {
+  _onChange,
+  _value,
+}: BasicInputProps & { _value: string }) => {
+  const [isValidFormat, setIsValidFormat] = useState<boolean>(true);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    _onChange?.(newValue);
+    const isValid = /^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+$/.test(
+      newValue
+    );
+    setIsValidFormat(isValid);
+  };
+
   return (
     <div
       {..._wrapperProps}
       className={twMerge(
         inputWrapperClasses.common,
         _state ? inputWrapperClasses[_state] : '',
-        _wrapperProps?.className
+        _wrapperProps?.className,
+        isValidFormat ? '' : inputWrapperClasses.default
       )}
     >
       <input
         {..._inputProps}
+        value={_value}
+        onChange={handleChange}
         className={twMerge(
           inputClasses.default,
           inputClasses['default-font'],
           _inputProps?.className
         )}
       />
-      {_rightNode}
+      {_rightNode && <div className="flex items-center">{_rightNode}</div>}
     </div>
   );
 };
