@@ -30,7 +30,7 @@ const TopBottomBarTemplate = ({
       <div
         {..._contentDivProps}
         className={twMerge(
-          'w-full',
+          'h-full w-full',
           _topNode ? 'pt-[108px]' : '',
           _bottomNode ? 'pb-[90px]' : '',
           _contentDivProps?.className
