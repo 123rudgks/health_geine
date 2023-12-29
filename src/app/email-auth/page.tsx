@@ -1,13 +1,34 @@
 'use client';
 
-import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import Button from '@/components/Button/Button';
 import BasicInput from '@/components/Input/BasicInput';
-import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import FillHealth from '@/svgs/FillHealth.svg';
+import ErrorCode from '@/svgs/ErrorCode.svg';
+import InitInput from '@/app/email-auth/InitInput';
+import { useState } from 'react';
 
 interface Props {}
-const page = (props: Props) => {
+
+const Page = (props: Props) => {
+  const [emailValue, setEmailValue] = useState<string>('');
+  const [codeValue, setCodeValue] = useState<string>('');
+
+  const handleEmailChange = (value: string) => {
+    setEmailValue(value);
+  };
+
+  const handleEmailDelete = () => {
+    setEmailValue('');
+  };
+
+  const handleCodeChange = (value: string) => {
+    setCodeValue(value);
+  };
+
+  const handleCodeDelete = () => {
+    setCodeValue('');
+  };
+
   return (
     <div className="flex h-[100vh] flex-col justify-center px-6">
       <p className="font-regular justify-start font-noto text-[14px] text-primary-400 underline">
@@ -25,7 +46,14 @@ const page = (props: Props) => {
         <p className="mb-1 flex justify-end font-noto text-[10px] font-light text-[#c1c1c1]">
           학교 이메일을 정확히 기재해주세요.
         </p>
-        <BasicInput _state="default" />
+        <BasicInput
+          _inputProps={{
+            placeholder: '이메일을 인증하세요.',
+          }}
+          _rightNode={<InitInput onClick={handleEmailDelete} />}
+          _onChange={handleEmailChange}
+          _value={emailValue}
+        />
         <div className="flex justify-end">
           <Button
             ring="none"
@@ -36,8 +64,20 @@ const page = (props: Props) => {
             인증 코드 전송
           </Button>
         </div>
-        <BasicInput _state="default" />
-        <div className="flex justify-end">
+        <BasicInput
+          _state="default"
+          _inputProps={{ placeholder: '인증 코드를 입력하세요.' }}
+          _rightNode={<InitInput onClick={handleCodeDelete} />}
+          _onChange={handleCodeChange}
+          _value={codeValue}
+        />
+        <div className="flex justify-between">
+          <div className="mt-2 flex items-start">
+            <ErrorCode />
+            <p className="ml-2 text-[11.04px] text-[#F44B4B]">
+              인증 코드가 일치하지 않습니다!
+            </p>
+          </div>
           <Button
             ring="none"
             background="primary-100"
@@ -69,4 +109,4 @@ const page = (props: Props) => {
     </div>
   );
 };
-export default page;
+export default Page;
