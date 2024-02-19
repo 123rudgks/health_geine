@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 import { twMerge } from 'tailwind-merge';
 import './globals.css';
+import ReactQueryClientProvider from './ReactQueryClientProvider';
 
 const mainFont = localFont({
   src: '../../public/font/Hiragino Kaku Gothic Pro W3.otf',
@@ -27,8 +28,10 @@ export default function RootLayout({
           'relative m-auto h-full min-h-full  min-w-[375px] max-w-[500px] bg-white '
         )}
       >
-        {children}
-        <div id="modal-root" className=" z-40 " />
+        <ReactQueryClientProvider>
+          {children}
+          <div id="modal-root" className=" z-40 " />
+        </ReactQueryClientProvider>
       </body>
     </html>
   );

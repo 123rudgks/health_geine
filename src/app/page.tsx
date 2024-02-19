@@ -5,7 +5,9 @@ import Calendar from '@/components/Calendar/Calendar';
 import BasicTextarea from '@/components/Input/BasicTextarea';
 import { parseDate } from '@internationalized/date';
 import { setCookie } from 'cookies-next';
+import { SessionProvider } from 'next-auth/react';
 import Link from 'next/link';
+import type { AppProps } from 'next/app';
 
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

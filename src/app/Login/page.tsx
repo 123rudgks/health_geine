@@ -4,6 +4,8 @@ import Google from '@/svgs/Google.svg';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import KakaoTalk from '@/svgs/KakaoTalk.svg';
 import MainLogo from '@/svgs/MainLogo.svg';
+import { SessionProvider, signIn, useSession } from 'next-auth/react';
+
 export default function LoginPage() {
   return (
     <div className="flex h-full w-full items-center justify-center">
@@ -25,6 +27,7 @@ export default function LoginPage() {
             <Google /> 구글로 로그인하기
           </Button>
           <Button
+            onClick={() => signIn('kakao', { redirect: true })}
             ring={'yellow'}
             color={'gray-400'}
             background={'yellow'}

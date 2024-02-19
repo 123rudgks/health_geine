@@ -7,10 +7,38 @@ import TrainerListItem from '@/components/pages/trainer/TrainerListItem';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import MagnifyingGlasses from '@/svgs/MagnifyingGlasses.svg';
 import NavArrowLeft from '@/svgs/NavArrowLeft.svg';
+// import { QueryClient, useQuery } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+interface User {
+  id: number;
+  date: string;
+  time: string;
+  place: string;
+  description: string;
+  state: string;
+  matchingUsers: [];
+}
 
-type Props = {};
+const TrainerListPage = () => {
+  const queryClient = useQueryClient();
+  const accessToken = '';
 
-const TrainerListPage = (props: Props) => {
+  const { data, isLoading, isError } = useQuery<User[]>({
+    queryKey: ['users'],
+    queryFn: async () => {
+      const { data } = await axios.get<User[]>(`/matchings/1`, {
+        headers: {
+          RefreshToken: '',
+          AccessToken: '',
+        },
+      });
+      console.log(data);
+      return data;
+    },
+  });
+  if (isLoading) return <>loading</>;
+  if (isError) return <>err</>;
   return (
     <TopBottomBarTemplate
       _topNode={
@@ -37,6 +65,7 @@ const TrainerListPage = (props: Props) => {
               className: 'bg-transparent',
               placeholder: '트레이너 검색',
             }}
+            _value=""
           />
         </div>
         <div className="mt-7">
@@ -62,7 +91,18 @@ const TrainerListPage = (props: Props) => {
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col gap-5  ">
+          <div className="mt-8 flex flex-col gap-5">
+            {queryClient.getQueryData<User[]>(['users'])?.map((item: User) => (
+              <p key={item.id}>{item.description}</p>
+            ))}
+
+            {/* {JSON.stringify(data, null, 2)} */}
+            {/* <ul>
+              {data &&
+                data.map((item: User) => (
+                  <li key={item.id}>{item.description}</li>
+                ))}
+            </ul> */}
             {Array.from({ length: 10 }).map((_, index) => (
               <TrainerListItem key={index} />
             ))}
