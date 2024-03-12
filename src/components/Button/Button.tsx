@@ -5,6 +5,7 @@ export interface ButtonProps {
   ring: 'none' | 'yellow' | 'gray-100' | KeyofColors;
   color: 'white' | 'gray-200' | 'gray-300' | 'gray-400' | KeyofColors;
   background: 'none' | 'white' | 'yellow' | 'gray-100' | KeyofColors;
+  onClick?: () => void;
 }
 const baseClasses = 'ring-2';
 
@@ -46,6 +47,7 @@ const Button = ({
   color,
   children,
   className,
+  onClick,
   ...props
 }: ButtonProps & React.ComponentProps<'button'>) => {
   return (
@@ -57,6 +59,7 @@ const Button = ({
         ringClasses[ring],
         className
       )}
+      onClick={onClick}
       {...props}
     >
       {children}

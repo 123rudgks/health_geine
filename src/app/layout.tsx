@@ -15,11 +15,7 @@ export const metadata = {
   description: '나에게 맞는 PT를 간편하게 매칭해주는 헬스케어 플랫폼',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="ko" className="h-screen w-screen bg-[#f9f9f9]">
       <body

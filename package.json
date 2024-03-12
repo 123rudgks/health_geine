@@ -16,7 +16,7 @@
     "@react-aria/i18n": "^3.9.0",
     "@react-spectrum/utils": "^3.11.2",
     "@react-stately/calendar": "^3.4.2",
-    "@tanstack/react-query": "^5.21.7",
+    "@tanstack/react-query": "4",
     "@tanstack/react-query-devtools": "^5.21.7",
     "@tanstack/react-query-next-experimental": "^5.21.7",
     "@types/node": "20.2.5",
@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
+    "@tanstack/eslint-plugin-query": "^5.20.1",
     "@types/react": "^18.2.12",
     "eslint-config-prettier": "^8.8.0",
     "prettier": "^2.8.8",
