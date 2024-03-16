@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
-
+import { recoilPersist } from 'recoil-persist';
+const { persistAtom } = recoilPersist();
 interface ILogin {
   userId: string;
   role: string;
@@ -33,6 +34,7 @@ export const loginState = atom<ILogin>({
     accessToken: '',
     refreshToken: '',
   },
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const userState = atom<IUser>({
@@ -54,6 +56,7 @@ export const userState = atom<IUser>({
     uniName: '',
     weight: '',
   },
+  effects_UNSTABLE: [persistAtom],
 });
 
 // authProvider: 'GOOGLE';

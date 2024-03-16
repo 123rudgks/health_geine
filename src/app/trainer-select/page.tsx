@@ -14,41 +14,8 @@ const TrainerSelectPage = () => {
   const accessToken = localStorage.getItem('accessToken');
   const router = useRouter();
   const [user, setUser] = useRecoilState(userState);
-  // const [accessToken, setAccessToken] = useState<string | null>(null);
-  // const [refreshToken, setRefreshToken] = useState<string | null>(null);
-
-  // const { data: tokens } = useQuery('tokens', () =>
-  //   Promise.resolve({
-  //     accessToken: localStorage.getItem('accessToken'),
-  //     refreshToken: localStorage.getItem('refreshToken'),
-  //   })
-  // );
-
-  // useEffect(() => {
-  //   if (tokens) {
-  //     setAccessToken(tokens.accessToken);
-  //     setRefreshToken(tokens.refreshToken);
-  //   }
-  // }, [tokens]);
 
   const handleUser = async (role: string) => {
-    // const res = await axios
-    //   .patch(
-    //     `https://서비스.한국/users/role`,
-    //     { role: role },
-    //     {
-    //       headers: {
-    //         'Content-Type': 'application/json;charset=utf-8',
-    //         'Access-Control-Allow-Origin': '*',
-    //         Authorization: accessToken,
-    //       },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     const data = response.data.data;
-    //     console.log(data);
-    //     router.push('/trainer-list');
-    //   });
     const res = await axios.patch(
       `https://서비스.한국/users/role`,
       { role: role },
@@ -68,7 +35,8 @@ const TrainerSelectPage = () => {
     try {
       const data = await handleUser(role);
       setUser(data);
-      router.push('/trainer-list');
+      // router.push('/trainer-list');
+      router.push('/health-management');
     } catch (error) {
       console.error('Error fetching data:', error);
     }

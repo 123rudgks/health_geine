@@ -1,66 +1,43 @@
-import { BASE_URL } from '@/utils/routePath';
-import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { loginState } from '@/recoil/state';
+import { BASE_URL } from '@/utils/routePath';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useQueryClient, QueryClient } from 'react-query';
+import { useRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 const Kakao = () => {
   const router = useRouter();
-  // const queryClient = useQueryClient();
-
-  // const getToken = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `https://서비스.한국/login/oauth2/code/kakao?code=${code}&state=${state}`,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json;charset=utf-8',
-  //           'Access-Control-Allow-Origin': '*',
-  //         },
-  //       }
-  //     );
-  //     const data = response.data.data;
-  //     // queryClient.setQueryData('tokens', data); // accessToken 및 refreshToken 저장
-  //     // const { isLoading, isError, data, error } = useQuery({
-  //     //   queryKey: ['tokens'],
-  //     //   queryFn: response,
-  //     // });
-  //     router.push('/trainer-select');
-  //   } catch (err) {
-  //     console.log('err', err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getToken();
-  // }, [code, state]);
-
   const code = router.query.code as string;
   const state = router.query.state as string;
+  const [user, setUser] = useRecoilState(loginState);
 
   const getToken = async () => {
     try {
-      await axios
-        .get(
-          `https://${BASE_URL}/login/oauth2/code/kakao?code=${code}&state=${state}`,
-          {
-            headers: {
-              'Content-Type': 'application/json;charset=utf-8',
-              'Access-Control-Allow-Origin': '*',
-            },
-          }
-        )
-        .then((response) => {
-          const data = response.data.data;
-          console.log(data);
-          // localStorage.setItem('accessToken', data.accessToken);
-          // localStorage.setItem('refreshToken', data.refreshToken);
+      const response = await axios.get(
+        `https://${BASE_URL}/login/oauth2/code/kakao?code=${code}&state=${state}`,
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
+        }
+      );
+      const data = response.data.data;
+      setUser(data);
+      // console.log(data);
+      // console.log(user);
+      localStorage.setItem('accessToken', data.accessToken);
 
-          // router.push('/trainer-select');
-        });
+      if (data.role === 'EMPTY') {
+        router.push('/trainer-select');
+        return data;
+      } else {
+        router.push('/health-management');
+        return data;
+      }
     } catch (err) {
-      console.log('err', err);
+      // console.log('err', err);
     }
   };
 
@@ -68,6 +45,9 @@ const Kakao = () => {
     getToken();
   }, [code]);
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
   return (
     <>
       <div>카카오 로그인 진행</div>
@@ -76,4 +56,10 @@ const Kakao = () => {
   );
 };
 
-export default Kakao;
+const KakaoWithRecoilRoot = () => (
+  <RecoilRoot>
+    <Kakao />
+  </RecoilRoot>
+);
+
+export default KakaoWithRecoilRoot;

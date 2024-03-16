@@ -6,21 +6,60 @@ import BackgroundCircle from './icon/BackgroundCircle.png';
 import EmptyCalendar from '@/svgs/EmptyCalendar.svg';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import Box from '@/components/Box/Box';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SquareCheckBox from '@/components/SquareCheckBox/SquareCheckBox';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { loginState, userState } from '@/recoil/state';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { KEY_LOGIN, KEY_ROLE } from '@/utils/queryKey';
 type Props = {};
 
 const Page = (props: Props) => {
   const router = useRouter();
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
+  const accessToken = localStorage.getItem('accessToken');
+  const loginData = useRecoilValue(loginState);
+  const [userData, setUserData] = useRecoilState(userState);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`https://서비스.한국/users`, {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: accessToken,
+          },
+        });
+
+        setUserData(response.data.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData(); // useEffect 안에서 fetchData 호출
+    // console.log(userData);
+  }, [setUserData]); // useEffect의 종속성으로 loginData.role을 사용
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(e.target.checked);
   };
 
+  let titleRole = loginData.role;
+
+  if (titleRole === 'USER') {
+    titleRole = '회원';
+  } else if (titleRole === 'TRAINER') {
+    titleRole = '트레이너';
+  } else {
+    titleRole = 'No role';
+  }
+
   return (
-    <div className="h-[100vh] bg-primary-400 ">
+    <div className="h-[100vh] bg-primary-400">
       <Image
         src={BackgroundCircle}
         alt="BackgroundCircle"
@@ -28,12 +67,16 @@ const Page = (props: Props) => {
       />
       <div className="relative z-10">
         <div className="py-16 pl-10 text-white">
-          <p className="font-[11px] font-[500]">회원전용</p>
+          <p className="pb-2 font-[11px] font-[500]">{titleRole}전용</p>
           <HealthGenie />
-          <p className="text-[19px] font-[700]">
-            지니님 좋은 아침입니다!
-            <br /> 오늘도 건강한 하루 보내봐요 :)
-          </p>
+          {userData.name && (
+            <>
+              <p className="pt-4 text-[19px] font-[700]">
+                {userData.name}님 좋은 아침입니다!
+                <br /> 오늘도 건강한 하루 보내봐요 :)
+              </p>
+            </>
+          )}
         </div>
 
         <Box className="flex h-[100%] flex-col justify-start gap-[13px] rounded-[21px] bg-[#f4f4f4] px-[22px] py-[26px]">
