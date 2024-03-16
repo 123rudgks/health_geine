@@ -1,21 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { RecoilRoot } from 'recoil';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { persistQueryClient } from '@tanstack/react-query-persist-client';
+// export const queryClient = new QueryClient();
+
+// const persister = createSyncStoragePersister({
+//   storage: window.localStorage,
+// });
+
+// persistQueryClient({
+//   queryClient,
+//   persister,
+// });
+const queryClient = new QueryClient();
 
 const ReactQueryClientProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [client] = useState(() => new QueryClient());
+  // const [client] = useState(() => new QueryClient());
+  // 기본 옵션들을 핸들링 할 수 있음.
 
   return (
-    <QueryClientProvider client={client}>
-      {children}
-      <ReactQueryDevtools initialIsOpen={false} />{' '}
-    </QueryClientProvider>
+    <RecoilRoot>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </RecoilRoot>
   );
 };
 

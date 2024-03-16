@@ -7,16 +7,17 @@ import KakaoTalk from '@/svgs/KakaoTalk.svg';
 import MainLogo from '@/svgs/MainLogo.svg';
 import { useRouter } from 'next/navigation';
 import ReactQueryClientProvider from '../ReactQueryClientProvider';
+import { BASE_URL } from '@/utils/routePath';
 
 export default function LoginPage() {
   const router = useRouter();
 
   const handleGoogleLogin = () => {
-    router.push('https://서비스.한국/oauth2/authorization/google');
+    router.push(`https://${BASE_URL}/oauth2/authorization/google`);
   };
 
   const handleKakaoLogin = () => {
-    router.push('https://서비스.한국/oauth2/authorization/kakao');
+    router.push(`https://${BASE_URL}/oauth2/authorization/kakao`);
   };
 
   return (
