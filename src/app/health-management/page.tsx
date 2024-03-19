@@ -6,7 +6,7 @@ import BackgroundCircle from './icon/BackgroundCircle.png';
 import EmptyCalendar from '@/svgs/EmptyCalendar.svg';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import Box from '@/components/Box/Box';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SquareCheckBox from '@/components/SquareCheckBox/SquareCheckBox';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -19,8 +19,14 @@ import {
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { KEY_MYLIST, KEY_MYREVIEW, KEY_USERS } from '@/utils/queryKey';
+import { get } from 'http';
 
 type Props = {};
+
+const getDay = (dayIndex: number) => {
+  const koreanDays = ['일', '월', '화', '수', '목', '금', '토'];
+  return koreanDays[dayIndex];
+};
 
 const Page = (props: Props) => {
   const router = useRouter();
@@ -31,6 +37,14 @@ const Page = (props: Props) => {
   const [userData, setUserData] = useRecoilState(userState);
   const [myListData, setMyListUserData] = useRecoilState(myListState);
   const [myReviewData, setMyReviewData] = useRecoilState(myReviewState);
+  const [koreanDay, setKoreanDay] = useState('');
+
+  useEffect(() => {
+    const date = new Date();
+    const dayIndex = date.getDay();
+    const koreanDay = getDay(dayIndex);
+    setKoreanDay(koreanDay);
+  }, []);
 
   const fetchUserData = async () => {
     const response = await axios.get(`https://서비스.한국/users`, {
@@ -106,14 +120,10 @@ const Page = (props: Props) => {
         <div className="py-16 pl-10 text-white">
           <p className="pb-2 font-[11px] font-[500]">{titleRole}전용</p>
           <HealthGenie />
-          {/* {userData.name && (
-            <> */}
           <p className="pt-4 text-[19px] font-[700]">
             {userData.name}님 좋은 아침입니다!
             <br /> 오늘도 건강한 하루 보내봐요 :)
           </p>
-          {/* </>
-          )} */}
         </div>
 
         <Box className="flex h-[100%] flex-col justify-start gap-[13px] rounded-[21px] bg-[#f4f4f4] px-[22px] py-[26px]">
@@ -150,7 +160,7 @@ const Page = (props: Props) => {
           <Box className="w-[100%] rounded-[18px] px-[22px] py-[26px] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
             <div className="flex justify-between">
               <h1 className="text-[19px] font-[700] text-primary-400">
-                목요일 운동 루틴
+                {koreanDay}요일 운동 루틴
               </h1>
               <div className="flex gap-1 text-center text-[13px] font-[600] text-white">
                 <Box className="rounded-[4px] bg-primary-400 px-[18px] py-[3px]">
@@ -237,7 +247,7 @@ const Page = (props: Props) => {
               </button>
             </div>
             <Box className="flex flex-col rounded-[21px] font-[500] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
-              <h1 className="text-[15px]">{myReviewData.trainerNickName}</h1>
+              <h1 className="text-[15px]">{myReviewData.trainerName}</h1>
               <div className="flex py-2">
                 {myReviewData.reviewScore}
                 <FillReviewStar />
@@ -247,7 +257,9 @@ const Page = (props: Props) => {
                 <EmptyReviewStar />
               </div>
               <p className="text-[13px]">{myReviewData.content}</p>
-              {/* <p className="text-end text-[11px] text-[#c1c1c1]">{myReviewData.date}</p> */}
+              <p className="text-end text-[11px] text-[#c1c1c1]">
+                {myReviewData.createdAt}
+              </p>
             </Box>
           </Box>
         </Box>

@@ -41,8 +41,9 @@ interface IMyReview {
   content: string;
   stopReason: string;
   reviewScore: string;
-  userNickName: string;
-  trainerNickName: string;
+  userName: string;
+  trainerName: string;
+  createdAt: string;
 }
 
 export const loginState = atom<ILogin>({
@@ -99,8 +100,9 @@ export const myReviewState = atom<IMyReview>({
     content: '',
     stopReason: '',
     reviewScore: '',
-    userNickName: '',
-    trainerNickName: '',
+    userName: '',
+    trainerName: '',
+    createdAt: '',
   },
   effects_UNSTABLE: [persistAtom],
 });
