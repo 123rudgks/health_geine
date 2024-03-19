@@ -6,18 +6,22 @@ import NavArrowRight from '@/svgs/NavArrowRight.svg';
 import Back from '@/svgs/BackArrowWhite.svg';
 import Alert from '@/svgs/Alert.svg';
 import { useRouter } from 'next/navigation';
+import { userState } from '@/recoil/state';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 interface Props {}
 
-const page = (props: Props) => {
+const Page = (props: Props) => {
   const router = useRouter();
+  const [userData, setUserData] = useRecoilState(userState);
+
   return (
     <div>
       <TopBottomBarTemplate
         _topNode={
           <div>
             <div className="flex justify-between px-4 pb-10 pt-16">
-              <Back onClick={() => router.push('/')} />
+              <Back onClick={() => router.back()} />
               <div className="flex justify-center text-[19px] font-[600] text-white">
                 마이페이지
               </div>
@@ -27,13 +31,16 @@ const page = (props: Props) => {
               <div className="ml-10 h-[87.16px] w-[87.16px] rounded-full bg-[#f0f0f0]" />
               <div className="flex flex-col justify-start pl-6">
                 <h1 className="font-noto text-[18.07px] font-semibold text-white">
-                  헬스지니
+                  {userData.name}
                 </h1>
                 <h2 className="font-noto text-[13.82px] font-light text-white">
                   신규회원
                 </h2>
                 <div className="flex gap-4 pt-2">
-                  <Box className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-white text-center font-noto text-[13.17px] font-light text-primary-400">
+                  <Box
+                    onClick={() => router.push('/health-profile')}
+                    className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-white text-center font-noto text-[13.17px] font-light text-primary-400"
+                  >
                     프로필 편집
                   </Box>
                   <Box className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-primary-100 text-center font-noto text-[13.17px] font-light text-white">
@@ -69,4 +76,4 @@ const page = (props: Props) => {
   );
 };
 
-export default page;
+export default Page;

@@ -6,14 +6,20 @@ import BackgroundCircle from './icon/BackgroundCircle.png';
 import EmptyCalendar from '@/svgs/EmptyCalendar.svg';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import Box from '@/components/Box/Box';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SquareCheckBox from '@/components/SquareCheckBox/SquareCheckBox';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { loginState, userState } from '@/recoil/state';
+import {
+  loginState,
+  myListState,
+  myReviewState,
+  userState,
+} from '@/recoil/state';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { KEY_LOGIN, KEY_ROLE } from '@/utils/queryKey';
+import { KEY_MYLIST, KEY_MYREVIEW, KEY_USERS } from '@/utils/queryKey';
+
 type Props = {};
 
 const Page = (props: Props) => {
@@ -23,26 +29,57 @@ const Page = (props: Props) => {
   const accessToken = localStorage.getItem('accessToken');
   const loginData = useRecoilValue(loginState);
   const [userData, setUserData] = useRecoilState(userState);
+  const [myListData, setMyListUserData] = useRecoilState(myListState);
+  const [myReviewData, setMyReviewData] = useRecoilState(myReviewState);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`https://서비스.한국/users`, {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: accessToken,
-          },
-        });
+  const fetchUserData = async () => {
+    const response = await axios.get(`https://서비스.한국/users`, {
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: accessToken,
+      },
+    });
+    return response.data.data;
+  };
 
-        setUserData(response.data.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData(); // useEffect 안에서 fetchData 호출
-    // console.log(userData);
-  }, [setUserData]); // useEffect의 종속성으로 loginData.role을 사용
+  const fetchMyListData = async () => {
+    const response = await axios.get(`https://서비스.한국/process/my/list`, {
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: accessToken,
+      },
+    });
+    return response.data.data;
+  };
+
+  const fetchMyReviewData = async () => {
+    const response = await axios.get(`https://서비스.한국/reviews/my/list`, {
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: accessToken,
+      },
+    });
+    return response.data.data;
+  };
+
+  const { data: userDataQuery } = useQuery(KEY_USERS, fetchUserData, {
+    onSuccess: (data) => setUserData(data),
+  });
+
+  const { data: myListDataQuery } = useQuery(KEY_MYLIST, fetchMyListData, {
+    onSuccess: (data) => setMyListUserData(data),
+  });
+
+  const { data: myReviewDataQuery } = useQuery(
+    KEY_MYREVIEW,
+    fetchMyReviewData,
+    {
+      onSuccess: (data) => setMyReviewData(data),
+    }
+  );
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(e.target.checked);
@@ -69,14 +106,14 @@ const Page = (props: Props) => {
         <div className="py-16 pl-10 text-white">
           <p className="pb-2 font-[11px] font-[500]">{titleRole}전용</p>
           <HealthGenie />
-          {userData.name && (
-            <>
-              <p className="pt-4 text-[19px] font-[700]">
-                {userData.name}님 좋은 아침입니다!
-                <br /> 오늘도 건강한 하루 보내봐요 :)
-              </p>
-            </>
-          )}
+          {/* {userData.name && (
+            <> */}
+          <p className="pt-4 text-[19px] font-[700]">
+            {userData.name}님 좋은 아침입니다!
+            <br /> 오늘도 건강한 하루 보내봐요 :)
+          </p>
+          {/* </>
+          )} */}
         </div>
 
         <Box className="flex h-[100%] flex-col justify-start gap-[13px] rounded-[21px] bg-[#f4f4f4] px-[22px] py-[26px]">
@@ -163,52 +200,20 @@ const Page = (props: Props) => {
               <Box className="h-[70px] w-[70px]" />
               <div className="flex w-[100%] flex-col px-4">
                 <p className="text-[13px] font-[500] text-gray-300">
-                  2023-09-11
+                  {myListData.date && (
+                    <>
+                      <p className="text-[13px] font-[500] text-gray-300">
+                        {myListData.date}
+                      </p>
+                    </>
+                  )}
                 </p>
                 <h2 className="pb-2 pt-1 text-[15px] font-[500] text-black">
-                  회원님 오늘 PT 피드백입니다!
+                  {myListData.content}
                 </h2>
                 <div className="flex justify-between">
                   <h3 className="text-[13px] font-[500] text-gray-300">
-                    정수영 트레이너
-                  </h3>
-                  <h3 className="text-[13px] font-[500] text-primary-400 underline">
-                    자세히 보기
-                  </h3>
-                </div>
-              </div>
-            </Box>
-            <Box className="flex rounded-[8px] bg-gray-100">
-              <Box className="h-[70px] w-[70px]" />
-              <div className="flex w-[100%] flex-col px-4">
-                <p className="text-[13px] font-[500] text-gray-300">
-                  2023-09-11
-                </p>
-                <h2 className="pb-2 pt-1 text-[15px] font-[500] text-black">
-                  회원님 오늘 PT 피드백입니다!
-                </h2>
-                <div className="flex justify-between">
-                  <h3 className="text-[13px] font-[500] text-gray-300">
-                    정수영 트레이너
-                  </h3>
-                  <h3 className="text-[13px] font-[500] text-primary-400 underline">
-                    자세히 보기
-                  </h3>
-                </div>
-              </div>
-            </Box>
-            <Box className="flex rounded-[8px] bg-gray-100">
-              <Box className="h-[70px] w-[70px]" />
-              <div className="flex w-[100%] flex-col px-4">
-                <p className="text-[13px] font-[500] text-gray-300">
-                  2023-09-11
-                </p>
-                <h2 className="pb-2 pt-1 text-[15px] font-[500] text-black">
-                  회원님 오늘 PT 피드백입니다!
-                </h2>
-                <div className="flex justify-between">
-                  <h3 className="text-[13px] font-[500] text-gray-300">
-                    정수영 트레이너
+                    {myListData.trainerNickName}
                   </h3>
                   <h3 className="text-[13px] font-[500] text-primary-400 underline">
                     자세히 보기
@@ -232,20 +237,17 @@ const Page = (props: Props) => {
               </button>
             </div>
             <Box className="flex flex-col rounded-[21px] font-[500] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
-              <h1 className="text-[15px]">정수영 트레이너</h1>
+              <h1 className="text-[15px]">{myReviewData.trainerNickName}</h1>
               <div className="flex py-2">
+                {myReviewData.reviewScore}
                 <FillReviewStar />
                 <FillReviewStar />
                 <FillReviewStar />
                 <EmptyReviewStar />
                 <EmptyReviewStar />
               </div>
-              <p className="text-[13px]">
-                오늘도 너무 친절하게 잘 알려주셔서, 감사했습니다. 하지만
-                트레이너님 팔뚝을 볼때 마다 너무 무서워서 헬스에 집중하기가
-                어려웠네요 ㅠ 그래서 별점 1개 깎았습니다.
-              </p>
-              <p className="text-end text-[11px] text-[#c1c1c1]">2023-11-12</p>
+              <p className="text-[13px]">{myReviewData.content}</p>
+              {/* <p className="text-end text-[11px] text-[#c1c1c1]">{myReviewData.date}</p> */}
             </Box>
           </Box>
         </Box>

@@ -6,11 +6,15 @@ import Back from '@/svgs/Back.svg';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import Box from '@/components/Box/Box';
 import Button from '@/components/Button/Button';
+import { useRecoilState } from 'recoil';
+import { userState } from '@/recoil/state';
 
 interface Props {}
 
-const page = (props: Props) => {
+const Page = (props: Props) => {
   const router = useRouter();
+  const [userData, setUserData] = useRecoilState(userState);
+
   return (
     <div>
       <TopBottomBarTemplate
@@ -38,7 +42,7 @@ const page = (props: Props) => {
           사진 선택
         </Box>
         <h1 className="font-noto text-[23px] font-bold text-primary-400">
-          지니님의 프로필
+          {userData.name}님의 프로필
         </h1>
         <Box className="h-[310px] w-[298px] rounded-[27px] bg-primary-100 shadow-[0_3px_10px_rgb(90,130,246,0.5)]">
           <div className="flex flex-row items-center justify-center gap-14 py-4">
@@ -46,7 +50,47 @@ const page = (props: Props) => {
               이름
             </h1>
             <p className="font-noto text-[16px] font-medium text-[#434343]">
-              헬스지니
+              {userData.name}
+            </p>
+          </div>
+          <div className="flex flex-row items-center justify-center gap-14 py-4">
+            <h1 className="font-noto text-[16px] font-semibold text-primary-400">
+              성별
+            </h1>
+            <p className="font-noto text-[16px] font-medium text-[#434343]">
+              {userData.gender}
+            </p>
+          </div>
+          <div className="flex flex-row items-center justify-center gap-14 py-4">
+            <h1 className="font-noto text-[16px] font-semibold text-primary-400">
+              생년월일
+            </h1>
+            <p className="font-noto text-[16px] font-medium text-[#434343]">
+              {userData.birth}
+            </p>
+          </div>
+          <div className="flex flex-row items-center justify-center gap-14 py-4">
+            <h1 className="font-noto text-[16px] font-semibold text-primary-400">
+              키
+            </h1>
+            <p className="font-noto text-[16px] font-medium text-[#434343]">
+              {userData.height}
+            </p>
+          </div>
+          <div className="flex flex-row items-center justify-center gap-14 py-4">
+            <h1 className="font-noto text-[16px] font-semibold text-primary-400">
+              몸무게
+            </h1>
+            <p className="font-noto text-[16px] font-medium text-[#434343]">
+              {userData.weight}
+            </p>
+          </div>
+          <div className="flex flex-row items-center justify-center gap-14 py-4">
+            <h1 className="font-noto text-[16px] font-semibold text-primary-400">
+              골격근량
+            </h1>
+            <p className="font-noto text-[16px] font-medium text-[#434343]">
+              {userData.muscleWeight}
             </p>
           </div>
         </Box>
@@ -58,4 +102,4 @@ const page = (props: Props) => {
   );
 };
 
-export default page;
+export default Page;

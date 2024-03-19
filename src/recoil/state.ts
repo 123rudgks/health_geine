@@ -26,6 +26,25 @@ interface IUser {
   weight: string;
 }
 
+interface IMyList {
+  id: string;
+  date: string;
+  content: string;
+  title: string;
+  photoPaths: [];
+  userNickName: string;
+  trainerNickName: string;
+}
+
+interface IMyReview {
+  id: string;
+  content: string;
+  stopReason: string;
+  reviewScore: string;
+  userNickName: string;
+  trainerNickName: string;
+}
+
 export const loginState = atom<ILogin>({
   key: 'loginState',
   default: {
@@ -59,18 +78,29 @@ export const userState = atom<IUser>({
   effects_UNSTABLE: [persistAtom],
 });
 
-// authProvider: 'GOOGLE';
-// birth: '';
-// email: 'testhealthgenie@gmail.com';
-// emailVerify: false;
-// gender: null;
-// height: null;
-// id: 8;
-// level: 'EMPTY';
-// muscleWeight: null;
-// name: '테스트';
-// nickname: '18460909';
-// profilePhoto: null;
-// role: 'TRAINER';
-// uniName: '';
-// weight: null;
+export const myListState = atom<IMyList>({
+  key: 'myListState',
+  default: {
+    id: '',
+    date: '',
+    content: '',
+    title: '',
+    photoPaths: [],
+    userNickName: '',
+    trainerNickName: '',
+  },
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const myReviewState = atom<IMyReview>({
+  key: 'myReviewState',
+  default: {
+    id: '',
+    content: '',
+    stopReason: '',
+    reviewScore: '',
+    userNickName: '',
+    trainerNickName: '',
+  },
+  effects_UNSTABLE: [persistAtom],
+});

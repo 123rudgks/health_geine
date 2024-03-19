@@ -7,14 +7,12 @@ import TrainerListItem from '@/components/pages/trainer/TrainerListItem';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import MagnifyingGlasses from '@/svgs/MagnifyingGlasses.svg';
 import NavArrowLeft from '@/svgs/NavArrowLeft.svg';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 
 const TrainerListPage = () => {
   return (
     <TopBottomBarTemplate
       _topNode={
-        <div className=" h-full w-full bg-[#FDFDFF]  pt-14 shadow-[0_6px_6px_-6px_rgba(0,0,0,0.07)]">
+        <div className=" h-full w-full bg-[#FDFDFF] pt-14 shadow-[0_6px_6px_-6px_rgba(0,0,0,0.07)]">
           <div className="relative my-auto flex  h-[23px] w-full items-center justify-center ">
             <HealthGenie />
             <div className="absolute right-[22px] top-0 flex h-full items-center font-noto text-xs text-primary-400">
