@@ -8,7 +8,7 @@ interface ILogin {
   refreshToken: string;
 }
 
-interface IUser {
+export default interface IUser {
   authProvider: string;
   birth: string;
   email: string;

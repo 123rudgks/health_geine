@@ -5,13 +5,119 @@ import BasicInput from '@/components/Input/BasicInput';
 import FillHealth from '@/svgs/FillHealth.svg';
 import ErrorCode from '@/svgs/ErrorCode.svg';
 import InitInput from '@/app/email-auth/InitInput';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useRecoilState } from 'recoil';
+import { userState } from '@/recoil/state';
+import { useRouter } from 'next/navigation';
 
 interface Props {}
 
 const Page = (props: Props) => {
+  const router = useRouter();
+
+  const accessToken = localStorage.getItem('accessToken');
+  const [univNameValue, setUnivNameValue] = useState<string>('');
   const [emailValue, setEmailValue] = useState<string>('');
   const [codeValue, setCodeValue] = useState<string>('');
+  const [user, setUser] = useRecoilState(userState);
+  const [verificationResult, setVerificationResult] = useState<string>('');
+  const [isSendButtonDisabled, setIsSendButtonDisabled] =
+    useState<boolean>(true);
+  const [isVerifyButtonDisabled, setIsVerifyButtonDisabled] =
+    useState<boolean>(true);
+  const [isCompleteButtonVisible, setIsCompleteButtonVisible] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    if (emailValue && univNameValue) {
+      setIsSendButtonDisabled(false);
+    } else {
+      setIsSendButtonDisabled(true);
+    }
+  }, [emailValue, univNameValue]);
+
+  useEffect(() => {
+    if (emailValue && univNameValue && codeValue) {
+      setIsVerifyButtonDisabled(false);
+    } else {
+      setIsVerifyButtonDisabled(true);
+    }
+  }, [emailValue, univNameValue, codeValue]);
+
+  const handleMail = async () => {
+    const res = await axios.post(
+      `https://서비스.한국/mail`,
+      { univ_email: emailValue, univName: univNameValue },
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: accessToken,
+        },
+      }
+    );
+
+    return res.data.data;
+  };
+
+  const fetchMailData = async () => {
+    try {
+      const data = await handleMail();
+      // setUser(data);
+      alert(
+        '이메일로 코드가 전송되었습니다. 전송된 인증 코드를 아래에 입력해주세요.'
+      );
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleMailVeri = async () => {
+    try {
+      const res = await axios.get(
+        `https://서비스.한국/mail/verifications?univ_email=${emailValue}&univName=${univNameValue}&code=${codeValue}`,
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: accessToken,
+          },
+        }
+      );
+
+      if (res.data.message === '검증이 성공했습니다') {
+        console.log(res.data.message);
+        setVerificationResult('인증에 성공했습니다!');
+        setIsCompleteButtonVisible(true);
+      } else {
+        console.log(res.data.message);
+        setVerificationResult('인증에 실패했습니다');
+        setIsCompleteButtonVisible(false);
+      }
+    } catch (error) {
+      console.error('Error verifying data:', error);
+      setVerificationResult('인증에 실패했습니다');
+      setIsCompleteButtonVisible(false);
+    }
+  };
+
+  const fetchVeriData = async () => {
+    try {
+      const data = await handleMailVeri();
+      // setUser(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleUnivChange = (value: string) => {
+    setUnivNameValue(value);
+  };
+
+  const handleUnivDelete = () => {
+    setUnivNameValue('');
+  };
 
   const handleEmailChange = (value: string) => {
     setEmailValue(value);
@@ -46,19 +152,35 @@ const Page = (props: Props) => {
         <p className="mb-1 flex justify-end font-noto text-[10px] font-light text-[#c1c1c1]">
           학교 이메일을 정확히 기재해주세요.
         </p>
-        <BasicInput
-          _inputProps={{
-            placeholder: '이메일을 인증하세요.',
-          }}
-          _rightNode={<InitInput onClick={handleEmailDelete} />}
-          _onChange={handleEmailChange}
-          _value={emailValue}
-        />
+
+        <div className="flex flex-col gap-2">
+          <BasicInput
+            _inputProps={{
+              placeholder: '이메일을 인증하세요.',
+            }}
+            _rightNode={<InitInput onClick={handleEmailDelete} />}
+            _onChange={handleEmailChange}
+            _value={emailValue}
+          />
+          <BasicInput
+            _state="default"
+            _inputProps={{
+              placeholder: '대학명을 입력하세요.',
+            }}
+            _rightNode={<InitInput onClick={handleUnivDelete} />}
+            _onChange={handleUnivChange}
+            _value={univNameValue}
+          />
+        </div>
         <div className="flex justify-end">
           <Button
+            onClick={() => {
+              fetchMailData();
+            }}
             ring="none"
-            background="primary-100"
             color="white"
+            background={isSendButtonDisabled ? 'primary-100' : 'primary-400'}
+            disabled={isSendButtonDisabled}
             className="my-4 h-[24px] w-[111px] rounded-[4px] font-noto text-[13px] font-semibold"
           >
             인증 코드 전송
@@ -72,22 +194,46 @@ const Page = (props: Props) => {
           _value={codeValue}
         />
         <div className="flex justify-between">
-          <div className="mt-2 flex items-start">
-            <ErrorCode />
-            <p className="ml-2 text-[11.04px] text-[#F44B4B]">
-              인증 코드가 일치하지 않습니다!
-            </p>
-          </div>
+          {verificationResult === '인증에 실패했습니다' ? (
+            <div className="mt-2 flex items-start">
+              <ErrorCode />
+              <p className="ml-2 text-[11.04px] text-[#F44B4B]">
+                {verificationResult}
+              </p>
+            </div>
+          ) : (
+            <p></p>
+          )}
           <Button
+            onClick={() => {
+              fetchVeriData();
+            }}
             ring="none"
-            background="primary-100"
+            background={isVerifyButtonDisabled ? 'primary-100' : 'primary-400'}
+            disabled={isVerifyButtonDisabled}
             color="white"
             className="my-4 h-[24px] w-[111px] rounded-[4px] font-noto text-[13px] font-semibold"
           >
             인증 확인 하기
           </Button>
         </div>
+
+        {isCompleteButtonVisible && (
+          <Button
+            onClick={() => {
+              router.back();
+            }}
+            ring="none"
+            background="primary-400"
+            disabled={isVerifyButtonDisabled}
+            color="white"
+            className="my-4 h-[35px] w-[146px] rounded-[4px] font-noto text-[21px] font-semibold"
+          >
+            완료하기
+          </Button>
+        )}
       </div>
+
       <hr color="#f3f3f3" />
       <div>
         <h1 className="my-4 font-noto text-[21px] font-bold text-black">
