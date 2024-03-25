@@ -12,7 +12,7 @@ export default interface IUser {
   authProvider: string;
   birth: string;
   email: string;
-  emailVerify: string;
+  emailVerify: boolean;
   gender: string;
   height: string;
   id: string;
@@ -63,7 +63,7 @@ export const userState = atom<IUser>({
     authProvider: '',
     birth: '',
     email: '',
-    emailVerify: '',
+    emailVerify: false,
     gender: '',
     height: '',
     id: '',

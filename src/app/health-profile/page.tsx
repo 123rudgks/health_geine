@@ -64,19 +64,24 @@ const Page = (props: Props) => {
         }}
       />
       <div className="flex flex-col items-center justify-center gap-6 pt-6">
-        {/* <p className="font-noto text-[10px] font-medium text-primary-400">
-          • 이메일 인증 회원입니다
-        </p> */}
         <div className="flex flex-col items-center gap-2">
-          <p className="font-noto text-[10px] font-medium text-[#F44B4B]">
-            • 이메일 인증 회원입니다
-          </p>
-          <button
-            onClick={() => router.push('/email-auth')}
-            className="font-noto text-[8px] font-medium text-[#B3B3B3]"
-          >
-            인증 페이지로 이동
-          </button>
+          {userData.emailVerify === true ? (
+            <p className="font-noto text-[10px] font-medium text-primary-400">
+              • 이메일 인증 회원입니다
+            </p>
+          ) : (
+            <>
+              <p className="font-noto text-[10px] font-medium text-[#F44B4B]">
+                • 이메일 인증이 필요합니다
+              </p>
+              <button
+                onClick={() => router.push('/email-auth')}
+                className="font-noto text-[8px] font-medium text-[#B3B3B3]"
+              >
+                인증 페이지로 이동
+              </button>
+            </>
+          )}
         </div>
         <div className="h-[144px] w-[144px] rounded-full bg-[#f0f0f0]" />
         <Box className="flex h-[29px] w-[101px] items-center justify-center rounded-[23px] bg-[#e9e9e9] font-noto text-[17px] font-medium text-[#959595]">

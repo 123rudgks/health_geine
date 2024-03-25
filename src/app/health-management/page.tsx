@@ -122,10 +122,12 @@ const Page = (props: Props) => {
           <div className="py-16 pl-10 text-white">
             <p className="pb-2 font-[11px] font-[500]">{titleRole}전용</p>
             <HealthGenie />
-            <p className="pt-4 text-[19px] font-[700]">
-              {userData.name}님 좋은 아침입니다!
-              <br /> 오늘도 건강한 하루 보내봐요 :)
-            </p>
+            {userData.name && (
+              <p className="pt-4 text-[19px] font-[700]">
+                {userData.name}님 좋은 아침입니다! <br /> 오늘도 건강한 하루
+                보내봐요 :)
+              </p>
+            )}
           </div>
 
           <Box className="flex h-[100%] flex-col justify-start gap-[13px] rounded-[21px] bg-[#f4f4f4] px-[22px] py-[26px]">
