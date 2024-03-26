@@ -221,7 +221,7 @@ const Page = (props: Props) => {
         {isCompleteButtonVisible && (
           <Button
             onClick={() => {
-              router.back();
+              router.push('/health-management');
             }}
             ring="none"
             background="primary-400"
