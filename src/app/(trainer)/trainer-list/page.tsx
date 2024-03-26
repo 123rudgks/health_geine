@@ -1,5 +1,6 @@
 'use client';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
+import Button from '@/components/Button/Button';
 import BasicInput from '@/components/Input/BasicInput';
 import RoundCheckBox from '@/components/RoundCheckBox/RoundCheckBox';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
@@ -33,7 +34,7 @@ const TrainerListPage = () => {
             _wrapperProps={{ className: 'ring-0 flex-1' }}
             _inputProps={{
               className: 'bg-transparent',
-              placeholder: '트레이너 검색',
+              placeholder: '운동종목, 해시태그 등으로 검색해보세요.',
             }}
             _value=""
           />

@@ -28,12 +28,14 @@ const Fab = ({ _imageName, _bottomNode, _onClick }: BasicFabProps) => {
             height={27}
           />
         </div>
-        <div className="flex flex-col items-center pt-1">
-          <div className="h-0 w-0 border-b-[10px] border-l-[10px] border-r-[10px] border-b-primary-200 border-l-transparent border-r-transparent" />
-          <div className="align-center flex rounded-[27px] bg-primary-200 px-4 py-2 font-noto text-[10.12px] font-medium text-white">
-            {_bottomNode}
+        {_bottomNode && (
+          <div className="flex flex-col items-center pt-1">
+            <div className="h-0 w-0 border-b-[10px] border-l-[10px] border-r-[10px] border-b-primary-200 border-l-transparent border-r-transparent" />
+            <div className="align-center flex rounded-[27px] bg-primary-200 px-4 py-2 font-noto text-[10.12px] font-medium text-white">
+              {_bottomNode}
+            </div>
           </div>
-        </div>
+        )}
       </button>
     </>
   );

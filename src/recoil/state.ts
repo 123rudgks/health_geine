@@ -46,6 +46,18 @@ interface IMyReview {
   createdAt: string;
 }
 
+interface IChatListContent {
+  roomId: number;
+  nickname: string;
+  role: string;
+  profilePhoto?: string | null;
+}
+
+interface IChatList {
+  contents: IChatListContent[];
+  last: boolean;
+}
+
 export const loginState = atom<ILogin>({
   key: 'loginState',
   default: {
@@ -103,6 +115,15 @@ export const myReviewState = atom<IMyReview>({
     userName: '',
     trainerName: '',
     createdAt: '',
+  },
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const chatListState = atom<IChatList>({
+  key: 'chatListState',
+  default: {
+    contents: [],
+    last: false,
   },
   effects_UNSTABLE: [persistAtom],
 });

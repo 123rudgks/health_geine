@@ -21,6 +21,7 @@ import { useQuery } from '@tanstack/react-query';
 import { KEY_MYLIST, KEY_MYREVIEW, KEY_USERS } from '@/utils/queryKey';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
+import TrainerProfileEdit from '@/components/pages/trainer/TrainerProfileEdit';
 
 type Props = {};
 
@@ -29,7 +30,7 @@ const getDay = (dayIndex: number) => {
   return koreanDays[dayIndex];
 };
 
-const Page = (props: Props) => {
+const Page = () => {
   const router = useRouter();
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
@@ -57,9 +58,13 @@ const Page = (props: Props) => {
     });
     return response.data.data;
   };
+  const listUrl =
+    userData.role === 'TRAINER'
+      ? `https://서비스.한국/process/trainers/list`
+      : `https://서비스.한국/process/my/list`;
 
   const fetchMyListData = async () => {
-    const response = await axios.get(`https://서비스.한국/process/my/list`, {
+    const response = await axios.get(listUrl, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -69,8 +74,13 @@ const Page = (props: Props) => {
     return response.data.data;
   };
 
+  const reviewUrl =
+    userData.role === 'TRAINER'
+      ? `https://서비스.한국/reviews/trainers/list/2`
+      : `https://서비스.한국/reviews/my/list`;
+
   const fetchMyReviewData = async () => {
-    const response = await axios.get(`https://서비스.한국/reviews/my/list`, {
+    const response = await axios.get(reviewUrl, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -84,17 +94,13 @@ const Page = (props: Props) => {
     onSuccess: (data) => setUserData(data),
   });
 
-  const { data: myListDataQuery } = useQuery(KEY_MYLIST, fetchMyListData, {
+  const { data: listDataQuery } = useQuery(KEY_MYLIST, fetchMyListData, {
     onSuccess: (data) => setMyListUserData(data),
   });
 
-  const { data: myReviewDataQuery } = useQuery(
-    KEY_MYREVIEW,
-    fetchMyReviewData,
-    {
-      onSuccess: (data) => setMyReviewData(data),
-    }
-  );
+  const { data: reviewDataQuery } = useQuery(KEY_MYREVIEW, fetchMyReviewData, {
+    onSuccess: (data) => setMyReviewData(data),
+  });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(e.target.checked);
@@ -131,6 +137,8 @@ const Page = (props: Props) => {
           </div>
 
           <Box className="flex h-[100%] flex-col justify-start gap-[13px] rounded-[21px] bg-[#f4f4f4] px-[22px] py-[26px]">
+            <TrainerProfileEdit />
+
             <Box className="w-[100%] rounded-[18px] px-[22px] py-[26px] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
               <div className="flex justify-between">
                 <h1 className="text-[16px] font-[700]">
@@ -210,31 +218,37 @@ const Page = (props: Props) => {
                   </h1>
                 </button>
               </div>
-              <Box className="my-2 flex rounded-[8px] bg-gray-100">
-                <Box className="h-[70px] w-[70px]" />
-                <div className="flex w-[100%] flex-col px-4">
-                  <p className="text-[13px] font-[500] text-gray-300">
-                    {myListData.date && (
-                      <>
-                        <p className="text-[13px] font-[500] text-gray-300">
-                          {myListData.date}
-                        </p>
-                      </>
-                    )}
-                  </p>
-                  <h2 className="pb-2 pt-1 text-[15px] font-[500] text-black">
-                    {myListData.content}
-                  </h2>
-                  <div className="flex justify-between">
-                    <h3 className="text-[13px] font-[500] text-gray-300">
-                      {myListData.trainerNickName}
-                    </h3>
-                    <h3 className="text-[13px] font-[500] text-primary-400 underline">
-                      자세히 보기
-                    </h3>
+              {listDataQuery && listDataQuery.length > 0 ? (
+                <Box className="my-2 flex rounded-[8px] bg-gray-100">
+                  <Box className="h-[70px] w-[70px]" />
+                  <div className="flex w-[100%] flex-col px-4">
+                    <p className="text-[13px] font-[500] text-gray-300">
+                      {myListData.date && (
+                        <>
+                          <p className="text-[13px] font-[500] text-gray-300">
+                            {myListData.date}
+                          </p>
+                        </>
+                      )}
+                    </p>
+                    <h2 className="pb-2 pt-1 text-[15px] font-[500] text-black">
+                      {myListData.content}
+                    </h2>
+                    <div className="flex justify-between">
+                      <h3 className="text-[13px] font-[500] text-gray-300">
+                        {myListData.trainerNickName}
+                      </h3>
+                      <h3 className="text-[13px] font-[500] text-primary-400 underline">
+                        자세히 보기
+                      </h3>
+                    </div>
                   </div>
-                </div>
-              </Box>
+                </Box>
+              ) : (
+                <p className="flex items-center justify-center font-noto text-[17px] font-semibold text-[#979797]">
+                  해당 데이터가 없습니다.
+                </p>
+              )}
             </Box>
             <Box className="mb-[90px] w-[100%] rounded-[18px] px-[22px] py-[26px] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
               <div className="flex justify-between py-4">
@@ -252,21 +266,27 @@ const Page = (props: Props) => {
                   </h1>
                 </button>
               </div>
-              <Box className="flex flex-col rounded-[21px] font-[500] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
-                <h1 className="text-[15px]">{myReviewData.trainerName}</h1>
-                <div className="flex py-2">
-                  {myReviewData.reviewScore}
-                  <FillReviewStar />
-                  <FillReviewStar />
-                  <FillReviewStar />
-                  <EmptyReviewStar />
-                  <EmptyReviewStar />
-                </div>
-                <p className="text-[13px]">{myReviewData.content}</p>
-                <p className="text-end text-[11px] text-[#c1c1c1]">
-                  {myReviewData.createdAt}
+              {reviewDataQuery && reviewDataQuery.length > 0 ? (
+                <Box className="flex flex-col rounded-[21px] font-[500] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
+                  <h1 className="text-[15px]">{myReviewData.trainerName}</h1>
+                  <div className="flex py-2">
+                    {myReviewData.reviewScore}
+                    <FillReviewStar />
+                    <FillReviewStar />
+                    <FillReviewStar />
+                    <EmptyReviewStar />
+                    <EmptyReviewStar />
+                  </div>
+                  <p className="text-[13px]">{myReviewData.content}</p>
+                  <p className="text-end text-[11px] text-[#c1c1c1]">
+                    {myReviewData.createdAt}
+                  </p>
+                </Box>
+              ) : (
+                <p className="flex items-center justify-center font-noto text-[17px] font-semibold text-[#979797]">
+                  해당 데이터가 없습니다.
                 </p>
-              </Box>
+              )}
             </Box>
           </Box>
         </div>

@@ -70,7 +70,7 @@ const BottomNavigationBar = () => {
           emptyIcon={<EmptyHome />}
           label="홈"
           active={activeToggle === 2}
-          onClick={() => handleToggleClick(2, '')}
+          onClick={() => handleToggleClick(2, 'trainer-list')}
         />
         <IconToggle
           filledIcon={<FillStar />}
