@@ -5,11 +5,18 @@ import BasicInput from '@/components/Input/BasicInput';
 import RoundCheckBox from '@/components/RoundCheckBox/RoundCheckBox';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import TrainerListItem from '@/components/pages/trainer/TrainerListItem';
+import { userState } from '@/recoil/state';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import MagnifyingGlasses from '@/svgs/MagnifyingGlasses.svg';
 import NavArrowLeft from '@/svgs/NavArrowLeft.svg';
+import Union from '@/svgs/Union.svg';
+import { useRouter } from 'next/navigation';
+import { useRecoilState } from 'recoil';
 
 const TrainerListPage = () => {
+  const router = useRouter();
+  const [userData, setUserData] = useRecoilState(userState);
+
   return (
     <TopBottomBarTemplate
       _topNode={
@@ -25,7 +32,7 @@ const TrainerListPage = () => {
       _bottomNode={<BottomNavigationBar />}
       _contentDivProps={{ className: 'bg-white' }}
     >
-      <div className=" h-full w-full  px-5 pt-10">
+      <div className="h-full w-full px-5 pt-10">
         <div className="flex h-10 rounded-[10px] bg-[#E2E2E2] px-3">
           <div className="flex w-10 items-center justify-center">
             <MagnifyingGlasses />
@@ -39,6 +46,21 @@ const TrainerListPage = () => {
             _value=""
           />
         </div>
+        {userData.role === 'TRAINER' && (
+          <div className="pt-4">
+            <Button
+              onClick={() => {
+                router.push('/write-trainer-detail');
+              }}
+              ring="none"
+              background="primary-100"
+              color="primary-400"
+              className="flex h-10 w-full flex-1 items-center justify-center gap-2 rounded-[8px] font-noto text-[15px] font-semibold"
+            >
+              <Union />내 소개글 추가하기
+            </Button>
+          </div>
+        )}
         <div className="mt-7">
           <div className="flex items-center justify-between">
             <RoundCheckBox

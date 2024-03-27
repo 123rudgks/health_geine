@@ -5,12 +5,14 @@ import LabelBoldText from '@/components/Text/LabelBoldText';
 import TrainerDetailInfoTab from '@/components/pages/trainer-detail/TrainerDetailInfoTab';
 import TrainerPhotoVideoTab from '@/components/pages/trainer-detail/TrainerPhotoVideoTab';
 import TrainerReviewTab from '@/components/pages/trainer-detail/TrainerReviewTab';
+import { userState } from '@/recoil/state';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import Building from '@/svgs/Building.svg';
 import Clock from '@/svgs/Clock.svg';
 import Star from '@/svgs/Star.svg';
 import Users from '@/svgs/Users.svg';
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import { twMerge } from 'tailwind-merge';
 
 type Props = {};
@@ -22,6 +24,8 @@ const TRAINER_DETAIL_TABS: TrainerDetailTab[] = [
 ];
 const TrainerDetailPage = (props: Props) => {
   const [currentTab, setCurrentTab] = useState<TrainerDetailTab>('상세내용');
+  const [userData, setUserData] = useRecoilState(userState);
+
   return (
     <TopBottomBarTemplate
       _topNode={
@@ -59,7 +63,7 @@ const TrainerDetailPage = (props: Props) => {
         <div className="flex w-full flex-col gap-2 p-[22px]">
           <div className="flex h-[18px] items-center gap-[14px]">
             <Building />
-            <LabelBoldText _label="소속: " _text="경북대학교" />
+            <LabelBoldText _label="소속: " _text={userData.uniName} />
           </div>
           <div className="flex h-[18px] items-center gap-[14px]">
             <Clock />

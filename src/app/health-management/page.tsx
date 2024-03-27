@@ -138,7 +138,6 @@ const Page = () => {
 
           <Box className="flex h-[100%] flex-col justify-start gap-[13px] rounded-[21px] bg-[#f4f4f4] px-[22px] py-[26px]">
             <TrainerProfileEdit />
-
             <Box className="w-[100%] rounded-[18px] px-[22px] py-[26px] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
               <div className="flex justify-between">
                 <h1 className="text-[16px] font-[700]">
