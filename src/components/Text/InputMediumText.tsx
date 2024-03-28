@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * ex : 소속: 경북대학교 와 같이 라벨부분은 bold, 나머지는 일반 text input인 문자열을 표현하는 컴포넌트
@@ -9,13 +9,25 @@ type Props = {
   _label: string;
   _input: string;
   _placeholder: string;
+  _onChange: (value: string) => void;
 };
 
-const InputMediumText = ({ _label, _input, _placeholder }: Props) => {
+const InputMediumText = ({
+  _label,
+  _input,
+  _placeholder,
+  _onChange,
+}: Props) => {
   const [inputValue, setInputValue] = useState(_input);
 
+  useEffect(() => {
+    setInputValue(_input);
+  }, [_input]);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
+    const value = event.target.value;
+    setInputValue(value);
+    _onChange(value);
   };
 
   return (

@@ -5,9 +5,12 @@ import Union from '@/svgs/Union.svg';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 
-type Props = {};
+type Props = {
+  profileImages: File[];
+  onImagesChange: (images: File[]) => void;
+};
 
-const AddTrainerPhotoVideoTab = (props: Props) => {
+const AddTrainerPhotoVideoTab = ({ profileImages, onImagesChange }: Props) => {
   const [modal, setModal] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [clickedImage, setClickedImage] = useState<string | null>(null);
@@ -27,7 +30,10 @@ const AddTrainerPhotoVideoTab = (props: Props) => {
     };
     const formData = new FormData();
     formData.append('image', file);
+
+    onImagesChange([...profileImages, file]);
   };
+
   const handleClick = () => {
     fileInput?.current?.click();
   };
@@ -77,19 +83,21 @@ const AddTrainerPhotoVideoTab = (props: Props) => {
         >
           <Union fill="#c1c1c1" />
         </div>
-        {images &&
-          images.map((_image, _index) => (
+        {profileImages &&
+          profileImages.map((_image, _index) => (
             <div
               key={_index}
               className="aspect-square overflow-hidden rounded-2xl bg-black"
               style={{ position: 'relative' }}
-              onClick={() => handleClickModal(_image)}
+              onClick={() =>
+                handleClickModal(window.URL.createObjectURL(_image))
+              }
             >
               <Image
                 onClick={() => {
                   setModal(true);
                 }}
-                src={_image}
+                src={URL.createObjectURL(_image)}
                 alt={`Image ${_index}`}
                 layout="fill"
                 objectFit="cover"
