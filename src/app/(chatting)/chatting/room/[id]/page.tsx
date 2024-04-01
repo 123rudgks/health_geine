@@ -9,10 +9,39 @@ import PtRequestBox from '@/components/pages/chatting/PtRequestBox';
 import PtResponseBox from '@/components/pages/chatting/PtResponseBox';
 import ChatCamera from '@/svgs/ChatCamera.svg';
 import ChatSend from '@/svgs/ChatSend.svg';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { useRecoilState } from 'recoil';
+import { trainerProfileState } from '@/recoil/state';
+import { KEY_CHAT } from '@/utils/queryKey';
 
 type Props = {};
 
 const ChattingRoom = (props: Props) => {
+  const [userData, setUserData] = useRecoilState(trainerProfileState);
+
+  const fetchMyListData = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+    const response = await axios.post(
+      `https://서비스.한국/chat/rooms`,
+      { anotherUserId: 1 },
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data.data;
+  };
+  const { data: trainerProfileDataQuery } = useQuery(
+    KEY_CHAT,
+    fetchMyListData,
+    {
+      onSuccess: (data) => setUserData(data),
+    }
+  );
   return (
     <TopBottomBarTemplate
       _topNode={
@@ -21,7 +50,7 @@ const ChattingRoom = (props: Props) => {
             <BackSpaceArrow />
           </div>
           <div className="flex flex-1 justify-center font-noto text-[18px] font-semibold  ">
-            정수영 트레이너
+            {trainerProfileDataQuery.name}
           </div>
         </div>
       }
@@ -38,6 +67,7 @@ const ChattingRoom = (props: Props) => {
                 className: 'text-[13px] font-noto placeholder:text-[#A6A6A6]',
                 placeholder: '메세지를 입력하세요',
               }}
+              _value="채팅"
             />
             <ChatSend />
           </div>

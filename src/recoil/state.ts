@@ -7,7 +7,6 @@ interface ILogin {
   accessToken: string;
   refreshToken: string;
 }
-
 export default interface IUser {
   authProvider: string;
   birth: string;
@@ -56,6 +55,21 @@ interface IChatListContent {
 interface IChatList {
   contents: IChatListContent[];
   last: boolean;
+}
+
+interface ITrainerProfile {
+  id: number;
+  introduction: string;
+  career: string;
+  cost: number;
+  month: number;
+  nickname: string;
+  name: string;
+  university: string;
+  startTime: string;
+  endTime: string;
+  reviewAvg: number;
+  photoPaths: [];
 }
 
 export const loginState = atom<ILogin>({
@@ -124,6 +138,25 @@ export const chatListState = atom<IChatList>({
   default: {
     contents: [],
     last: false,
+  },
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const trainerProfileState = atom<ITrainerProfile>({
+  key: 'trainerProfileState',
+  default: {
+    id: 0,
+    introduction: '',
+    career: '',
+    cost: 0,
+    month: 0,
+    nickname: '',
+    name: '',
+    university: '',
+    startTime: '',
+    endTime: '',
+    reviewAvg: 0,
+    photoPaths: [],
   },
   effects_UNSTABLE: [persistAtom],
 });

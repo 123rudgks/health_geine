@@ -5,17 +5,41 @@ import BasicInput from '@/components/Input/BasicInput';
 import RoundCheckBox from '@/components/RoundCheckBox/RoundCheckBox';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import TrainerListItem from '@/components/pages/trainer/TrainerListItem';
-import { userState } from '@/recoil/state';
+import { trainerProfileState, userState } from '@/recoil/state';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import MagnifyingGlasses from '@/svgs/MagnifyingGlasses.svg';
 import NavArrowLeft from '@/svgs/NavArrowLeft.svg';
 import Union from '@/svgs/Union.svg';
+import { KEY_TRAINERPROFILE } from '@/utils/queryKey';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 
 const TrainerListPage = () => {
   const router = useRouter();
   const [userData, setUserData] = useRecoilState(userState);
+  const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
+  const accessToken = localStorage.getItem('accessToken');
+
+  const fetchMyListData = async () => {
+    const response = await axios.get(`https://서비스.한국/trainers/profiles`, {
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: accessToken,
+      },
+    });
+    return response.data.data;
+  };
+
+  const { data: trainerProfileDataQuery } = useQuery(
+    KEY_TRAINERPROFILE,
+    fetchMyListData,
+    {
+      onSuccess: (data) => setTrainerData(data),
+    }
+  );
 
   return (
     <TopBottomBarTemplate
@@ -85,9 +109,15 @@ const TrainerListPage = () => {
           </div>
 
           <div className="mt-8 flex flex-col gap-5">
-            {Array.from({ length: 10 }).map((_, index) => (
+            {/* {Array.from({ length: 10 }).map((_, index) => (
               <TrainerListItem key={index} />
-            ))}
+            ))} */}
+            {trainerProfileDataQuery &&
+              trainerProfileDataQuery.map((index: any) => (
+                <p key={index} onClick={() => router.push(`chatting/room`)}>
+                  {index.name}
+                </p>
+              ))}
           </div>
         </div>
       </div>
