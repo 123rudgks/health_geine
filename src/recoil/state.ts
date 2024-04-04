@@ -56,7 +56,7 @@ interface IChatList {
   last: boolean;
 }
 
-interface ITrainerProfile {
+export interface ITrainerProfile {
   id: number;
   introduction: string;
   career: string;
@@ -68,7 +68,7 @@ interface ITrainerProfile {
   startTime: string;
   endTime: string;
   reviewAvg: number;
-  photoPaths: [];
+  photoPaths: string;
 }
 
 export const loginState = atom<ILogin>({
@@ -154,7 +154,7 @@ export const trainerProfileState = atom<ITrainerProfile>({
     startTime: '',
     endTime: '',
     reviewAvg: 0,
-    photoPaths: [],
+    photoPaths: '',
   },
   effects_UNSTABLE: [persistAtom],
 });

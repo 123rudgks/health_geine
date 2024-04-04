@@ -5,7 +5,11 @@ import BasicInput from '@/components/Input/BasicInput';
 import RoundCheckBox from '@/components/RoundCheckBox/RoundCheckBox';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import TrainerListItem from '@/components/pages/trainer/TrainerListItem';
-import { trainerProfileState, userState } from '@/recoil/state';
+import {
+  ITrainerProfile,
+  trainerProfileState,
+  userState,
+} from '@/recoil/state';
 import HealthGenie from '@/svgs/HealthGenieTitle.svg';
 import MagnifyingGlasses from '@/svgs/MagnifyingGlasses.svg';
 import NavArrowLeft from '@/svgs/NavArrowLeft.svg';
@@ -15,6 +19,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
+import { BASE_URL } from '@/utils/routePath';
 
 const TrainerListPage = () => {
   const router = useRouter();
@@ -23,7 +28,7 @@ const TrainerListPage = () => {
   const accessToken = localStorage.getItem('accessToken');
 
   const fetchMyListData = async () => {
-    const response = await axios.get(`https://서비스.한국/trainers/profiles`, {
+    const response = await axios.get(`https://${BASE_URL}/trainers/profiles`, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Access-Control-Allow-Origin': '*',
@@ -113,11 +118,21 @@ const TrainerListPage = () => {
               <TrainerListItem key={index} />
             ))} */}
             {trainerProfileDataQuery &&
-              trainerProfileDataQuery.map((index: any) => (
-                <p key={index} onClick={() => router.push(`chatting/room`)}>
-                  {index.name}
-                </p>
-              ))}
+              trainerProfileDataQuery.map(
+                (item: ITrainerProfile, index: number) => (
+                  // <p key={index} onClick={() => router.push(`chatting/room`)}>
+                  //   {index.name}
+                  // </p>
+                  <TrainerListItem
+                    key={index}
+                    name={item.name}
+                    introduction={item.introduction}
+                    university={item.university}
+                    reviewAvg={item.reviewAvg}
+                    photoPaths={item.photoPaths}
+                  />
+                )
+              )}
           </div>
         </div>
       </div>

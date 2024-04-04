@@ -4,32 +4,36 @@ import UserCircle from '@/svgs/UserCircle.svg';
 import Image from 'next/image';
 
 import ProfileStar from '@/svgs/ProfileStar.svg';
-type Props = {};
-
-const TrainerListItem = (props: Props) => {
+import { ITrainerProfile } from '@/recoil/state';
+type Props = ITrainerProfile;
+const TrainerListItem = ({
+  introduction,
+  name,
+  university,
+  reviewAvg,
+  photoPaths,
+}: Props) => {
   return (
     <div className="flex gap-[14px] border-b border-[#D9D9D9] pb-5 last:border-none">
       <div className="relative h-[110px] w-[110px] basis-[110px] overflow-hidden rounded-xl">
-        <Image src={'https://picsum.photos/200'} alt="trainer image" fill />
+        <Image src={photoPaths} alt="trainer image" fill />
       </div>
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="font-noto text-[17px] font-bold">박예빈</span>
+          <span className="font-noto text-[17px] font-bold">{name}</span>
           <span className="flex items-center gap-1 font-noto text-xs font-bold">
             <UserCircle />
-            21
+            조회수
           </span>
         </div>
-        <div className="f font-noto text-[13px]">
-          체계적이고 전문적으로 관리하고 지도해드리겠습니다.
-        </div>
+        <div className="f font-noto text-[13px]">{introduction}</div>
         <div className="flex items-center gap-1">
           <div>
             <ProfileBuilding />
           </div>
           <div className="font-noto text-[12px]">
             <span className="mr-1 font-bold">소속:</span>
-            <span>경북 대학교</span>
+            <span>{university}</span>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -38,7 +42,7 @@ const TrainerListItem = (props: Props) => {
           </div>
           <div className="font-noto text-[12px]">
             <span className="mr-1 font-bold">리뷰 평점:</span>
-            <span>4/5</span>
+            <span>{reviewAvg}</span>
           </div>
         </div>
       </div>
