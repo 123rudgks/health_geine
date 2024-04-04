@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import { userState } from '@/recoil/state';
 import { useRouter } from 'next/navigation';
+import { BASE_URL } from '@/utils/routePath';
 
 interface Props {}
 
@@ -47,13 +48,13 @@ const Page = (props: Props) => {
 
   const handleMail = async () => {
     const res = await axios.post(
-      `https://서비스.한국/mail`,
+      `https://${BASE_URL}/mail`,
       { univ_email: emailValue, univName: univNameValue },
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
           'Access-Control-Allow-Origin': '*',
-          Authorization: accessToken,
+          Authorization: `Bearer ` + accessToken,
         },
       }
     );
@@ -76,12 +77,12 @@ const Page = (props: Props) => {
   const handleMailVeri = async () => {
     try {
       const res = await axios.get(
-        `https://서비스.한국/mail/verifications?univ_email=${emailValue}&univName=${univNameValue}&code=${codeValue}`,
+        `https://${BASE_URL}/mail/verifications?univ_email=${emailValue}&univName=${univNameValue}&code=${codeValue}`,
         {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
             'Access-Control-Allow-Origin': '*',
-            Authorization: accessToken,
+            Authorization: `Bearer ` + accessToken,
           },
         }
       );

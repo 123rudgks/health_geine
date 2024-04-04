@@ -27,7 +27,7 @@ const TrainerListPage = () => {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Access-Control-Allow-Origin': '*',
-        Authorization: accessToken,
+        Authorization: `Bearer ` + accessToken,
       },
     });
     return response.data.data;
@@ -70,7 +70,7 @@ const TrainerListPage = () => {
             _value=""
           />
         </div>
-        {userData.role === 'TRAINER' && (
+        {userData.role === 'ROLE_TRAINER' && (
           <div className="pt-4">
             <Button
               onClick={() => {

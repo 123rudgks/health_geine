@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { twMerge } from 'tailwind-merge';
 import NoProfile from '@/svgs/NoProfile.svg';
+import { BASE_URL } from '@/utils/routePath';
 
 type Props = {};
 type WriteTrainerDetailTab = '상세내용' | '사진/동영상';
@@ -59,27 +60,60 @@ const WriteTrainerDetailPage = (props: Props) => {
       setLoading(true);
       const accessToken = localStorage.getItem('accessToken');
       const headers = {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json;charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
         Authorization: `Bearer ${accessToken}`,
       };
+      const dataToSend = {
+        name: profileData.name,
+        startTime: profileData.startTime,
+        endTime: profileData.endTime,
+        introduction: profileData.introduction,
+        career: profileData.career,
+        cost: parseFloat(profileData.cost),
+        nickname: parseInt(profileData.nickname),
+        reviewAvg: parseFloat(profileData.reviewAvg),
+        month: parseInt(profileData.month),
+        university: profileData.university,
+      };
 
-      const formDataToSend = new FormData();
-      formDataToSend.append('dto', JSON.stringify(profileData));
+      console.log('dataToSend', dataToSend);
 
-      profileImages.forEach((image) => {
-        formDataToSend.append('profileImages', image);
-      });
-
-      console.log('formDataToSend', formDataToSend);
-      const response = await axios.post(
-        'https://서비스.한국/trainers/profiles',
-        formDataToSend,
+      const profileResponse = await axios.post(
+        `https://${BASE_URL}/trainers/profiles`,
+        dataToSend,
         { headers }
       );
-      console.log(response.data);
+      console.log('프로필 데이터', profileResponse.data);
+
+      if (profileImages.length > 0) {
+        const formData = new FormData();
+        profileImages.forEach((image, index) => {
+          formData.append('photos', image);
+        });
+
+        const values = formData.values();
+        for (const pair of values) {
+          console.log('pair', pair);
+        }
+
+        const imageResponse = await axios.post(
+          `https://${BASE_URL}/trainers/profiles/1/photos`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Access-Control-Allow-Origin': '*',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log('Image response:', imageResponse.data);
+      }
+
       setLoading(false);
       setError(null);
-      // router.push('/health-management');
+      router.push('/trainer-list');
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -124,9 +158,9 @@ const WriteTrainerDetailPage = (props: Props) => {
               <p className="font-noto text-[15px] font-medium text-white">
                 트레이너
               </p>
-              <h1 className="font-noto text-[25px] font-bold text-white">
+              <span className="font-noto text-[25px] font-bold text-white">
                 {userData.name}
-              </h1>
+              </span>
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
               <NoProfile />

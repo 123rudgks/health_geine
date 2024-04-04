@@ -2,10 +2,9 @@ import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 const { persistAtom } = recoilPersist();
 interface ILogin {
-  userId: string;
   role: string;
-  accessToken: string;
-  refreshToken: string;
+  access: string;
+  refresh: string;
 }
 export default interface IUser {
   authProvider: string;
@@ -75,10 +74,9 @@ interface ITrainerProfile {
 export const loginState = atom<ILogin>({
   key: 'loginState',
   default: {
-    userId: '',
-    role: '',
-    accessToken: '',
-    refreshToken: '',
+    role: 'ROLE_EMPTY',
+    access: '',
+    refresh: '',
   },
   effects_UNSTABLE: [persistAtom],
 });
