@@ -117,7 +117,7 @@ const TrainerListPage = () => {
             {/* {Array.from({ length: 10 }).map((_, index) => (
               <TrainerListItem key={index} />
             ))} */}
-            {trainerProfileDataQuery &&
+            {/* {trainerProfileDataQuery &&
               trainerProfileDataQuery.map(
                 (item: ITrainerProfile, index: number) => (
                   // <p key={index} onClick={() => router.push(`chatting/room`)}>
@@ -132,7 +132,7 @@ const TrainerListPage = () => {
                     photoPaths={item.photoPaths}
                   />
                 )
-              )}
+              )} */}
           </div>
         </div>
       </div>
