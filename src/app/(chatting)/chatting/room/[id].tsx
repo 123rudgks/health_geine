@@ -16,12 +16,14 @@ import { useRecoilState } from 'recoil';
 import { trainerProfileState } from '@/recoil/state';
 import { KEY_CHAT } from '@/utils/queryKey';
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 
 type Props = {};
 
 const ChattingRoom = (props: Props) => {
+  const router = useRouter();
+  const { anotherName, anotherId } = router.query;
   const [userData, setUserData] = useRecoilState(trainerProfileState);
-
   const accessToken = localStorage.getItem('accessToken');
   const [message, setMessage] = useState('');
   const [messageHistory, setMessageHistory] = useState<
@@ -32,13 +34,12 @@ const ChattingRoom = (props: Props) => {
   //   Stomp.over(new SockJS('https://서비스.한국/ws'))
   // );
 
-  const roomId = 1;
   const client = useRef<CompatClient | null>(null);
   const stompClient = new SockJS('https://서비스.한국/ws');
   const fetchMyListData = async () => {
     const response = await axios.post(
       `https://서비스.한국/chat/rooms`,
-      { anotherUserId: 1 },
+      { anotherUserId: anotherId },
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
@@ -49,6 +50,7 @@ const ChattingRoom = (props: Props) => {
     );
     return response.data.data;
   };
+
   const { data: trainerProfileDataQuery } = useQuery(
     KEY_CHAT,
     fetchMyListData,
@@ -185,8 +187,8 @@ const ChattingRoom = (props: Props) => {
           <div className="absolute left-[22px] [&>svg>path]:stroke-black">
             <BackSpaceArrow />
           </div>
-          <div className="flex flex-1 justify-center font-noto text-[18px] font-semibold  ">
-            {trainerProfileDataQuery && trainerProfileDataQuery.name}
+          <div className="flex flex-1 justify-center font-noto text-[18px] font-semibold">
+            {anotherName}
           </div>
         </div>
       }

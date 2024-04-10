@@ -5,16 +5,23 @@ import Image from 'next/image';
 
 import ProfileStar from '@/svgs/ProfileStar.svg';
 import { ITrainerProfile } from '@/recoil/state';
-type Props = ITrainerProfile;
+
 const TrainerListItem = ({
   introduction,
   name,
   university,
   reviewAvg,
   photoPaths,
-}: Props) => {
+  onClick,
+}: Pick<
+  ITrainerProfile,
+  'introduction' | 'name' | 'university' | 'reviewAvg' | 'photoPaths'
+> & { onClick: () => void }) => {
   return (
-    <div className="flex gap-[14px] border-b border-[#D9D9D9] pb-5 last:border-none">
+    <div
+      className="flex gap-[14px] border-b border-[#D9D9D9] pb-5 last:border-none hover:cursor-pointer"
+      onClick={onClick}
+    >
       <div className="relative h-[110px] w-[110px] basis-[110px] overflow-hidden rounded-xl">
         <Image src={photoPaths} alt="trainer image" fill />
       </div>

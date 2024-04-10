@@ -114,25 +114,18 @@ const TrainerListPage = () => {
           </div>
 
           <div className="mt-8 flex flex-col gap-5">
-            {/* {Array.from({ length: 10 }).map((_, index) => (
-              <TrainerListItem key={index} />
-            ))} */}
-            {/* {trainerProfileDataQuery &&
-              trainerProfileDataQuery.map(
-                (item: ITrainerProfile, index: number) => (
-                  // <p key={index} onClick={() => router.push(`chatting/room`)}>
-                  //   {index.name}
-                  // </p>
-                  <TrainerListItem
-                    key={index}
-                    name={item.name}
-                    introduction={item.introduction}
-                    university={item.university}
-                    reviewAvg={item.reviewAvg}
-                    photoPaths={item.photoPaths}
-                  />
-                )
-              )} */}
+            {trainerProfileDataQuery &&
+              trainerProfileDataQuery.map((item: ITrainerProfile) => (
+                <TrainerListItem
+                  onClick={() => router.push(`chatting/room`)}
+                  key={item.nickname}
+                  name={item.name}
+                  introduction={item.introduction}
+                  university={item.university}
+                  reviewAvg={item.reviewAvg}
+                  photoPaths={item.photoPaths}
+                />
+              ))}
           </div>
         </div>
       </div>
