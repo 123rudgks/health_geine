@@ -1,19 +1,22 @@
 import LabelBoldText from '@/components/Text/LabelBoldText';
 
-type Props = {};
+type Props = {
+  introduction: string;
+  month: string;
+  cost: string;
+  career: string;
+};
 
-const TrainerDetailInfoTab = (props: Props) => {
+const TrainerDetailInfoTab = ({ introduction, month, cost, career }: Props) => {
   return (
     <div>
       <div className="whitespace-pre-line font-noto text-[13px] text-[#434343]">
-        {`체계적이고 전문적으로 관리하고 지도해드리겠습니다.
-    
-    안녕하세요!
-    경북대학교 경력 2년차 트레이너 입니다.
-    체형관리는 ~~`}
+        {introduction}
       </div>
       <div className="mt-4 flex flex-col gap-3 border-t border-[#F3F3F3] pt-4">
-        <LabelBoldText _label="경력: " _text="2년" />
+        <LabelBoldText _label="경력: " _text={month} />
+        <LabelBoldText _label="견적: " _text={cost} />
+        <LabelBoldText _label="약력: " _text={career} />
       </div>
     </div>
   );

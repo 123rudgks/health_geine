@@ -17,12 +17,14 @@ import { trainerProfileState } from '@/recoil/state';
 import { KEY_CHAT } from '@/utils/queryKey';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import { BASE_URL } from '@/utils/routePath';
 
 type Props = {};
 
-const ChattingRoom = (props: Props) => {
-  const router = useRouter();
-  const { anotherName, anotherId } = router.query;
+const ChattingRoom = (props: any) => {
+  const params = new URLSearchParams(document.location.search);
+  const anotherId = params.get('id');
+  const anotherName = params.get('name');
   const [userData, setUserData] = useRecoilState(trainerProfileState);
   const accessToken = localStorage.getItem('accessToken');
   const [message, setMessage] = useState('');
@@ -35,10 +37,10 @@ const ChattingRoom = (props: Props) => {
   // );
 
   const client = useRef<CompatClient | null>(null);
-  const stompClient = new SockJS('https://서비스.한국/ws');
+  // const stompClient = new SockJS(`https://${BASE_URL}/ws`);
   const fetchMyListData = async () => {
     const response = await axios.post(
-      `https://서비스.한국/chat/rooms`,
+      `https://${BASE_URL}/chat/rooms`,
       { anotherUserId: anotherId },
       {
         headers: {
@@ -82,52 +84,59 @@ const ChattingRoom = (props: Props) => {
   //   });
   // };
 
-  const onChangeMessage = (value: any) => {
-    setMessage(value); // 메시지 변경
+  const onChangeMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
   };
+  // const onClickTestChatRoom = () => {
+  //   client.current = Stomp.over(stompClient);
+  //   client.current.connect(
+  //     {
+  //       Authorization: `Bearer ${accessToken}`,
+  //       'Content-Type': 'application/json',
+  //     },
+  //     () => {
+  //       client.current?.subscribe(
+  //         `/sub/chat/${anotherId}`,
+  //         (message) => {
+  //           setMessageHistory((prevMessageHistory) => {
+  //             return [...prevMessageHistory, JSON.parse(message.body)];
+  //           });
+  //         },
+  //         {
+  //           Authorization: `Bearer ${accessToken}`,
+  //           'Content-Type': 'application/json',
+  //         }
+  //       );
+  //     }
+  //   );
+  // };
 
-  const onClickTestChatRoom = () => {
-    client.current = Stomp.over(stompClient);
-    client.current.connect(
-      {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      () => {
-        client.current?.subscribe(
-          `/sub/chat/4`,
-          (message) => {
-            setMessageHistory((prevMessageHistory) => {
-              return [...prevMessageHistory, JSON.parse(message.body)];
-            });
-          },
-          {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          }
-        );
-      }
-    );
-  };
-
-  useEffect(() => {
-    onClickTestChatRoom();
-  }, []);
+  // useEffect(() => {
+  //   onClickTestChatRoom();
+  // }, []);
 
   const onClickSendMessage = () => {
-    if (client.current && client.current.connected) {
-      client.current.send(
-        '/pub/chat/4',
-        {
-          'Content-Type': 'application/json',
-        },
-        JSON.stringify({
-          senderId: userData.id,
-          content: message,
-        })
-      );
-      setMessage(''); // 메시지 전송 후 초기화
-    }
+    // if (client.current && client.current.connected) {
+    //   client.current.send(
+    //     `/pub/chat/${anotherId}`,
+    //     {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     JSON.stringify({
+    //       senderId: userData.id,
+    //       content: message,
+    //     })
+    //   );
+    //   setMessage(''); // 메시지 전송 후 초기화
+    // }
+    // stompClient.send(
+    //   `/pub/chat/${anotherId}`,
+    //   { 'Content-Type': 'application/json' },
+    //   JSON.stringify({
+    //     senderId: userData.id,
+    //     content: message,
+    //   })
+    // );
   };
 
   // if (!stompClient) return;
@@ -187,7 +196,7 @@ const ChattingRoom = (props: Props) => {
           <div className="absolute left-[22px] [&>svg>path]:stroke-black">
             <BackSpaceArrow />
           </div>
-          <div className="flex flex-1 justify-center font-noto text-[18px] font-semibold">
+          <div className="flex flex-1 justify-center font-noto text-[18px] font-semibold text-black">
             {anotherName}
           </div>
         </div>
@@ -205,8 +214,8 @@ const ChattingRoom = (props: Props) => {
                 className: 'text-[13px] font-noto placeholder:text-[#A6A6A6]',
                 placeholder: '메세지를 입력하세요.',
               }}
-              _value={message}
-              _onChange={onChangeMessage}
+              _value={message || ''}
+              // _onChange={onChangeMessage}
             />
             <ChatSend
               onClick={() => {

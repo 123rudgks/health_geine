@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import { BASE_URL } from '@/utils/routePath';
+import Link from 'next/link';
 
 const TrainerListPage = () => {
   const router = useRouter();
@@ -116,15 +117,24 @@ const TrainerListPage = () => {
           <div className="mt-8 flex flex-col gap-5">
             {trainerProfileDataQuery &&
               trainerProfileDataQuery.map((item: ITrainerProfile) => (
-                <TrainerListItem
-                  onClick={() => router.push(`chatting/room`)}
-                  key={item.nickname}
-                  name={item.name}
-                  introduction={item.introduction}
-                  university={item.university}
-                  reviewAvg={item.reviewAvg}
-                  photoPaths={item.photoPaths}
-                />
+                <>
+                  <Link
+                    href={{
+                      pathname: `/trainer-detail`,
+                      query: { id: item.id },
+                    }}
+                  >
+                    <TrainerListItem
+                      onClick={() => {}}
+                      key={item.nickname}
+                      name={item.name}
+                      introduction={item.introduction}
+                      university={item.university}
+                      reviewAvg={item.reviewAvg}
+                      photoPaths={item.photoPaths}
+                    />
+                  </Link>
+                </>
               ))}
           </div>
         </div>
