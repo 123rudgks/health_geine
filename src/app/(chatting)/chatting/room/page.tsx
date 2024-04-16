@@ -13,186 +13,173 @@ import ChatSend from '@/svgs/ChatSend.svg';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
-import { trainerProfileState } from '@/recoil/state';
+import { trainerProfileState, userState } from '@/recoil/state';
 import { KEY_CHAT } from '@/utils/queryKey';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { BASE_URL } from '@/utils/routePath';
 
 type Props = {};
+interface ChatHistoryProps {
+  senderId: string;
+  content: string;
+}
+
+interface PrevHistoryProps {
+  createdDate: Date;
+  senderId: string;
+  nickname: string;
+  role: string;
+  profilePhoto: string;
+  content: string;
+}
 
 const ChattingRoom = (props: any) => {
+  let roomId: string = '';
+
   const params = new URLSearchParams(document.location.search);
+
+  // const anotherId = '5';
+  // const anotherName = '이다혜';
   const anotherId = params.get('id');
   const anotherName = params.get('name');
-  const [userData, setUserData] = useRecoilState(trainerProfileState);
   const accessToken = localStorage.getItem('accessToken');
+
+  const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
+  const [senderData, setSenderData] = useRecoilState(userState);
   const [message, setMessage] = useState('');
-  const [messageHistory, setMessageHistory] = useState<
-    { sender: any; message: any; chatAt: any }[]
-  >([]);
-
-  // const [stompClient, setStompClient] = useState(
-  //   Stomp.over(new SockJS('https://서비스.한국/ws'))
-  // );
-
-  const client = useRef<CompatClient | null>(null);
-  // const stompClient = new SockJS(`https://${BASE_URL}/ws`);
-  const fetchMyListData = async () => {
-    const response = await axios.post(
-      `https://${BASE_URL}/chat/rooms`,
-      { anotherUserId: anotherId },
-      {
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return response.data.data;
-  };
-
-  const { data: trainerProfileDataQuery } = useQuery(
-    KEY_CHAT,
-    fetchMyListData,
-    {
-      onSuccess: (data) => setUserData(data),
-    }
+  const [sentMessages, setSentMessages] = useState<string[]>([]);
+  const [isChatHistory, setIsChatHistory] = useState<ChatHistoryProps[] | null>(
+    null
   );
+  const [receivedMessages, setReceivedMessages] = useState<ChatHistoryProps[]>(
+    []
+  );
+  const [prevMessages, setPrevMessages] = useState<PrevHistoryProps[]>([]);
 
-  // useEffect(() => {
-  //   stompClient.connect(
-  //     {},
-  //     () => {},
-  //     (error: any) => console.error('STOMP connection error', error)
-  //   );
-  // }, []);
+  const room = async () => {
+    try {
+      const response = await axios.post(
+        `https://${BASE_URL}/chat/rooms`,
+        { anotherUserId: anotherId },
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      roomId = String(response.data.data.roomId);
 
-  // const onClickTestChatRoom = (sellerName: any) => () => {
-  //   stompClient.subscribe(`/sub/chat/${roomId}`, (msg) => {
-  //     const jsonFrame = JSON.parse(msg.body);
-  //     console.log(jsonFrame);
-  //     setMessageHistory((prev) => [
-  //       ...prev,
-  //       {
-  //         sender: jsonFrame.sender,
-  //         message: jsonFrame.message,
-  //         chatAt: jsonFrame.chatAt,
-  //       },
-  //     ]);
-  //   });
-  // };
-
-  const onChangeMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.target.value);
-  };
-  // const onClickTestChatRoom = () => {
-  //   client.current = Stomp.over(stompClient);
-  //   client.current.connect(
-  //     {
-  //       Authorization: `Bearer ${accessToken}`,
-  //       'Content-Type': 'application/json',
-  //     },
-  //     () => {
-  //       client.current?.subscribe(
-  //         `/sub/chat/${anotherId}`,
-  //         (message) => {
-  //           setMessageHistory((prevMessageHistory) => {
-  //             return [...prevMessageHistory, JSON.parse(message.body)];
-  //           });
-  //         },
-  //         {
-  //           Authorization: `Bearer ${accessToken}`,
-  //           'Content-Type': 'application/json',
-  //         }
-  //       );
-  //     }
-  //   );
-  // };
-
-  // useEffect(() => {
-  //   onClickTestChatRoom();
-  // }, []);
-
-  const onClickSendMessage = () => {
-    // if (client.current && client.current.connected) {
-    //   client.current.send(
-    //     `/pub/chat/${anotherId}`,
-    //     {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     JSON.stringify({
-    //       senderId: userData.id,
-    //       content: message,
-    //     })
-    //   );
-    //   setMessage(''); // 메시지 전송 후 초기화
-    // }
-    // stompClient.send(
-    //   `/pub/chat/${anotherId}`,
-    //   { 'Content-Type': 'application/json' },
-    //   JSON.stringify({
-    //     senderId: userData.id,
-    //     content: message,
-    //   })
-    // );
+      return roomId;
+      return response.data.data;
+    } catch (error) {
+      console.error('Error while fetching room data:', error);
+      throw error;
+    }
   };
 
-  // if (!stompClient) return;
+  const { data: trainerProfileDataQuery } = useQuery(KEY_CHAT, room, {
+    onSuccess: (data) => setTrainerData(data),
+  });
 
-  // const accessToken = localStorage.getItem('accessToken');
-  // stompClient.send(
-  //   `/pub/chat/4`,
-  //   {
-  //     Authorization: `Bearer ${accessToken}`,
-  //   },
-  //   JSON.stringify({
-  //     roomId: 4,
-  //     sender: userData.id,
-  //     message: message,
-  //     chatAt: new Date().toISOString(),
-  //   })
-  // );
-  // setMessage('');
+  const history = async (roomId: any) => {
+    try {
+      const response = await axios.get(
+        `https://${BASE_URL}/chat/${roomId}/messages`,
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error('Error while fetching chat history:', error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    onClickSendMessage();
-  }, []);
+    room()
+      .then((roomId) => {
+        history(roomId).then((data) => {
+          setPrevMessages(data);
+        });
+      })
+      .catch((error) => {
+        console.error('Error while fetching room data:', error);
+      });
+  }, [accessToken, anotherId, senderData.id, roomId]);
 
-  // useEffect(() => {
-  //   if (!stompClient) return;
-  //   const headers = {
-  //     Authorization: `Bearer ${accessToken}`, // 여기에 사용자의 인증 토큰을 삽입하세요
-  //   };
+  // socket 구현
+  const client = useRef<CompatClient | null>(null);
+  const connectHandler = () => {
+    const socket = new SockJS(`https://${BASE_URL}/ws`);
+    client.current = Stomp.over(socket);
+    client.current.connect(
+      {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      () => {
+        client.current?.subscribe(
+          `/sub/chat/${roomId}`,
+          (message) => {
+            setIsChatHistory((prevHistory) => {
+              return prevHistory
+                ? [...prevHistory, JSON.parse(message.body)]
+                : null;
+            });
+          },
+          {
+            Authorization: 'Bearer ' + accessToken,
+            'Content-Type': 'application/json',
+          }
+        );
+      }
+    );
+  };
 
-  //   stompClient.connect(
-  //     { headers },
-  //     () => {
-  //       const subscription = stompClient.subscribe(`/sub/chat/4`, (msg) => {
-  //         const jsonFrame = JSON.parse(msg.body);
-  //         console.log('제이슨', jsonFrame);
-  //         setMessageHistory((prev) => [
-  //           ...prev,
-  //           {
-  //             sender: jsonFrame.sender,
-  //             message: jsonFrame.message,
-  //             chatAt: jsonFrame.chatAt,
-  //           },
-  //         ]);
-  //       });
+  useEffect(() => {
+    connectHandler();
+  }, [accessToken, roomId]);
 
-  //       subscription();
-  //       // return () => subscription.unsubscribe();
-  //     },
-  //     (error: any) => console.error('STOMP connection error', error)
-  //   );
-  // }, [stompClient]);
+  const sendHandler = (message: string) => {
+    if (client.current && client.current.connected) {
+      setSentMessages([...sentMessages, message]);
+      client.current.send(
+        `/pub/chat/${roomId}`,
+        {},
+        JSON.stringify({
+          senderId: senderData.id,
+          content: message,
+        })
+      );
+    }
+    setMessage('');
+  };
+
+  useEffect(() => {
+    if (isChatHistory) {
+      const newReceivedMessages = isChatHistory.filter(
+        (msg) => msg.senderId !== anotherId
+      );
+      setReceivedMessages([...receivedMessages, ...newReceivedMessages]);
+    }
+  }, [isChatHistory]);
+
+  const onChangeMessage = (message: string) => {
+    setMessage(message);
+  };
 
   return (
     <TopBottomBarTemplate
       _topNode={
-        <div className="relative flex h-full w-full items-center bg-white">
+        <div className="relative flex h-full w-full items-center bg-transparent">
           <div className="absolute left-[22px] [&>svg>path]:stroke-black">
             <BackSpaceArrow />
           </div>
@@ -202,7 +189,7 @@ const ChattingRoom = (props: any) => {
         </div>
       }
       _bottomNode={
-        <div className="flex h-full items-center border-t-2 bg-[#F2F2F2] px-7 ">
+        <div className="flex h-full items-center border-t-2 bg-transparent px-7 ">
           <div className="flex flex-1 items-center gap-3">
             <ChatCamera />
             <BasicInput
@@ -214,32 +201,64 @@ const ChattingRoom = (props: any) => {
                 className: 'text-[13px] font-noto placeholder:text-[#A6A6A6]',
                 placeholder: '메세지를 입력하세요.',
               }}
-              _value={message || ''}
-              // _onChange={onChangeMessage}
+              _value={message}
+              _onChange={onChangeMessage}
             />
             <ChatSend
               onClick={() => {
-                onClickSendMessage();
+                sendHandler(message);
               }}
             />
-
-            {/* <p onClick={onClickTestChatRoom}>..</p> */}
           </div>
         </div>
       }
-      _contentDivProps={{ className: 'bg-white' }}
+      _contentDivProps={{ className: 'bg-white overflow-auto' }}
     >
       <div className="relative flex h-full w-full flex-col gap-6 bg-[#F2F2F2] p-5 ">
-        {/* <OtherChatBox _name="정수영 트레이너" _profileSrc="">
-          <ChatBubble
-            _from="other"
-            _text="오늘도 좋은 아침입니다!"
-            _time={new Date()}
-          />
-        </OtherChatBox> */}
-        <div className="flex justify-end">
-          <ChatBubble _from="me" _text={message} _time={new Date()} />
-        </div>
+        {/* 이전에 있었던 메시지 출력 */}
+        {prevMessages
+          .map((msg: PrevHistoryProps, index: number) =>
+            msg.senderId === senderData.id ? (
+              <div key={`prev-${index}`} className="flex justify-end">
+                <ChatBubble
+                  _from="me"
+                  _text={msg.content}
+                  _time={new Date(msg.createdDate)}
+                />
+              </div>
+            ) : (
+              <OtherChatBox
+                key={`prev-${index}`}
+                _name={anotherName || ''}
+                _profileSrc={msg.profilePhoto || ''}
+              >
+                <ChatBubble
+                  _from="other"
+                  _text={msg.content}
+                  _time={new Date(msg.createdDate)}
+                />
+              </OtherChatBox>
+            )
+          )
+          .reverse()}
+
+        {/* 사용자가 보낸 메시지 출력 */}
+        {sentMessages.map((msg, index) => (
+          <div key={`sent-${index}`} className="flex justify-end">
+            <ChatBubble _from="me" _text={msg} _time={new Date()} />
+          </div>
+        ))}
+
+        {/* 받은 메시지 출력 */}
+        {receivedMessages.map((msg, index) => (
+          <OtherChatBox
+            key={`received-${index}`}
+            _name={anotherName || ''}
+            _profileSrc=""
+          >
+            <ChatBubble _from="other" _text={msg.content} _time={new Date()} />
+          </OtherChatBox>
+        ))}
         {/* <OtherChatBox _name="정수영 트레이너" _profileSrc="">
           <PtRequestBox />
         </OtherChatBox>

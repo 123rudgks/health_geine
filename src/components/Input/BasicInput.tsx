@@ -43,12 +43,11 @@ const BasicInput = ({
   const [isValidFormat, setIsValidFormat] = useState<boolean>(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    _onChange?.(newValue);
-    const isValid = /^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+$/.test(
-      newValue
-    );
-    setIsValidFormat(isValid);
+    const value = e.target.value;
+    setIsValidFormat(true); // 입력 값이 변경되면 항상 유효한 포맷으로 설정
+    if (_onChange) {
+      _onChange(value); // 부모 컴포넌트에 입력 값 변경 알림
+    }
   };
 
   return (
