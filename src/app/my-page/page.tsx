@@ -17,23 +17,23 @@ interface Props {}
 const Page = (props: Props) => {
   const router = useRouter();
   const accessToken = localStorage.getItem('accessToken');
-  const code = localStorage.getItem('code');
+  const oauthAccessToken = localStorage.getItem('oauthAccessToken');
   const [userData, setUserData] = useRecoilState(userState);
 
-  const withDraw = async () => {
+  const withdraw = async () => {
+    alert('정말 탈퇴하시겠습니까?');
+
     try {
-      const response = await axios.delete(
-        `https://${BASE_URL}/withdraw?code=${code}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      console.log('회원 탈퇴', response.data);
-      localStorage.removeItem('code');
-      localStorage.removeItem('accessToken');
+      const response = await axios.delete(`https://${BASE_URL}/withdraw`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          OAuthAccessToken: `${oauthAccessToken}`,
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+      });
+      localStorage.clear();
       router.push('/');
+      return response.data.data;
     } catch (error) {
       console.error('회원 탈퇴 실패:', error);
     }
@@ -51,7 +51,7 @@ const Page = (props: Props) => {
         _topNode={
           <div>
             <div className="flex justify-between px-4 pb-10 pt-16">
-              <Back onClick={() => router.back()} />
+              <Back onClick={() => router.push('/health-management')} />
               <div className="flex justify-center text-[19px] font-[600] text-white">
                 마이페이지
               </div>
@@ -100,7 +100,7 @@ const Page = (props: Props) => {
         <NavArrowRight />
       </div>
       <div
-        onClick={withDraw}
+        onClick={withdraw}
         className="flex h-[100px] items-center justify-between border-b-2 border-[#eeeeee] bg-white px-10"
       >
         <h1 className="font-noto text-[15px] font-bold text-black">

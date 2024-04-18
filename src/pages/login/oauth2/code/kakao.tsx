@@ -13,32 +13,31 @@ const Kakao = () => {
   const [user, setUser] = useRecoilState(loginState);
 
   const getToken = async () => {
+    if (!code) {
+      return;
+    }
+
     try {
       const response = await axios.get(
         `https://${BASE_URL}/login/oauth2/code/kakao?code=${code}&state=${state}`,
         {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
           },
         }
       );
       const data = response.data.data;
       setUser(data);
-      // console.log(data);
-      // console.log(user);
       localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('code', code);
+      localStorage.setItem('oauthAccessToken', data.oauthAccessToken);
 
       if (data.role === 'ROLE_EMPTY') {
         router.push('/trainer-select');
-        return data;
       } else {
         router.push('/health-management');
-        return data;
       }
     } catch (err) {
-      // console.log('err', err);
+      console.log('err', err);
     }
   };
 

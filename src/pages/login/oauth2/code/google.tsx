@@ -12,21 +12,23 @@ const Google = () => {
   const [user, setUser] = useRecoilState(loginState);
 
   const getToken = async () => {
+    if (!code) {
+      return;
+    }
+
     try {
       const response = await axios.get(
         `https://${BASE_URL}/login/oauth2/code/google?code=${code}&state=${state}`,
         {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
           },
         }
       );
       const data = response.data.data;
       setUser(data);
-      // console.log(data);
-      // console.log(user);
       localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('oauthAccessToken', data.oauthAccessToken);
 
       if (data.role === 'ROLE_EMPTY') {
         router.push('/trainer-select');
@@ -47,6 +49,7 @@ const Google = () => {
   useEffect(() => {
     console.log(user);
   }, [user]);
+
   return (
     <>
       <div>
