@@ -1,4 +1,6 @@
 'use client';
+import axios from 'axios';
+import Link from 'next/link';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import Button from '@/components/Button/Button';
 import BasicInput from '@/components/Input/BasicInput';
@@ -15,20 +17,20 @@ import MagnifyingGlasses from '@/svgs/MagnifyingGlasses.svg';
 import NavArrowLeft from '@/svgs/NavArrowLeft.svg';
 import Union from '@/svgs/Union.svg';
 import { KEY_TRAINERPROFILE } from '@/utils/queryKey';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import { BASE_URL } from '@/utils/routePath';
-import Link from 'next/link';
+import { useState } from 'react';
 
 const TrainerListPage = () => {
   const router = useRouter();
   const [userData, setUserData] = useRecoilState(userState);
-  const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
+  const [trainerProfileData, setTrainerProfileData] =
+    useState(trainerProfileState);
   const accessToken = localStorage.getItem('accessToken');
 
-  const fetchMyListData = async () => {
+  const trainerProfileList = async () => {
     const response = await axios.get(`https://${BASE_URL}/trainers/profiles`, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -39,13 +41,16 @@ const TrainerListPage = () => {
     return response.data.data;
   };
 
+  trainerProfileList();
+
   const { data: trainerProfileDataQuery } = useQuery(
     KEY_TRAINERPROFILE,
-    fetchMyListData,
+    trainerProfileList,
     {
-      onSuccess: (data) => setTrainerData(data),
+      onSuccess: (data) => setTrainerProfileData(data),
     }
   );
+  // const userIds = trainerProfileDataQuery.map((profile: any) => profile.userId);
 
   return (
     <TopBottomBarTemplate
@@ -117,16 +122,19 @@ const TrainerListPage = () => {
           <div className="mt-8 flex flex-col gap-5">
             {trainerProfileDataQuery &&
               trainerProfileDataQuery.map((item: ITrainerProfile) => (
-                <>
+                <div key={item.id}>
                   <Link
                     href={{
                       pathname: `/trainer-detail`,
-                      query: { id: item.id },
+                      query: { id: item.id, userId: item.userId },
                     }}
                   >
                     <TrainerListItem
                       onClick={() => {}}
                       key={item.nickname}
+                      id={item.id}
+                      userId={item.userId}
+                      nickname={item.nickname}
                       name={item.name}
                       introduction={item.introduction}
                       university={item.university}
@@ -134,7 +142,7 @@ const TrainerListPage = () => {
                       photoPaths={item.photoPaths}
                     />
                   </Link>
-                </>
+                </div>
               ))}
           </div>
         </div>

@@ -57,17 +57,18 @@ interface IChatList {
 }
 
 export interface ITrainerProfile {
-  id: number;
+  id: string;
+  userId: string;
   introduction: string;
   career: string;
-  cost: number;
-  month: number;
+  cost: string;
+  month: string;
   nickname: string;
   name: string;
   university: string;
   startTime: string;
   endTime: string;
-  reviewAvg: number;
+  reviewAvg: string;
   photoPaths: string;
 }
 
@@ -143,17 +144,18 @@ export const chatListState = atom<IChatList>({
 export const trainerProfileState = atom<ITrainerProfile>({
   key: 'trainerProfileState',
   default: {
-    id: 0,
+    id: '',
+    userId: '',
     introduction: '',
     career: '',
-    cost: 0,
-    month: 0,
+    cost: '',
+    month: '',
     nickname: '',
     name: '',
     university: '',
     startTime: '',
     endTime: '',
-    reviewAvg: 0,
+    reviewAvg: '',
     photoPaths: '',
   },
   effects_UNSTABLE: [persistAtom],

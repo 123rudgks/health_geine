@@ -8,6 +8,10 @@ import Box from '@/components/Box/Box';
 import Button from '@/components/Button/Button';
 import { useRecoilState } from 'recoil';
 import IUser, { userState } from '@/recoil/state';
+import axios from 'axios';
+import { KEY_USERS } from '@/utils/queryKey';
+import { useQuery } from 'react-query';
+import { BASE_URL } from '@/utils/routePath';
 
 interface Props {}
 interface UserField {
@@ -26,7 +30,26 @@ const userFields: UserField[] = [
 
 const Page = (props: Props) => {
   const router = useRouter();
+  const accessToken = localStorage.getItem('accessToken');
   const [userData, setUserData] = useRecoilState(userState);
+
+  // const infoEdit = async () => {
+  //   const response = await axios.patch(
+  //     `https://${BASE_URL}/users/info`,
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/json;charset=utf-8',
+  //         'Access-Control-Allow-Origin': '*',
+  //         Authorization: `Bearer ` + accessToken,
+  //       },
+  //     }
+  //   );
+  //   return response.data.data;
+  // };
+
+  // const { data } = useQuery(KEY_USERS, infoEdit, {
+  //   onSuccess: (data) => setUserData(data),
+  // });
 
   const renderUserField = (field: UserField) => (
     <div className="grid grid-cols-4 gap-3" key={field.label}>
@@ -93,9 +116,12 @@ const Page = (props: Props) => {
         <Box className="h-[310px] w-[298px] rounded-[27px] bg-[#EAEFFF] shadow-[0_3px_10px_rgb(90,130,246,0.5)]">
           {userFields.map(renderUserField)}
         </Box>
-        <div className="flex h-[29px] w-[97px] items-center justify-center rounded-[23px] bg-[#e9e9e9] font-noto text-[17px] font-medium text-[#959595]">
+        <Box
+          // onClick={infoEdit}
+          className="flex h-[29px] w-[97px] items-center justify-center rounded-[23px] bg-[#e9e9e9] font-noto text-[17px] font-medium text-[#959595] hover:cursor-pointer"
+        >
           수정하기
-        </div>
+        </Box>
       </div>
     </div>
   );

@@ -1,19 +1,19 @@
 'use client';
+import axios from 'axios';
 import Button from '@/components/Button/Button';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import InputMediumText from '@/components/Text/InputMediumText';
 import AddTrainerPhotoVideoTab from '@/components/pages/write-trainer-detail/AddTrainerPhotoVideoTab';
 import WriteTrainerDetailInfoTab from '@/components/pages/write-trainer-detail/WriteTrainerDetailInfoTab';
-import { userState } from '@/recoil/state';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import Building from '@/svgs/Building.svg';
 import Clock from '@/svgs/Clock.svg';
-import axios from 'axios';
+import NoProfile from '@/svgs/NoProfile.svg';
+import { trainerProfileState, userState } from '@/recoil/state';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { twMerge } from 'tailwind-merge';
-import NoProfile from '@/svgs/NoProfile.svg';
 import { BASE_URL } from '@/utils/routePath';
 
 type Props = {};
@@ -24,7 +24,8 @@ const WRITE_TRAINER_DETAIL_TABS: WriteTrainerDetailTab[] = [
 ];
 const WriteTrainerDetailPage = (props: Props) => {
   const router = useRouter();
-  const [userData, seUserData] = useRecoilState(userState);
+  const [userData, setUserData] = useRecoilState(userState);
+  const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
   const [profileData, setProfileData] = useState({
     name: userData.name,
     startTime: '',
@@ -64,6 +65,7 @@ const WriteTrainerDetailPage = (props: Props) => {
         'Access-Control-Allow-Origin': '*',
         Authorization: `Bearer ${accessToken}`,
       };
+
       const dataToSend = {
         name: profileData.name,
         startTime: profileData.startTime,
@@ -77,14 +79,12 @@ const WriteTrainerDetailPage = (props: Props) => {
         university: profileData.university,
       };
 
-      console.log('dataToSend', dataToSend);
-
       const profileResponse = await axios.post(
         `https://${BASE_URL}/trainers/profiles`,
         dataToSend,
         { headers }
       );
-      console.log('프로필 데이터', profileResponse.data);
+      // console.log('프로필 데이터', profileResponse.data);
 
       if (profileImages.length > 0) {
         const formData = new FormData();
@@ -98,7 +98,7 @@ const WriteTrainerDetailPage = (props: Props) => {
         }
 
         const imageResponse = await axios.post(
-          `https://${BASE_URL}/trainers/profiles/1/photos`,
+          `https://${BASE_URL}/trainers/profiles/${userData.id}/photos`,
           formData,
           {
             headers: {
@@ -111,6 +111,7 @@ const WriteTrainerDetailPage = (props: Props) => {
         console.log('Image response:', imageResponse.data);
       }
 
+      alert('프로필이 성공적으로 작성되었습니다.');
       setLoading(false);
       setError(null);
       router.push('/trainer-list');

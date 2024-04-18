@@ -35,13 +35,10 @@ interface PrevHistoryProps {
 }
 
 const ChattingRoom = (props: any) => {
-  let roomId: string = '';
-
   const params = new URLSearchParams(document.location.search);
 
-  // const anotherId = '5';
-  // const anotherName = '이다혜';
-  const anotherId = params.get('id');
+  let roomId: string = '';
+  const anotherId = params.get('userId');
   const anotherName = params.get('name');
   const accessToken = localStorage.getItem('accessToken');
 

@@ -39,11 +39,11 @@ const Page = (props: Props) => {
                 <div className="flex gap-4 pt-2">
                   <Box
                     onClick={() => router.push('/health-profile')}
-                    className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-white text-center font-noto text-[13.17px] font-light text-primary-400"
+                    className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-white text-center font-noto text-[13.17px] font-light text-primary-400 hover:cursor-pointer"
                   >
                     프로필 편집
                   </Box>
-                  <Box className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-primary-100 text-center font-noto text-[13.17px] font-light text-white">
+                  <Box className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-primary-100 text-center font-noto text-[13.17px] font-light text-white hover:cursor-pointer">
                     로그아웃
                   </Box>
                 </div>
