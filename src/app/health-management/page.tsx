@@ -49,6 +49,20 @@ const Page = () => {
     setKoreanDay(koreanDay);
   }, []);
 
+  // const fetchTrainerProfileData = async () => {
+  //   const response = await axios.get(
+  //     `https://서비스.한국/trainers/profiles/details/${userData.id}`,
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/json;charset=utf-8',
+  //         'Access-Control-Allow-Origin': '*',
+  //         Authorization: `Bearer ` + accessToken,
+  //       },
+  //     }
+  //   );
+  //   return response.data.data;
+  // };
+
   const fetchUserData = async () => {
     const response = await axios.get(`https://${BASE_URL}/users`, {
       headers: {
@@ -59,6 +73,7 @@ const Page = () => {
     });
     return response.data.data;
   };
+
   const listUrl =
     userData.role === 'ROLE_TRAINER'
       ? `https://${BASE_URL}/process/trainers/list`
@@ -77,7 +92,7 @@ const Page = () => {
 
   const reviewUrl =
     userData.role === 'ROLE_TRAINER'
-      ? `https://${BASE_URL}/reviews/trainers/list/2`
+      ? `https://${BASE_URL}/reviews/trainers/list/${userData.id}`
       : `https://${BASE_URL}/reviews/my/list`;
 
   const fetchMyReviewData = async () => {
@@ -138,7 +153,7 @@ const Page = () => {
           </div>
 
           <Box className="flex h-[100%] flex-col justify-start gap-[13px] rounded-[21px] bg-[#f4f4f4] px-[22px] py-[26px]">
-            <TrainerProfileEdit />
+            {/* <TrainerProfileEdit career={} /> */}
             <Box className="w-[100%] rounded-[18px] px-[22px] py-[26px] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
               <div className="flex justify-between">
                 <h1 className="text-[16px] font-[700]">
@@ -146,7 +161,7 @@ const Page = () => {
                 </h1>
                 <EmptyCalendar />
               </div>
-              {/* <p onClick={refreshToken}>갱신</p> */}
+
               <div className="py-2">
                 <div className="text-gray-4 flex text-[16px]">
                   <p className="font-[700]">

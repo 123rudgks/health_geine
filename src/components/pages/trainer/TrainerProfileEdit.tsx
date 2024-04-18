@@ -5,8 +5,20 @@ import ModalBackground from '@/components/Modal/ModalBackground';
 import Box from '@/components/Box/Box';
 import { useState } from 'react';
 type Props = {};
-
-const TrainerProfileEdit = (props: Props) => {
+interface TrainerProfileEditProps {
+  id: string;
+  month: string;
+  cost: string;
+  career: string;
+  introduction: string;
+}
+const TrainerProfileEdit = ({
+  id,
+  month,
+  cost,
+  career,
+  introduction,
+}: TrainerProfileEditProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFabClick = () => {
@@ -18,12 +30,18 @@ const TrainerProfileEdit = (props: Props) => {
   };
 
   return (
-    <div>
+    <div key={id}>
       {isModalOpen && (
         <ModalPortal>
           <ModalBackground onClick={handleCloseModal}>
             {/* <ModalBackground /> */}
-            <TrainerProfileEdit />
+            <TrainerProfileEdit
+              id={id}
+              month={month}
+              career={career}
+              cost={cost}
+              introduction={introduction}
+            />
           </ModalBackground>
         </ModalPortal>
       )}
@@ -43,19 +61,19 @@ const TrainerProfileEdit = (props: Props) => {
               <div className="flex text-[13px] text-[#434343]">
                 <p className="font-[700]">
                   경력:
-                  <span className="font-[500]"> career</span>
+                  <span className="font-[500]"> {month}</span>
                 </p>
               </div>
               <div className="flex text-[13px] text-[#434343]">
                 <p className="font-[700]">
                   견적:
-                  <span className="font-[500]"> cost</span>
+                  <span className="font-[500]"> {cost}</span>
                 </p>
               </div>
               <div className="flex text-[13px] text-[#434343]">
                 <p className="font-[700]">
-                  악력:
-                  <span className="font-[500]"> month</span>
+                  약력:
+                  <span className="font-[500]"> {career}</span>
                 </p>
               </div>
             </div>
@@ -74,13 +92,7 @@ const TrainerProfileEdit = (props: Props) => {
           </div>
           <div className="py-2">
             <div className="flex text-[13px] text-[#434343]">
-              <p className="font-[500]">
-                안녕하세요!
-                <br />
-                경북대학교 경력 2년차 트레이너 입니다.
-                <br />
-                체형관리는 ~~
-              </p>
+              <p className="font-[500]">{introduction}</p>
             </div>
           </div>
         </div>

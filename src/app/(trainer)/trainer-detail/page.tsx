@@ -29,7 +29,7 @@ const TrainerDetailPage = ({
 }) => {
   const router = useRouter();
   const accessToken = localStorage.getItem('accessToken');
-  const trainerId = searchParams.id;
+  const trainerProfileId = searchParams.id;
   const [trainerProfileData, setTrainerProfileData] = useState<any>();
 
   const [currentTab, setCurrentTab] = useState<TrainerDetailTab>('상세내용');
@@ -37,7 +37,7 @@ const TrainerDetailPage = ({
   const trainerProfileList = async () => {
     try {
       const response = await axios.get(
-        `https://${BASE_URL}/trainers/profiles/details/${trainerId}`,
+        `https://${BASE_URL}/trainers/profiles/details/${trainerProfileId}`,
         {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
@@ -67,7 +67,7 @@ const TrainerDetailPage = ({
     };
 
     fetchData();
-  }, [trainerId]);
+  }, [trainerProfileId]);
 
   return (
     <>

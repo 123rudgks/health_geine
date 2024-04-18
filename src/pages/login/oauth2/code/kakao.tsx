@@ -28,6 +28,7 @@ const Kakao = () => {
       // console.log(data);
       // console.log(user);
       localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('code', code);
 
       if (data.role === 'ROLE_EMPTY') {
         router.push('/trainer-select');

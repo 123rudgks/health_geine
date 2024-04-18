@@ -8,12 +8,42 @@ import Alert from '@/svgs/Alert.svg';
 import { useRouter } from 'next/navigation';
 import { userState } from '@/recoil/state';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import Link from 'next/link';
+import { BASE_URL } from '@/utils/routePath';
+import axios from 'axios';
 
 interface Props {}
 
 const Page = (props: Props) => {
   const router = useRouter();
+  const accessToken = localStorage.getItem('accessToken');
+  const code = localStorage.getItem('code');
   const [userData, setUserData] = useRecoilState(userState);
+
+  const withDraw = async () => {
+    try {
+      const response = await axios.delete(
+        `https://${BASE_URL}/withdraw?code=${code}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log('회원 탈퇴', response.data);
+      localStorage.removeItem('code');
+      localStorage.removeItem('accessToken');
+      router.push('/');
+    } catch (error) {
+      console.error('회원 탈퇴 실패:', error);
+    }
+  };
+
+  const logout = () => {
+    alert('로그아웃 하시겠습니까?');
+    localStorage.clear();
+    router.push('/');
+  };
 
   return (
     <div>
@@ -43,7 +73,10 @@ const Page = (props: Props) => {
                   >
                     프로필 편집
                   </Box>
-                  <Box className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-primary-100 text-center font-noto text-[13.17px] font-light text-white hover:cursor-pointer">
+                  <Box
+                    onClick={logout}
+                    className="flex h-[20.53px] w-[92.19px] items-center justify-center rounded-full bg-primary-100 text-center font-noto text-[13.17px] font-light text-white hover:cursor-pointer"
+                  >
                     로그아웃
                   </Box>
                 </div>
@@ -66,7 +99,10 @@ const Page = (props: Props) => {
         </h1>
         <NavArrowRight />
       </div>
-      <div className="flex h-[100px] items-center justify-between border-b-2 border-[#eeeeee] bg-white px-10">
+      <div
+        onClick={withDraw}
+        className="flex h-[100px] items-center justify-between border-b-2 border-[#eeeeee] bg-white px-10"
+      >
         <h1 className="font-noto text-[15px] font-bold text-black">
           회원 탈퇴하기
         </h1>
