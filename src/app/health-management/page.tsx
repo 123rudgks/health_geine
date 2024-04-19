@@ -15,11 +15,17 @@ import {
   loginState,
   myListState,
   myReviewState,
+  trainerProfileMeState,
   userState,
 } from '@/recoil/state';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { KEY_MYLIST, KEY_MYREVIEW, KEY_USERS } from '@/utils/queryKey';
+import {
+  KEY_MYLIST,
+  KEY_MYREVIEW,
+  KEY_TRAINERPROFILE_ME,
+  KEY_USERS,
+} from '@/utils/queryKey';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import TrainerProfileEdit from '@/components/pages/trainer/TrainerProfileEdit';
@@ -37,6 +43,9 @@ const Page = () => {
   const accessToken = localStorage.getItem('accessToken');
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const loginData = useRecoilValue(loginState);
+  const [trainerProfileData, setTrainerProfileData] = useRecoilState(
+    trainerProfileMeState
+  );
   const [userData, setUserData] = useRecoilState(userState);
   const [myListData, setMyListUserData] = useRecoilState(myListState);
   const [myReviewData, setMyReviewData] = useRecoilState(myReviewState);
@@ -49,19 +58,19 @@ const Page = () => {
     setKoreanDay(koreanDay);
   }, []);
 
-  // const fetchTrainerProfileData = async () => {
-  //   const response = await axios.get(
-  //     `https://서비스.한국/trainers/profiles/details/${userData.id}`,
-  //     {
-  //       headers: {
-  //         'Content-Type': 'application/json;charset=utf-8',
-  //         'Access-Control-Allow-Origin': '*',
-  //         Authorization: `Bearer ` + accessToken,
-  //       },
-  //     }
-  //   );
-  //   return response.data.data;
-  // };
+  const fetchTrainerProfileData = async () => {
+    const response = await axios.get(
+      `https://${BASE_URL}/trainers/profiles/details`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + accessToken,
+        },
+      }
+    );
+    return response.data.data;
+  };
 
   const fetchUserData = async () => {
     const response = await axios.get(`https://${BASE_URL}/users`, {
@@ -105,6 +114,14 @@ const Page = () => {
     });
     return response.data.data;
   };
+
+  const { data: trainerProfileDataQuery } = useQuery(
+    KEY_TRAINERPROFILE_ME,
+    fetchTrainerProfileData,
+    {
+      onSuccess: (data) => setTrainerProfileData(data),
+    }
+  );
 
   const { data: userDataQuery } = useQuery(KEY_USERS, fetchUserData, {
     onSuccess: (data) => setUserData(data),
@@ -153,7 +170,15 @@ const Page = () => {
           </div>
 
           <Box className="flex h-[100%] flex-col justify-start gap-[13px] rounded-[21px] bg-[#f4f4f4] px-[22px] py-[26px]">
-            {/* <TrainerProfileEdit career={} /> */}
+            {trainerProfileDataQuery && (
+              <TrainerProfileEdit
+                id={trainerProfileDataQuery.id}
+                career={trainerProfileDataQuery.career}
+                month={trainerProfileDataQuery.month}
+                cost={trainerProfileDataQuery.cost}
+                introduction={trainerProfileDataQuery.introduction}
+              />
+            )}
             <Box className="w-[100%] rounded-[18px] px-[22px] py-[26px] shadow-[0_3px_10px_rgb(0,0,0,0.1)]">
               <div className="flex justify-between">
                 <h1 className="text-[16px] font-[700]">

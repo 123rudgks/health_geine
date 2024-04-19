@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { twMerge } from 'tailwind-merge';
 import { BASE_URL } from '@/utils/routePath';
+import Image from 'next/image';
 
 type Props = {};
 type WriteTrainerDetailTab = '상세내용' | '사진/동영상';
@@ -44,6 +45,7 @@ const WriteTrainerDetailPage = (props: Props) => {
   const [currentTab, setCurrentTab] =
     useState<WriteTrainerDetailTab>('상세내용');
   const [infoTabData, setInfoTabData] = useState(profileData);
+  const [additionalImages, setAdditionalImages] = useState<File[]>([]);
 
   const handleChange = (key: string, value: string) => {
     setProfileData((prevData) => ({
@@ -54,6 +56,10 @@ const WriteTrainerDetailPage = (props: Props) => {
 
   const handleImagesChange = (images: File[]) => {
     setProfileImages(images);
+  };
+
+  const handleAdditionalImagesChange = (images: File[]) => {
+    setAdditionalImages(images);
   };
 
   const handleSubmit = async () => {
@@ -92,13 +98,14 @@ const WriteTrainerDetailPage = (props: Props) => {
           formData.append('photos', image);
         });
 
-        const values = formData.values();
-        for (const pair of values) {
-          console.log('pair', pair);
-        }
+        formData.append('purpose', 'PROFILE');
+        // const values = formData.values();
+        // for (const pair of values) {
+        //   console.log('pair', pair);
+        // }
 
         const imageResponse = await axios.post(
-          `https://${BASE_URL}/trainers/profiles/${userData.id}/photos`,
+          `https://${BASE_URL}/trainers/profiles/1/photos`,
           formData,
           {
             headers: {
@@ -108,7 +115,29 @@ const WriteTrainerDetailPage = (props: Props) => {
             },
           }
         );
-        console.log('Image response:', imageResponse.data);
+        // console.log('Image response:', imageResponse.data);
+      }
+
+      if (additionalImages.length > 0) {
+        // 추가된 이미지 처리
+        const formData = new FormData();
+        additionalImages.forEach((image, index) => {
+          formData.append('photos', image);
+        });
+
+        formData.append('purpose', 'ETC');
+
+        const imageResponse = await axios.post(
+          `https://${BASE_URL}/trainers/profiles/${id}/photos`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Access-Control-Allow-Origin': '*',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
       }
 
       alert('프로필이 성공적으로 작성되었습니다.');
@@ -120,6 +149,11 @@ const WriteTrainerDetailPage = (props: Props) => {
       setLoading(false);
       setError('에러가 발생했습니다.');
     }
+  };
+
+  const handlePhotoChange = (newPhoto: File) => {
+    const newProfileImages = [newPhoto];
+    setProfileImages(newProfileImages);
   };
 
   return (
@@ -164,7 +198,17 @@ const WriteTrainerDetailPage = (props: Props) => {
               </span>
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <NoProfile />
+              {profileImages.length > 0 ? (
+                <Image
+                  src={URL.createObjectURL(profileImages[0])}
+                  alt="트레이너 프로필 사진"
+                  layout="fill"
+                  objectFit="cover"
+                  objectPosition="center"
+                />
+              ) : (
+                <NoProfile />
+              )}
             </div>
             <div className="absolute inset-0 flex items-end justify-end pb-4 pr-6">
               <Button
@@ -172,11 +216,18 @@ const WriteTrainerDetailPage = (props: Props) => {
                 color={'white'}
                 background={'primary-400'}
                 className="h-[20px] w-[75px] rounded-[4px] bg-opacity-50 text-[10px] font-light ring-opacity-50"
-                onClick={handleSubmit}
+                onClick={() => document.getElementById('photoInput')?.click()}
                 disabled={loading}
               >
                 사진 바꾸기
               </Button>
+              <input
+                id="photoInput"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={(e) => handlePhotoChange(e.target.files![0])}
+              />
             </div>
           </div>
         </div>
@@ -187,9 +238,7 @@ const WriteTrainerDetailPage = (props: Props) => {
               _label="소속: "
               _input={profileData.university}
               _placeholder="내용을 입력하세요."
-              _onChange={(value) =>
-                setProfileData({ ...profileData, university: value })
-              }
+              _onChange={(value) => handleChange('university', value)}
             />
           </div>
           <div className="flex h-[18px] items-center gap-[14px]">
@@ -199,17 +248,13 @@ const WriteTrainerDetailPage = (props: Props) => {
                 _label="연락 가능 시간: "
                 _input={profileData.startTime}
                 _placeholder="09:00"
-                _onChange={(value) =>
-                  setProfileData({ ...profileData, startTime: value })
-                }
+                _onChange={(value) => handleChange('startTime', value)}
               />
               <InputMediumText
                 _label="~"
                 _input={profileData.endTime}
                 _placeholder="18:00"
-                _onChange={(value) =>
-                  setProfileData({ ...profileData, endTime: value })
-                }
+                _onChange={(value) => handleChange('endTime', value)}
               />
             </div>
           </div>
@@ -248,8 +293,8 @@ const WriteTrainerDetailPage = (props: Props) => {
             )}
             {currentTab === '사진/동영상' && (
               <AddTrainerPhotoVideoTab
-                profileImages={profileImages}
-                onImagesChange={handleImagesChange}
+                profileImages={additionalImages}
+                onImagesChange={handleAdditionalImagesChange}
               />
             )}
           </div>

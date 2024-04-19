@@ -160,3 +160,23 @@ export const trainerProfileState = atom<ITrainerProfile>({
   },
   effects_UNSTABLE: [persistAtom],
 });
+
+export const trainerProfileMeState = atom<ITrainerProfile>({
+  key: 'trainerProfileMeState',
+  default: {
+    id: '',
+    userId: '',
+    introduction: '',
+    career: '',
+    cost: '',
+    month: '',
+    nickname: '',
+    name: '',
+    university: '',
+    startTime: '',
+    endTime: '',
+    reviewAvg: '',
+    photoPaths: '',
+  },
+  effects_UNSTABLE: [persistAtom],
+});
