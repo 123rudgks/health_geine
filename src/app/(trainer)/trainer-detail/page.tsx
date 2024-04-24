@@ -31,8 +31,33 @@ const TrainerDetailPage = ({
   const accessToken = localStorage.getItem('accessToken');
   const trainerProfileId = searchParams.id;
   const [trainerProfileData, setTrainerProfileData] = useState<any>();
-
+  const [trainerImageData, setTrainerImageData] = useState<any>();
   const [currentTab, setCurrentTab] = useState<TrainerDetailTab>('상세내용');
+
+  const photoResponse = async () => {
+    try {
+      const response = await axios.get(
+        `https://${BASE_URL}/trainers/profiles/${trainerProfileId}/photos`,
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      const data = response.data.data;
+
+      if (data && Object.keys(data).length > 0) {
+        return data;
+      } else {
+        throw new Error('데이터가 없습니다.');
+      }
+    } catch (error) {
+      console.error('데이터를 불러오는 중 에러가 발생했습니다.', error);
+      throw error;
+    }
+  };
 
   const trainerProfileList = async () => {
     try {
@@ -63,7 +88,9 @@ const TrainerDetailPage = ({
   useEffect(() => {
     const fetchData = async () => {
       const data = await trainerProfileList();
+      const imageData = await photoResponse();
       setTrainerProfileData(data);
+      setTrainerImageData(imageData);
     };
 
     fetchData();
@@ -71,7 +98,7 @@ const TrainerDetailPage = ({
 
   return (
     <>
-      {trainerProfileData && (
+      {trainerProfileData && trainerImageData && (
         <div key={trainerProfileData.id}>
           <TopBottomBarTemplate
             _topNode={
@@ -113,24 +140,46 @@ const TrainerDetailPage = ({
           >
             <div className="w-full">
               <div className="relative w-full pb-[50%]">
-                <div
-                  className="absolute inset-0 flex"
-                  style={{
-                    backgroundImage: `url('${trainerProfileData.photoPaths}')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                >
-                  <div className="flex flex-col items-start justify-end pb-4 pl-6">
-                    <p className="font-noto text-[15px] font-medium text-white">
-                      트레이너
-                    </p>
-                    <span className="font-noto text-[25px] font-bold text-white">
-                      {trainerProfileData.name}
-                    </span>
-                  </div>
-                  {/* <div className="absolute inset-0 flex items-center justify-center"></div> */}
-                </div>
+                {trainerImageData.map((item: any) =>
+                  item.purpose !== 'ETC' ? (
+                    <div
+                      key={item.id}
+                      className="absolute inset-0 flex"
+                      style={{
+                        backgroundImage: `url('${item.path}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    >
+                      <div className="flex flex-col items-start justify-end pb-4 pl-6">
+                        <p className="font-noto text-[15px] font-medium text-white">
+                          트레이너
+                        </p>
+                        <span className="font-noto text-[25px] font-bold text-white">
+                          {trainerProfileData.name}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      key={item.id}
+                      className="absolute inset-0 flex"
+                      style={{
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    >
+                      <div className="flex flex-col items-start justify-end pb-4 pl-6">
+                        <p className="font-noto text-[15px] font-medium text-white">
+                          트레이너
+                        </p>
+                        <span className="font-noto text-[25px] font-bold text-white">
+                          {trainerProfileData.name}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
               <div className="flex w-full flex-col gap-2 p-[22px]">
                 <div className="flex h-[18px] items-center gap-[14px]">
@@ -184,7 +233,9 @@ const TrainerDetailPage = ({
                       career={trainerProfileData.career}
                     />
                   )}
-                  {currentTab === '사진/동영상' && <TrainerPhotoVideoTab />}
+                  {currentTab === '사진/동영상' && trainerImageData && (
+                    <TrainerPhotoVideoTab trainerImageData={trainerImageData} />
+                  )}
                   {currentTab === '후기' && <TrainerReviewTab />}
                 </div>
               </div>

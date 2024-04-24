@@ -19,6 +19,7 @@ const nextConfig = {
         port: '',
       },
     ],
+    domains: ['new-health-genie.s3.ap-northeast-2.amazonaws.com'],
   },
 
   webpack(config) {

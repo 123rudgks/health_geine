@@ -116,6 +116,28 @@ const EditTrainerDetailPage = ({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      alert('정말 삭제하시겠습니까?');
+      const response = await axios.delete(
+        `https://${BASE_URL}/trainers/profiles/${trainerProfileId}`,
+
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      //  const data = response.data.data;
+      router.push('/trainer-list');
+    } catch (error) {
+      console.error('프로필 수정 중 에러가 발생했습니다.', error);
+    }
+  };
+
   return (
     <>
       {trainerProfileData && (
@@ -128,6 +150,9 @@ const EditTrainerDetailPage = ({
                 </div>
                 <div className="flex flex-1 justify-center font-noto text-[18px] font-bold text-primary-400">
                   {trainerProfileData.name} 트레이너
+                </div>
+                <div onClick={handleDelete} className="absolute right-[22px]">
+                  삭제
                 </div>
               </div>
             }

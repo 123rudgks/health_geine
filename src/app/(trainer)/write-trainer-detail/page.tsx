@@ -24,6 +24,7 @@ const WRITE_TRAINER_DETAIL_TABS: WriteTrainerDetailTab[] = [
   '사진/동영상',
 ];
 const WriteTrainerDetailPage = (props: Props) => {
+  const accessToken = localStorage.getItem('accessToken');
   const router = useRouter();
   const [userData, setUserData] = useRecoilState(userState);
   const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
@@ -54,6 +55,11 @@ const WriteTrainerDetailPage = (props: Props) => {
     }));
   };
 
+  const handlePhotoChange = (newPhoto: File) => {
+    const newProfileImages = [newPhoto];
+    setProfileImages(newProfileImages);
+  };
+
   const handleImagesChange = (images: File[]) => {
     setProfileImages(images);
   };
@@ -62,15 +68,58 @@ const WriteTrainerDetailPage = (props: Props) => {
     setAdditionalImages(images);
   };
 
+  const uploadProfileImages = async (id: string) => {
+    try {
+      if (profileImages.length > 0) {
+        const formData = new FormData();
+        profileImages.forEach((image, index) => {
+          formData.append('photos', image);
+        });
+
+        formData.append('purpose', 'PROFILE');
+
+        await axios.post(
+          `https://${BASE_URL}/trainers/profiles/${id}/photos`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Access-Control-Allow-Origin': '*',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+      }
+
+      if (additionalImages.length > 0) {
+        const formData = new FormData();
+        additionalImages.forEach((image, index) => {
+          formData.append('photos', image);
+        });
+
+        formData.append('purpose', 'ETC');
+
+        await axios.post(
+          `https://${BASE_URL}/trainers/profiles/${id}/photos`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Access-Control-Allow-Origin': '*',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+      }
+    } catch (error) {
+      console.error('프로필 이미지 업로드 중 에러:', error);
+      throw new Error('프로필 이미지 업로드 중 에러가 발생했습니다.');
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const accessToken = localStorage.getItem('accessToken');
-      const headers = {
-        'Content-Type': 'application/json;charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-        Authorization: `Bearer ${accessToken}`,
-      };
 
       const dataToSend = {
         name: profileData.name,
@@ -88,57 +137,59 @@ const WriteTrainerDetailPage = (props: Props) => {
       const profileResponse = await axios.post(
         `https://${BASE_URL}/trainers/profiles`,
         dataToSend,
-        { headers }
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       );
-      // console.log('프로필 데이터', profileResponse.data);
 
-      if (profileImages.length > 0) {
-        const formData = new FormData();
-        profileImages.forEach((image, index) => {
-          formData.append('photos', image);
-        });
+      const id = profileResponse.data.data.id;
 
-        formData.append('purpose', 'PROFILE');
-        // const values = formData.values();
-        // for (const pair of values) {
-        //   console.log('pair', pair);
-        // }
+      await uploadProfileImages(id);
+      // if (profileImages.length > 0) {
+      //   const formData = new FormData();
+      //   profileImages.forEach((image, index) => {
+      //     formData.append('photos', image);
+      //   });
 
-        const imageResponse = await axios.post(
-          `https://${BASE_URL}/trainers/profiles/1/photos`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Access-Control-Allow-Origin': '*',
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        // console.log('Image response:', imageResponse.data);
-      }
+      //   formData.append('purpose', 'PROFILE');
 
-      if (additionalImages.length > 0) {
-        // 추가된 이미지 처리
-        const formData = new FormData();
-        additionalImages.forEach((image, index) => {
-          formData.append('photos', image);
-        });
+      //   const imageResponse = await axios.post(
+      //     `https://${BASE_URL}/trainers/profiles/${id}/photos`,
+      //     formData,
+      //     {
+      //       headers: {
+      //         'Content-Type': 'multipart/form-data',
+      //         'Access-Control-Allow-Origin': '*',
+      //         Authorization: `Bearer ${accessToken}`,
+      //       },
+      //     }
+      //   );
+      // }
 
-        formData.append('purpose', 'ETC');
+      // if (additionalImages.length > 0) {
+      //   const formData = new FormData();
+      //   additionalImages.forEach((image, index) => {
+      //     formData.append('photos', image);
+      //   });
 
-        const imageResponse = await axios.post(
-          `https://${BASE_URL}/trainers/profiles/${id}/photos`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Access-Control-Allow-Origin': '*',
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-      }
+      //   formData.append('purpose', 'ETC');
+
+      //   const imageResponse = await axios.post(
+      //     `https://${BASE_URL}/trainers/profiles/${id}/photos`,
+      //     formData,
+      //     {
+      //       headers: {
+      //         'Content-Type': 'multipart/form-data',
+      //         'Access-Control-Allow-Origin': '*',
+      //         Authorization: `Bearer ${accessToken}`,
+      //       },
+      //     }
+      //   );
+      // }
 
       alert('프로필이 성공적으로 작성되었습니다.');
       setLoading(false);
@@ -149,11 +200,6 @@ const WriteTrainerDetailPage = (props: Props) => {
       setLoading(false);
       setError('에러가 발생했습니다.');
     }
-  };
-
-  const handlePhotoChange = (newPhoto: File) => {
-    const newProfileImages = [newPhoto];
-    setProfileImages(newProfileImages);
   };
 
   return (
@@ -189,16 +235,8 @@ const WriteTrainerDetailPage = (props: Props) => {
       <div className="w-full">
         <div className="relative w-full pb-[50%]">
           <div className="absolute inset-0 flex bg-[#dbdbdb]">
-            <div className="flex flex-col items-start justify-end pb-4 pl-6">
-              <p className="font-noto text-[15px] font-medium text-white">
-                트레이너
-              </p>
-              <span className="font-noto text-[25px] font-bold text-white">
-                {userData.name}
-              </span>
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              {profileImages.length > 0 ? (
+            {profileImages.length > 0 ? (
+              <div className="absolute inset-0 flex items-center justify-center">
                 <Image
                   src={URL.createObjectURL(profileImages[0])}
                   alt="트레이너 프로필 사진"
@@ -206,9 +244,19 @@ const WriteTrainerDetailPage = (props: Props) => {
                   objectFit="cover"
                   objectPosition="center"
                 />
-              ) : (
+              </div>
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
                 <NoProfile />
-              )}
+              </div>
+            )}
+            <div className="flex flex-col items-start justify-end pb-4 pl-6">
+              <p className="font-noto text-[15px] font-medium text-white">
+                트레이너
+              </p>
+              <h1 className="font-noto text-[25px] font-bold text-white">
+                {userData.name}
+              </h1>
             </div>
             <div className="absolute inset-0 flex items-end justify-end pb-4 pr-6">
               <Button
