@@ -8,15 +8,23 @@ interface BasicFabProps {
   _imageName?: 'edit' | 'chat';
   _bottomNode?: React.ReactNode;
   _onClick(): void;
+  className?: string;
 }
 
-const Fab = ({ _imageName, _bottomNode, _onClick }: BasicFabProps) => {
+const Fab = ({
+  _imageName,
+  _bottomNode,
+  _onClick,
+  className,
+}: BasicFabProps) => {
+  const fabClasses = twMerge(
+    'align-center flex flex-col items-center',
+    className
+  );
+
   return (
     <>
-      <button
-        onClick={_onClick}
-        className="align-center flex flex-col items-center"
-      >
+      <button onClick={_onClick} className={fabClasses}>
         <div
           className="flex h-[57px] w-[57px] items-center justify-center rounded-full bg-primary-400
         shadow-[rgba(0,_0,_0,_0.3)_0px_2px_20px_1px]"

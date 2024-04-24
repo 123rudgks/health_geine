@@ -149,48 +149,7 @@ const WriteTrainerDetailPage = (props: Props) => {
       const id = profileResponse.data.data.id;
 
       await uploadProfileImages(id);
-      // if (profileImages.length > 0) {
-      //   const formData = new FormData();
-      //   profileImages.forEach((image, index) => {
-      //     formData.append('photos', image);
-      //   });
-
-      //   formData.append('purpose', 'PROFILE');
-
-      //   const imageResponse = await axios.post(
-      //     `https://${BASE_URL}/trainers/profiles/${id}/photos`,
-      //     formData,
-      //     {
-      //       headers: {
-      //         'Content-Type': 'multipart/form-data',
-      //         'Access-Control-Allow-Origin': '*',
-      //         Authorization: `Bearer ${accessToken}`,
-      //       },
-      //     }
-      //   );
-      // }
-
-      // if (additionalImages.length > 0) {
-      //   const formData = new FormData();
-      //   additionalImages.forEach((image, index) => {
-      //     formData.append('photos', image);
-      //   });
-
-      //   formData.append('purpose', 'ETC');
-
-      //   const imageResponse = await axios.post(
-      //     `https://${BASE_URL}/trainers/profiles/${id}/photos`,
-      //     formData,
-      //     {
-      //       headers: {
-      //         'Content-Type': 'multipart/form-data',
-      //         'Access-Control-Allow-Origin': '*',
-      //         Authorization: `Bearer ${accessToken}`,
-      //       },
-      //     }
-      //   );
-      // }
-
+      
       alert('프로필이 성공적으로 작성되었습니다.');
       setLoading(false);
       setError(null);
