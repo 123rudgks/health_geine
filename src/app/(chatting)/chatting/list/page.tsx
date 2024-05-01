@@ -10,22 +10,21 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import ChatListEmpty from '@/svgs/ChatListEmpty.svg';
+import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 
 type Props = {};
 
 const ChattingList = (props: Props) => {
-  const router = useRouter();
-  const accessToken = localStorage.getItem('accessToken');
   const [chatListData, setChatListData] = useRecoilState(chatListState);
 
   const handleChatList = async () => {
     const res = await axios.get(
-      `https://서비스.한국/chat/rooms?lastId=&size=`,
+      `https://${BASE_URL}/chat/rooms?lastId=&size=`,
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
           'Access-Control-Allow-Origin': '*',
-          Authorization: accessToken,
+          Authorization: ACCESS_TOKEN,
         },
       }
     );

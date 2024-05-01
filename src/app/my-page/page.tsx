@@ -7,17 +7,14 @@ import Back from '@/svgs/BackArrowWhite.svg';
 import Alert from '@/svgs/Alert.svg';
 import { useRouter } from 'next/navigation';
 import { userState } from '@/recoil/state';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import Link from 'next/link';
-import { BASE_URL } from '@/utils/routePath';
+import { useRecoilState } from 'recoil';
+import { BASE_URL, ACCESS_TOKEN, OAUTH_ACCESS_TOKEN } from '@/utils/routePath';
 import axios from 'axios';
 
 interface Props {}
 
 const Page = (props: Props) => {
   const router = useRouter();
-  const accessToken = localStorage.getItem('accessToken');
-  const oauthAccessToken = localStorage.getItem('oauthAccessToken');
   const [userData, setUserData] = useRecoilState(userState);
 
   const withdraw = async () => {
@@ -26,8 +23,8 @@ const Page = (props: Props) => {
     try {
       const response = await axios.delete(`https://${BASE_URL}/withdraw`, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-          OAuthAccessToken: `${oauthAccessToken}`,
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+          OAuthAccessToken: `${OAUTH_ACCESS_TOKEN}`,
           'Content-Type': 'application/json;charset=utf-8',
         },
       });

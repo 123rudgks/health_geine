@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import Box from '@/components/Box/Box';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
-import FillReviewStar from '../health-management/icon/FillReviewStar.svg';
 import EmptyReviewStar from '../health-management/icon/EmptyReviewStar.svg';
 import Back from '../../svgs/Back.svg';
 import Button from '@/components/Button/Button';
@@ -11,6 +10,7 @@ import BasicTextArea from '@/components/Input/BasicTextarea';
 
 const Page = () => {
   const router = useRouter();
+
   return (
     <>
       <TopBottomBarTemplate

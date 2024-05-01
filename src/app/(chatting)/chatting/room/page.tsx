@@ -16,8 +16,7 @@ import { useRecoilState } from 'recoil';
 import { trainerProfileState, userState } from '@/recoil/state';
 import { KEY_CHAT } from '@/utils/queryKey';
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
-import { BASE_URL } from '@/utils/routePath';
+import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 
 type Props = {};
 interface ChatHistoryProps {
@@ -40,7 +39,6 @@ const ChattingRoom = (props: any) => {
   let roomId: string = '';
   const anotherId = params.get('userId');
   const anotherName = params.get('name');
-  const accessToken = localStorage.getItem('accessToken');
 
   const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
   const [senderData, setSenderData] = useRecoilState(userState);
@@ -63,7 +61,7 @@ const ChattingRoom = (props: any) => {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
             'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         }
       );
@@ -89,7 +87,7 @@ const ChattingRoom = (props: any) => {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
             'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         }
       );
@@ -110,7 +108,7 @@ const ChattingRoom = (props: any) => {
       .catch((error) => {
         console.error('Error while fetching room data:', error);
       });
-  }, [accessToken, anotherId, senderData.id, roomId]);
+  }, [ACCESS_TOKEN, anotherId, senderData.id, roomId]);
 
   // socket 구현
   const client = useRef<CompatClient | null>(null);
@@ -119,7 +117,7 @@ const ChattingRoom = (props: any) => {
     client.current = Stomp.over(socket);
     client.current.connect(
       {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
         'Content-Type': 'application/json',
       },
       () => {
@@ -133,7 +131,7 @@ const ChattingRoom = (props: any) => {
             });
           },
           {
-            Authorization: 'Bearer ' + accessToken,
+            Authorization: 'Bearer ' + ACCESS_TOKEN,
             'Content-Type': 'application/json',
           }
         );
@@ -143,7 +141,7 @@ const ChattingRoom = (props: any) => {
 
   useEffect(() => {
     connectHandler();
-  }, [accessToken, roomId]);
+  }, [ACCESS_TOKEN, roomId]);
 
   const sendHandler = (message: string) => {
     if (client.current && client.current.connected) {

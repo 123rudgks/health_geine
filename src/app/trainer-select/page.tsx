@@ -5,11 +5,11 @@ import SearchUser from '@/svgs/SelectUser.svg';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useRecoilState, useSetRecoilState } from 'recoil';
+import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 
 type Props = {};
 
 const TrainerSelectPage = () => {
-  const accessToken = localStorage.getItem('accessToken');
   const router = useRouter();
   const [user, setUserState] = useRecoilState(userState);
   const setUser = useSetRecoilState(userState);
@@ -17,18 +17,17 @@ const TrainerSelectPage = () => {
 
   const handleUser = async (role: string) => {
     const res = await axios.patch(
-      `https://서비스.한국/users/role`,
+      `https://${BASE_URL}/users/role`,
       { role: role },
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
           'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ` + accessToken,
+          Authorization: `Bearer ` + ACCESS_TOKEN,
         },
       }
     );
 
-    console.log(res);
     return res.data.data;
   };
 
@@ -42,7 +41,7 @@ const TrainerSelectPage = () => {
       }));
       router.push('/health-management');
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
     }
   };
 

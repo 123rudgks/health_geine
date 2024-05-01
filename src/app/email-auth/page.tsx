@@ -10,14 +10,13 @@ import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import { userState } from '@/recoil/state';
 import { useRouter } from 'next/navigation';
-import { BASE_URL } from '@/utils/routePath';
+import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 
 interface Props {}
 
 const Page = (props: Props) => {
   const router = useRouter();
 
-  const accessToken = localStorage.getItem('accessToken');
   const [univNameValue, setUnivNameValue] = useState<string>('');
   const [emailValue, setEmailValue] = useState<string>('');
   const [codeValue, setCodeValue] = useState<string>('');
@@ -54,7 +53,7 @@ const Page = (props: Props) => {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
           'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ` + accessToken,
+          Authorization: `Bearer ` + ACCESS_TOKEN,
         },
       }
     );
@@ -82,7 +81,7 @@ const Page = (props: Props) => {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
             'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ` + accessToken,
+            Authorization: `Bearer ` + ACCESS_TOKEN,
           },
         }
       );

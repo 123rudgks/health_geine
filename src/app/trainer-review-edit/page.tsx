@@ -11,6 +11,7 @@ import BasicTextArea from '@/components/Input/BasicTextarea';
 
 const Page = () => {
   const router = useRouter();
+
   return (
     <>
       <TopBottomBarTemplate
