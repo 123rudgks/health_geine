@@ -2,7 +2,6 @@ import { twMerge } from 'tailwind-merge';
 import Image from 'next/image';
 import FABChat from './icon/FABChat.png';
 import FABEdit from './icon/FABEdit.png';
-import classNames from 'classnames';
 
 interface BasicFabProps {
   _imageName?: 'edit' | 'chat';

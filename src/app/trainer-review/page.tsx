@@ -9,6 +9,7 @@ import Fab from '@/components/FAB/Fab';
 
 const Page = () => {
   const router = useRouter();
+
   return (
     <>
       <TopBottomBarTemplate

@@ -5,13 +5,8 @@ import { useRouter } from 'next/navigation';
 import Back from '@/svgs/Back.svg';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import Box from '@/components/Box/Box';
-import Button from '@/components/Button/Button';
 import { useRecoilState } from 'recoil';
 import IUser, { userState } from '@/recoil/state';
-import axios from 'axios';
-import { KEY_USERS } from '@/utils/queryKey';
-import { useQuery } from 'react-query';
-import { BASE_URL } from '@/utils/routePath';
 
 interface Props {}
 interface UserField {
@@ -30,26 +25,7 @@ const userFields: UserField[] = [
 
 const Page = (props: Props) => {
   const router = useRouter();
-  const accessToken = localStorage.getItem('accessToken');
   const [userData, setUserData] = useRecoilState(userState);
-
-  // const infoEdit = async () => {
-  //   const response = await axios.patch(
-  //     `https://${BASE_URL}/users/info`,
-  //     {
-  //       headers: {
-  //         'Content-Type': 'application/json;charset=utf-8',
-  //         'Access-Control-Allow-Origin': '*',
-  //         Authorization: `Bearer ` + accessToken,
-  //       },
-  //     }
-  //   );
-  //   return response.data.data;
-  // };
-
-  // const { data } = useQuery(KEY_USERS, infoEdit, {
-  //   onSuccess: (data) => setUserData(data),
-  // });
 
   const renderUserField = (field: UserField) => (
     <div className="grid grid-cols-4 gap-3" key={field.label}>

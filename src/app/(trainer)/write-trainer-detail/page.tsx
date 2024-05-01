@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { twMerge } from 'tailwind-merge';
-import { BASE_URL } from '@/utils/routePath';
+import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 import Image from 'next/image';
 
 type Props = {};
@@ -24,7 +24,6 @@ const WRITE_TRAINER_DETAIL_TABS: WriteTrainerDetailTab[] = [
   '사진/동영상',
 ];
 const WriteTrainerDetailPage = (props: Props) => {
-  const accessToken = localStorage.getItem('accessToken');
   const router = useRouter();
   const [userData, setUserData] = useRecoilState(userState);
   const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
@@ -85,7 +84,7 @@ const WriteTrainerDetailPage = (props: Props) => {
             headers: {
               'Content-Type': 'multipart/form-data',
               'Access-Control-Allow-Origin': '*',
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${ACCESS_TOKEN}`,
             },
           }
         );
@@ -106,7 +105,7 @@ const WriteTrainerDetailPage = (props: Props) => {
             headers: {
               'Content-Type': 'multipart/form-data',
               'Access-Control-Allow-Origin': '*',
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${ACCESS_TOKEN}`,
             },
           }
         );
@@ -141,7 +140,7 @@ const WriteTrainerDetailPage = (props: Props) => {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
             'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         }
       );
@@ -149,7 +148,7 @@ const WriteTrainerDetailPage = (props: Props) => {
       const id = profileResponse.data.data.id;
 
       await uploadProfileImages(id);
-      
+
       alert('프로필이 성공적으로 작성되었습니다.');
       setLoading(false);
       setError(null);

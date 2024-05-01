@@ -3,12 +3,6 @@ import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigati
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import CommunityCalendar from '@/svgs/CommunituCalendar.svg';
-import CommunityClock from '@/svgs/CommunityClock.svg';
-import Chatting from '@/svgs/FillChatting.svg';
-import EmptyLike from '@/svgs/EmptyLike.svg';
-import SettingDot from '@/svgs/SettingDot.svg';
-import BlackDot from '@/svgs/BlackDot.svg';
-import CommunityListItem from '@/components/pages/community/CommunityListItem';
 import { useRouter } from 'next/navigation';
 import BasicInput from '@/components/Input/BasicInput';
 import Mask from '@/svgs/InputDelete.svg';

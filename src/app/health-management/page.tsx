@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { BASE_URL } from '@/utils/routePath';
+import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 import FillReviewStar from './icon/FillReviewStar.svg';
 import EmptyReviewStar from './icon/EmptyReviewStar.svg';
 import BackgroundCircle from './icon/BackgroundCircle.png';
@@ -29,7 +29,6 @@ import {
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import TrainerProfileEdit from '@/components/pages/trainer/TrainerProfileEdit';
-import { getCookie } from 'cookies-next';
 
 type Props = {};
 
@@ -40,7 +39,6 @@ const getDay = (dayIndex: number) => {
 
 const Page = () => {
   const router = useRouter();
-  const accessToken = localStorage.getItem('accessToken');
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const loginData = useRecoilValue(loginState);
   const [trainerProfileData, setTrainerProfileData] = useRecoilState(
@@ -65,7 +63,7 @@ const Page = () => {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
           'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ` + accessToken,
+          Authorization: `Bearer ` + ACCESS_TOKEN,
         },
       }
     );
@@ -77,7 +75,7 @@ const Page = () => {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Access-Control-Allow-Origin': '*',
-        Authorization: `Bearer ` + accessToken,
+        Authorization: `Bearer ` + ACCESS_TOKEN,
       },
     });
     return response.data.data;
@@ -93,7 +91,7 @@ const Page = () => {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Access-Control-Allow-Origin': '*',
-        Authorization: `Bearer ` + accessToken,
+        Authorization: `Bearer ` + ACCESS_TOKEN,
       },
     });
     return response.data.data;
@@ -109,7 +107,7 @@ const Page = () => {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Access-Control-Allow-Origin': '*',
-        Authorization: `Bearer ` + accessToken,
+        Authorization: `Bearer ` + ACCESS_TOKEN,
       },
     });
     return response.data.data;

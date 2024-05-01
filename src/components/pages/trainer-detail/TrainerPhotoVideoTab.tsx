@@ -3,6 +3,7 @@ import ModalPortal from '@/components/Modal/ModalPortal';
 import Cancel from '@/svgs/ImagePreviewCancel.svg';
 import Image from 'next/image';
 import { useState } from 'react';
+
 type Props = {
   trainerImageData: any;
 };
@@ -15,6 +16,7 @@ const TrainerPhotoVideoTab = ({ trainerImageData }: Props) => {
     setClickedImage(image);
     setModal(true);
   };
+
   return (
     <>
       {modal && (

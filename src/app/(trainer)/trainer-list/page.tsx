@@ -20,7 +20,7 @@ import { KEY_TRAINERPROFILE } from '@/utils/queryKey';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
-import { BASE_URL } from '@/utils/routePath';
+import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 import { useState } from 'react';
 
 const TrainerListPage = () => {
@@ -28,14 +28,13 @@ const TrainerListPage = () => {
   const [userData, setUserData] = useRecoilState(userState);
   const [trainerProfileData, setTrainerProfileData] =
     useState(trainerProfileState);
-  const accessToken = localStorage.getItem('accessToken');
 
   const trainerProfileList = async () => {
     const response = await axios.get(`https://${BASE_URL}/trainers/profiles`, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Access-Control-Allow-Origin': '*',
-        Authorization: `Bearer ` + accessToken,
+        Authorization: `Bearer ` + ACCESS_TOKEN,
       },
     });
     return response.data.data;
@@ -50,7 +49,6 @@ const TrainerListPage = () => {
       onSuccess: (data) => setTrainerProfileData(data),
     }
   );
-  // const userIds = trainerProfileDataQuery.map((profile: any) => profile.userId);
 
   return (
     <TopBottomBarTemplate

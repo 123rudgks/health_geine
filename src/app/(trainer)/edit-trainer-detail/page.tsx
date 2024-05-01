@@ -10,7 +10,7 @@ import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import Building from '@/svgs/Building.svg';
 import Clock from '@/svgs/Clock.svg';
 import Star from '@/svgs/Star.svg';
-import { BASE_URL } from '@/utils/routePath';
+import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -28,7 +28,6 @@ const EditTrainerDetailPage = ({
   searchParams: { id: string; userId: string };
 }) => {
   const router = useRouter();
-  const accessToken = localStorage.getItem('accessToken');
   const trainerProfileId = searchParams.id;
   const trainerId = searchParams.userId;
   const [trainerProfileData, setTrainerProfileData] = useState<any>();
@@ -126,7 +125,7 @@ const EditTrainerDetailPage = ({
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
             'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         }
       );
