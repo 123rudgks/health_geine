@@ -9,11 +9,72 @@ import Mask from '@/svgs/InputDelete.svg';
 import Button from '@/components/Button/Button';
 import Box from '@/components/Box/Box';
 import Camera from '@/svgs/ChatCamera.svg';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { BASE_URL } from '@/utils/routePath';
+import BasicTextArea from '@/components/Input/BasicTextarea';
+import { error } from 'console';
+import { post } from '@/apis/api';
 
 type Props = {};
 
 const Page = (props: Props) => {
   const router = useRouter();
+  const [titleValue, setTitleValue] = useState<string>('');
+  const [contentValue, setContentValue] = useState<string>('');
+
+  const date = `${new Date().getFullYear()}.${
+    new Date().getMonth() + 1
+  }.${new Date().getDate()}`;
+
+  const getDay = (dayIndex: number) => {
+    const koreanDays = ['일', '월', '화', '수', '목', '금', '토'];
+    return koreanDays[dayIndex];
+  };
+
+  const [koreanDay, setKoreanDay] = useState('');
+
+  useEffect(() => {
+    const date = new Date();
+    const dayIndex = date.getDay();
+    const koreanDay = getDay(dayIndex);
+    setKoreanDay(koreanDay);
+  }, []);
+
+  //   const post = async () => {
+  //     // if (titleValue !== null && contentValue !== null) {
+  //     try {
+  //       const response = await axios.post(
+  //         `https://${BASE_URL}/community/posts`,
+  //         { title: titleValue, content: contentValue },
+  //         {
+  //           headers: {
+  //             'Content-Type': 'application/json;charset=utf-8',
+  //             'Access-Control-Allow-Origin': '*',
+  //             Authorization: `Bearer ` + ACCESS_TOKEN,
+  //           },
+  //         }
+  //       );
+
+  //       return response.data.data;
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //     // } else {
+  //     //   alert('제목과 내용은 비어있을 수 없습니다.');
+  //     // }
+  //   };
+  post(titleValue, contentValue);
+
+  const handleTitle = (value: string) => {
+    if (value.length > 20) {
+      value = value.slice(0, 20);
+    }
+    setTitleValue(value);
+  };
+  const handleContent = (value: string) => {
+    setContentValue(value);
+  };
 
   return (
     <TopBottomBarTemplate
@@ -34,6 +95,9 @@ const Page = (props: Props) => {
       _bottomNode={
         <div className="flex justify-center px-14">
           <Button
+            onClick={() => {
+              post(titleValue, contentValue);
+            }}
             ring="none"
             background="primary-400"
             color="white"
@@ -50,7 +114,9 @@ const Page = (props: Props) => {
           <div className="font-regular flex gap-2 font-noto text-[18.36px] text-[#434343]">
             <div className="flex items-center justify-center gap-1">
               <CommunityCalendar />
-              <p>2023.09.11(월)</p>
+              <p>
+                {date} ({koreanDay})
+              </p>
             </div>
           </div>
         </div>
@@ -64,18 +130,27 @@ const Page = (props: Props) => {
               'text-[16px] font-noto placeholder:text-black text-black',
             placeholder: '제목을 입력해주세요. (20자 이내)',
           }}
-          _value={''}
-          _onChange={() => {}}
+          _value={titleValue}
+          _onChange={handleTitle}
         />
-        <Box className="flex w-full flex-col items-center justify-center rounded-[6px] border border-[#c1c1c1] p-0">
-          <textarea
+        <Box className="flex w-full flex-col rounded-[6px] border border-[#c1c1c1] p-0">
+          {/* <textarea
+            value={contentValue}
+            onChange={handleContent}
             className="m-2 h-[200px] w-full resize-none p-2 font-noto text-[16px] text-black placeholder:text-black"
+            placeholder="내용을 입력해주세요."
+          /> */}
+          <BasicTextArea
+            _wrapperClasses="px-4 ring-0"
+            _value={contentValue}
+            _onChange={handleContent}
+            className="h-[200px] w-full font-noto text-[16px] text-black placeholder:text-black"
             placeholder="내용을 입력해주세요."
           />
           <div className="h-0 w-full border-b border-[#c1c1c1]" />
           <div className="flex items-center justify-center p-4 font-noto text-[14px] font-semibold">
             <Camera />
-            <p className="pl-2 ">사진 선택하기</p>
+            <p className="pl-2">사진 선택하기</p>
             <p>3/5</p>
           </div>
         </Box>

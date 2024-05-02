@@ -6,11 +6,10 @@ import FillHealth from '@/svgs/FillHealth.svg';
 import ErrorCode from '@/svgs/ErrorCode.svg';
 import InitInput from '@/app/email-auth/InitInput';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import { userState } from '@/recoil/state';
 import { useRouter } from 'next/navigation';
-import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
+import { getMail, getMailVeri, handleVerificationResult } from '@/apis/api';
 
 interface Props {}
 
@@ -45,25 +44,9 @@ const Page = (props: Props) => {
     }
   }, [emailValue, univNameValue, codeValue]);
 
-  const handleMail = async () => {
-    const res = await axios.post(
-      `https://${BASE_URL}/mail`,
-      { univ_email: emailValue, univName: univNameValue },
-      {
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ` + ACCESS_TOKEN,
-        },
-      }
-    );
-
-    return res.data.data;
-  };
-
   const fetchMailData = async () => {
     try {
-      const data = await handleMail();
+      const data = await getMail(emailValue, univNameValue);
       // setUser(data);
       alert(
         '이메일로 코드가 전송되었습니다. 전송된 인증 코드를 아래에 입력해주세요.'
@@ -73,39 +56,14 @@ const Page = (props: Props) => {
     }
   };
 
-  const handleMailVeri = async () => {
-    try {
-      const res = await axios.get(
-        `https://${BASE_URL}/mail/verifications?univ_email=${emailValue}&univName=${univNameValue}&code=${codeValue}`,
-        {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ` + ACCESS_TOKEN,
-          },
-        }
-      );
-
-      if (res.data.message === '검증이 성공했습니다') {
-        console.log(res.data.message);
-        setVerificationResult('인증에 성공했습니다!');
-        setIsCompleteButtonVisible(true);
-      } else {
-        console.log(res.data.message);
-        setVerificationResult('인증에 실패했습니다');
-        setIsCompleteButtonVisible(false);
-      }
-    } catch (error) {
-      console.error('Error verifying data:', error);
-      setVerificationResult('인증에 실패했습니다');
-      setIsCompleteButtonVisible(false);
-    }
-  };
-
   const fetchVeriData = async () => {
     try {
-      const data = await handleMailVeri();
-      // setUser(data);
+      const data = await getMailVeri(emailValue, univNameValue, codeValue);
+      handleVerificationResult(
+        verificationResult,
+        setVerificationResult,
+        setIsCompleteButtonVisible
+      );
     } catch (error) {
       console.error('Error fetching data:', error);
     }

@@ -5,36 +5,16 @@ import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import NavArrowRight from '@/svgs/NavArrowRight.svg';
 import Back from '@/svgs/BackArrowWhite.svg';
 import Alert from '@/svgs/Alert.svg';
-import { useRouter } from 'next/navigation';
 import { userState } from '@/recoil/state';
 import { useRecoilState } from 'recoil';
-import { BASE_URL, ACCESS_TOKEN, OAUTH_ACCESS_TOKEN } from '@/utils/routePath';
-import axios from 'axios';
+import { withdraw } from '@/apis/api';
+import { useRouter } from 'next/navigation';
 
 interface Props {}
 
 const Page = (props: Props) => {
   const router = useRouter();
   const [userData, setUserData] = useRecoilState(userState);
-
-  const withdraw = async () => {
-    alert('정말 탈퇴하시겠습니까?');
-
-    try {
-      const response = await axios.delete(`https://${BASE_URL}/withdraw`, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-          OAuthAccessToken: `${OAUTH_ACCESS_TOKEN}`,
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-      });
-      localStorage.clear();
-      router.push('/');
-      return response.data.data;
-    } catch (error) {
-      console.error('회원 탈퇴 실패:', error);
-    }
-  };
 
   const logout = () => {
     alert('로그아웃 하시겠습니까?');
@@ -97,7 +77,9 @@ const Page = (props: Props) => {
         <NavArrowRight />
       </div>
       <div
-        onClick={withdraw}
+        onClick={() => {
+          withdraw();
+        }}
         className="flex h-[100px] items-center justify-between border-b-2 border-[#eeeeee] bg-white px-10"
       >
         <h1 className="font-noto text-[15px] font-bold text-black">
