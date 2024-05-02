@@ -2,10 +2,9 @@
 import { loginState, userState } from '@/recoil/state';
 import SearchTrainer from '@/svgs/SelectTrainer.svg';
 import SearchUser from '@/svgs/SelectUser.svg';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
+import { getUser } from '@/apis/api';
 
 type Props = {};
 
@@ -15,25 +14,9 @@ const TrainerSelectPage = () => {
   const setUser = useSetRecoilState(userState);
   const setLoginState = useSetRecoilState(loginState);
 
-  const handleUser = async (role: string) => {
-    const res = await axios.patch(
-      `https://${BASE_URL}/users/role`,
-      { role: role },
-      {
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ` + ACCESS_TOKEN,
-        },
-      }
-    );
-
-    return res.data.data;
-  };
-
   const fetchData = async (role: string) => {
     try {
-      const data = await handleUser(role);
+      const data = await getUser(role);
       setUser(data);
       setLoginState((prevLoginState) => ({
         ...prevLoginState,

@@ -10,28 +10,29 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import ChatListEmpty from '@/svgs/ChatListEmpty.svg';
-import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
+import { BASE_URL } from '@/utils/routePath';
+import { getChatList } from '@/apis/api';
 
 type Props = {};
 
 const ChattingList = (props: Props) => {
   const [chatListData, setChatListData] = useRecoilState(chatListState);
 
-  const handleChatList = async () => {
-    const res = await axios.get(
-      `https://${BASE_URL}/chat/rooms?lastId=&size=`,
-      {
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: ACCESS_TOKEN,
-        },
-      }
-    );
-    return res.data.data;
-  };
+  // const handleChatList = async () => {
+  //   const res = await axios.get(
+  //     `https://${BASE_URL}/chat/rooms?lastId=&size=`,
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/json;charset=utf-8',
+  //         'Access-Control-Allow-Origin': '*',
+  //         Authorization: ACCESS_TOKEN,
+  //       },
+  //     }
+  //   );
+  //   return res.data.data;
+  // };
 
-  const { data } = useQuery(KEY_CHATLIST, handleChatList, {
+  const { data } = useQuery(KEY_CHATLIST, getChatList, {
     onSuccess: (data) => setChatListData(data),
   });
 

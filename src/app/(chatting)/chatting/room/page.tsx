@@ -16,7 +16,7 @@ import { useRecoilState } from 'recoil';
 import { trainerProfileState, userState } from '@/recoil/state';
 import { KEY_CHAT } from '@/utils/queryKey';
 import { useEffect, useRef, useState } from 'react';
-import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
+import { BASE_URL } from '@/utils/routePath';
 
 type Props = {};
 interface ChatHistoryProps {
@@ -34,6 +34,7 @@ interface PrevHistoryProps {
 }
 
 const ChattingRoom = (props: any) => {
+  const ACCESS_TOKEN = localStorage.getItem('accessToken');
   const params = new URLSearchParams(document.location.search);
 
   let roomId: string = '';

@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { twMerge } from 'tailwind-merge';
-import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
+import { BASE_URL } from '@/utils/routePath';
 import Image from 'next/image';
 
 type Props = {};
@@ -24,6 +24,7 @@ const WRITE_TRAINER_DETAIL_TABS: WriteTrainerDetailTab[] = [
   '사진/동영상',
 ];
 const WriteTrainerDetailPage = (props: Props) => {
+  const ACCESS_TOKEN = localStorage.getItem('accessToken');
   const router = useRouter();
   const [userData, setUserData] = useRecoilState(userState);
   const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);

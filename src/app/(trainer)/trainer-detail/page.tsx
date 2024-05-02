@@ -10,10 +10,11 @@ import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import Building from '@/svgs/Building.svg';
 import Clock from '@/svgs/Clock.svg';
 import Star from '@/svgs/Star.svg';
-import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
+import { BASE_URL } from '@/utils/routePath';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { getPhotoResponse, getTrainerProfileListDetail } from '@/apis/api';
 
 type Props = {};
 type TrainerDetailTab = '상세내용' | '사진/동영상' | '후기';
@@ -33,61 +34,10 @@ const TrainerDetailPage = ({
   const [trainerImageData, setTrainerImageData] = useState<any>();
   const [currentTab, setCurrentTab] = useState<TrainerDetailTab>('상세내용');
 
-  const photoResponse = async () => {
-    try {
-      const response = await axios.get(
-        `https://${BASE_URL}/trainers/profiles/${trainerProfileId}/photos`,
-        {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        }
-      );
-      const data = response.data.data;
-
-      if (data && Object.keys(data).length > 0) {
-        return data;
-      } else {
-        throw new Error('데이터가 없습니다.');
-      }
-    } catch (error) {
-      console.error('데이터를 불러오는 중 에러가 발생했습니다.', error);
-      throw error;
-    }
-  };
-
-  const trainerProfileList = async () => {
-    try {
-      const response = await axios.get(
-        `https://${BASE_URL}/trainers/profiles/details/${trainerProfileId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        }
-      );
-
-      const data = response.data.data;
-
-      if (data && Object.keys(data).length > 0) {
-        return data;
-      } else {
-        throw new Error('데이터가 없습니다.');
-      }
-    } catch (error) {
-      console.error('데이터를 불러오는 중 에러가 발생했습니다.', error);
-      throw error;
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
-      const data = await trainerProfileList();
-      const imageData = await photoResponse();
+      const data = await getTrainerProfileListDetail(trainerProfileId);
+      const imageData = await getPhotoResponse(trainerProfileId);
       setTrainerProfileData(data);
       setTrainerImageData(imageData);
     };

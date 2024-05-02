@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
+import { BASE_URL } from '@/utils/routePath';
 import FillReviewStar from './icon/FillReviewStar.svg';
 import EmptyReviewStar from './icon/EmptyReviewStar.svg';
 import BackgroundCircle from './icon/BackgroundCircle.png';
@@ -29,6 +29,7 @@ import {
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import TrainerProfileEdit from '@/components/pages/trainer/TrainerProfileEdit';
+import { getTrainerProfileData, getUserData } from '@/apis/api';
 
 type Props = {};
 
@@ -38,6 +39,8 @@ const getDay = (dayIndex: number) => {
 };
 
 const Page = () => {
+  const ACCESS_TOKEN = localStorage.getItem('accessToken');
+
   const router = useRouter();
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const loginData = useRecoilValue(loginState);
@@ -56,37 +59,12 @@ const Page = () => {
     setKoreanDay(koreanDay);
   }, []);
 
-  const fetchTrainerProfileData = async () => {
-    const response = await axios.get(
-      `https://${BASE_URL}/trainers/profiles/details`,
-      {
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ` + ACCESS_TOKEN,
-        },
-      }
-    );
-    return response.data.data;
-  };
-
-  const fetchUserData = async () => {
-    const response = await axios.get(`https://${BASE_URL}/users`, {
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-        Authorization: `Bearer ` + ACCESS_TOKEN,
-      },
-    });
-    return response.data.data;
-  };
-
   const listUrl =
     userData.role === 'ROLE_TRAINER'
       ? `https://${BASE_URL}/process/trainers/list`
       : `https://${BASE_URL}/process/my/list`;
 
-  const fetchMyListData = async () => {
+  const getMyListData = async () => {
     const response = await axios.get(listUrl, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -102,7 +80,7 @@ const Page = () => {
       ? `https://${BASE_URL}/reviews/trainers/list/${userData.id}`
       : `https://${BASE_URL}/reviews/my/list`;
 
-  const fetchMyReviewData = async () => {
+  const gethMyReviewData = async () => {
     const response = await axios.get(reviewUrl, {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -115,21 +93,21 @@ const Page = () => {
 
   const { data: trainerProfileDataQuery } = useQuery(
     KEY_TRAINERPROFILE_ME,
-    fetchTrainerProfileData,
+    getTrainerProfileData,
     {
       onSuccess: (data) => setTrainerProfileData(data),
     }
   );
 
-  const { data: userDataQuery } = useQuery(KEY_USERS, fetchUserData, {
+  const { data: userDataQuery } = useQuery(KEY_USERS, getUserData, {
     onSuccess: (data) => setUserData(data),
   });
 
-  const { data: listDataQuery } = useQuery(KEY_MYLIST, fetchMyListData, {
+  const { data: listDataQuery } = useQuery(KEY_MYLIST, getMyListData, {
     onSuccess: (data) => setMyListUserData(data),
   });
 
-  const { data: reviewDataQuery } = useQuery(KEY_MYREVIEW, fetchMyReviewData, {
+  const { data: reviewDataQuery } = useQuery(KEY_MYREVIEW, gethMyReviewData, {
     onSuccess: (data) => setMyReviewData(data),
   });
 
