@@ -29,9 +29,7 @@ const Page = (props: Props) => {
       _bottomNode={<BottomNavigationBar />}
       _contentDivProps={{ className: 'bg-white' }}
     >
-      <>
-        <CommunityListItem />
-      </>
+      <>{/* <CommunityListItem /> */}</>
     </TopBottomBarTemplate>
   );
 };

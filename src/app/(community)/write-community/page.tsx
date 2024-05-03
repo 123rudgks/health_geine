@@ -10,10 +10,7 @@ import Button from '@/components/Button/Button';
 import Box from '@/components/Box/Box';
 import Camera from '@/svgs/ChatCamera.svg';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { BASE_URL } from '@/utils/routePath';
 import BasicTextArea from '@/components/Input/BasicTextarea';
-import { error } from 'console';
 import { post } from '@/apis/api';
 
 type Props = {};
@@ -40,31 +37,6 @@ const Page = (props: Props) => {
     const koreanDay = getDay(dayIndex);
     setKoreanDay(koreanDay);
   }, []);
-
-  //   const post = async () => {
-  //     // if (titleValue !== null && contentValue !== null) {
-  //     try {
-  //       const response = await axios.post(
-  //         `https://${BASE_URL}/community/posts`,
-  //         { title: titleValue, content: contentValue },
-  //         {
-  //           headers: {
-  //             'Content-Type': 'application/json;charset=utf-8',
-  //             'Access-Control-Allow-Origin': '*',
-  //             Authorization: `Bearer ` + ACCESS_TOKEN,
-  //           },
-  //         }
-  //       );
-
-  //       return response.data.data;
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //     // } else {
-  //     //   alert('제목과 내용은 비어있을 수 없습니다.');
-  //     // }
-  //   };
-  post(titleValue, contentValue);
 
   const handleTitle = (value: string) => {
     if (value.length > 20) {
