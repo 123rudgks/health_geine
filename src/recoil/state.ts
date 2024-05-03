@@ -71,6 +71,19 @@ export interface ITrainerProfile {
   reviewAvg: string;
   photoPaths: string;
 }
+export interface ICommunityListContent {
+  id: number;
+  createdDate: string;
+  lastModifiedDate: string;
+  title: string;
+  content: string;
+  writer: string;
+  writerPhoto?: string | null;
+}
+export interface ICommunityList {
+  contents: ICommunityListContent[];
+  last: boolean;
+}
 
 export const loginState = atom<ILogin>({
   key: 'loginState',
@@ -177,6 +190,29 @@ export const trainerProfileMeState = atom<ITrainerProfile>({
     endTime: '',
     reviewAvg: '',
     photoPaths: '',
+  },
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const communityListState = atom<ICommunityList>({
+  key: 'communityListState',
+  default: {
+    contents: [],
+    last: false,
+  },
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const communityListContentState = atom<ICommunityListContent>({
+  key: 'communityListContentState',
+  default: {
+    id: 0,
+    createdDate: '',
+    lastModifiedDate: '',
+    title: '',
+    content: '',
+    writer: '',
+    writerPhoto: null,
   },
   effects_UNSTABLE: [persistAtom],
 });

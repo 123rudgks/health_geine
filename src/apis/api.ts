@@ -1,3 +1,4 @@
+'use client';
 import axios from 'axios';
 import { BASE_URL } from '@/utils/routePath';
 import Router from 'next/router';
@@ -197,13 +198,11 @@ export const getTrainerProfileListDetail = async (trainerProfileId: string) => {
   }
 };
 
-// write-community
-export const post = async (titleValue: string, contentValue: string) => {
-  // if (titleValue !== null && contentValue !== null) {
+// community
+export const getCommunityList = async () => {
   try {
-    const response = await axios.post(
-      `https://${BASE_URL}/community/posts`,
-      { title: titleValue, content: contentValue },
+    const response = await axios.get(
+      `https://${BASE_URL}/community/posts?keyword=&userId=&lastId=&size=`,
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
@@ -212,14 +211,37 @@ export const post = async (titleValue: string, contentValue: string) => {
         },
       }
     );
-
-    return response.data.data;
+    return response.data.data.contents;
   } catch (error) {
     console.log(error);
   }
-  // } else {
-  //   alert('제목과 내용은 비어있을 수 없습니다.');
-  // }
+};
+
+// write-community
+export const post = async (titleValue: string, contentValue: string) => {
+  if (titleValue.trim() !== '' && contentValue.trim() !== '') {
+    try {
+      const response = await axios.post(
+        `https://${BASE_URL}/community/posts`,
+        { title: titleValue, content: contentValue },
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: `Bearer ` + ACCESS_TOKEN,
+          },
+        }
+      );
+
+      alert('정상적으로 글이 저장되었습니다.');
+      Router.push('/community');
+      return response.data.data;
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    alert('제목과 내용은 비어있을 수 없습니다.');
+  }
 };
 
 // chatting/list

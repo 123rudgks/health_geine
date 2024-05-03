@@ -7,16 +7,33 @@ import Like from '@/svgs/FillLike.svg';
 import Box from '@/components/Box/Box';
 import CommunityListItem from '@/components/pages/community/CommunityListItem';
 import { useRouter } from 'next/navigation';
+import { useRecoilState } from 'recoil';
+import { ICommunityListContent, communityListState } from '@/recoil/state';
+import { useQuery } from '@tanstack/react-query';
+import { KEY_COMMUNITY_LIST } from '@/utils/queryKey';
+import { getCommunityList } from '@/apis/api';
+import Fab from '@/components/FAB/Fab';
+import Link from 'next/link';
 
 type Props = {};
 
 const Page = (props: Props) => {
   const router = useRouter();
+  const [communityListData, setCommunityListData] =
+    useRecoilState(communityListState);
+
+  const { data: communityDataQuery } = useQuery(
+    KEY_COMMUNITY_LIST,
+    getCommunityList,
+    {
+      onSuccess: (data) => setCommunityListData(data),
+    }
+  );
 
   return (
     <TopBottomBarTemplate
       _topNode={
-        <div className="relative flex h-full w-full items-center">
+        <div className="relative flex h-full w-full items-center bg-white">
           <div className="absolute left-[22px]">
             <BackSpaceArrow
               onClick={() => {
@@ -32,7 +49,7 @@ const Page = (props: Props) => {
       _bottomNode={<BottomNavigationBar />}
       _contentDivProps={{ className: 'bg-white' }}
     >
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center pb-[100px]">
         <Box className="my-6 flex w-[328px] justify-between rounded-[6px] bg-primary-400 p-3 font-noto">
           <div className="flex items-center gap-4">
             <HotSpring />
@@ -47,8 +64,36 @@ const Page = (props: Props) => {
             </span>
           </div>
         </Box>
-        <CommunityListItem />
+        {communityDataQuery &&
+          communityDataQuery.map(
+            (item: ICommunityListContent, index: number) => (
+              <div key={item.id}>
+                <Link
+                  href={{
+                    pathname: `/community-detail`,
+                    query: { postId: item.id },
+                  }}
+                >
+                  <CommunityListItem
+                    key={item.id}
+                    id={item.id}
+                    createdDate={item.createdDate}
+                    title={item.title}
+                    content={item.content}
+                    writer={item.writer}
+                  />
+                </Link>
+              </div>
+            )
+          )}
       </div>
+
+      <Fab
+        _imageName="edit"
+        _onClick={() => {
+          router.push('/write-community');
+        }}
+      />
     </TopBottomBarTemplate>
   );
 };
