@@ -85,6 +85,17 @@ export interface ICommunityList {
   last: boolean;
 }
 
+export interface ICommentList {
+  postId: string;
+  id: string;
+  createdDate: string;
+  lastModifiedDate: string;
+  content: string;
+  writer: string;
+  writerPhoto: string;
+  onUpdate: () => void;
+}
+
 export const loginState = atom<ILogin>({
   key: 'loginState',
   default: {
