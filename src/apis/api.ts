@@ -244,6 +244,25 @@ export const post = async (titleValue: string, contentValue: string) => {
   }
 };
 
+// community-detail
+export const getCommunityDetail = async (postId: string) => {
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/community/posts/${postId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // chatting/list
 export const getChatList = async () => {
   const res = await axios.get(`https://${BASE_URL}/chat/rooms?lastId=&size=`, {
