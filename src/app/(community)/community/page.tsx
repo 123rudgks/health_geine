@@ -71,7 +71,7 @@ const Page = (props: Props) => {
                 <Link
                   href={{
                     pathname: `/community-detail`,
-                    query: { postId: item.id },
+                    query: { id: item.id },
                   }}
                 >
                   <CommunityListItem

@@ -244,6 +244,164 @@ export const post = async (titleValue: string, contentValue: string) => {
   }
 };
 
+// comments count (댓글 개수)
+export const getCommentCount = async (postId: string) => {
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/community/posts/${postId}/comments/count`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// likes count (좋아요 개수)
+export const getLikesCount = async (postId: string) => {
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/community/posts/${postId}/likes/count`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail
+export const getCommunityDetail = async (postId: string) => {
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/community/posts/${postId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (댓글 작성)
+export const getCommentPost = async (postId: string, content: string) => {
+  try {
+    const response = await axios.post(
+      `https://${BASE_URL}/community/posts/${postId}/comments`,
+      { content: content },
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (댓글 수정)
+export const getCommentUpdate = async (
+  postId: string,
+  commentId: string,
+  content: string
+) => {
+  try {
+    const response = await axios.patch(
+      `https://${BASE_URL}/community/posts/${postId}/comments/${commentId}`,
+      { content: content },
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (댓글 삭제)
+export const getCommentDelete = async (postId: string, commentId: string) => {
+  try {
+    const response = await axios.delete(
+      `https://${BASE_URL}/community/posts/${postId}/comments/${commentId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (댓글 전체 조회)
+export const getComment = async (postId: string) => {
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/community/posts/${postId}/comments`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (좋아요 게시)
+export const getLikes = async (postId: string) => {
+  try {
+    const response = await axios.post(
+      `https://${BASE_URL}/community/posts/${postId}/likes`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // chatting/list
 export const getChatList = async () => {
   const res = await axios.get(`https://${BASE_URL}/chat/rooms?lastId=&size=`, {
