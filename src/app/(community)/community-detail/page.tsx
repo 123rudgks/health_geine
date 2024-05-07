@@ -19,6 +19,7 @@ import {
   getLikesCount,
 } from '@/apis/api';
 import CommentsListItem from '@/components/pages/community/CommentsListItem';
+import { ICommentList } from '@/recoil/state';
 
 type Props = {};
 
@@ -62,6 +63,11 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
   const handleCommentPost = async () => {
     await getCommentPost(postId, content);
     setContent('');
+    handleUpdate();
+  };
+
+  // 댓글 수정 및 삭제 시
+  const handleUpdate = async () => {
     const updatedCommentCountData = await getCommentCount(postId);
     const updatedCommentData = await getComment(postId);
     setCommentsCountData(updatedCommentCountData);
@@ -169,15 +175,17 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                 commentsData
                   .slice()
                   .reverse()
-                  .map((item: any, index: number) => (
+                  .map((item: ICommentList, index: number) => (
                     <div className="w-full" key={item.id}>
                       <CommentsListItem
+                        postId={postId}
                         id={item.id}
                         createdDate={item.createdDate}
                         lastModifiedDate={item.lastModifiedDate}
                         writer={item.writer}
                         content={item.content}
-                        writerPhoto={item.profilePhoto}
+                        writerPhoto={item.writerPhoto}
+                        onUpdate={handleUpdate}
                       />
                     </div>
                   ))}
