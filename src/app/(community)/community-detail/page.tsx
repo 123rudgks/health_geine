@@ -1,9 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import CommunityCalendar from '@/svgs/CommunituCalendar.svg';
 import CommunityClock from '@/svgs/CommunityClock.svg';
 import Chatting from '@/svgs/FillChatting.svg';
+import FillLike from '@/svgs/FillLike.svg';
 import EmptyLike from '@/svgs/EmptyLike.svg';
 import BlackDot from '@/svgs/BlackDot.svg';
 import { useRouter } from 'next/navigation';
@@ -19,7 +21,9 @@ import {
   getCommunityDetail,
   getCommunityUpdate,
   getLikes,
+  getLikesCancel,
   getLikesCount,
+  getPhotos,
 } from '@/apis/api';
 import CommentsListItem from '@/components/pages/community/CommentsListItem';
 import { ICommentList, userState } from '@/recoil/state';
@@ -40,11 +44,14 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
   const [communityDetailData, setCommunityDetailData] = useState<any>();
   const [editedTitle, setEditedTitle] = useState('');
   const [editedContent, setEditedContent] = useState('');
+  const [photosData, setPhotosData] = useState<any>();
   const [commentsData, setCommentsData] = useState<any>();
   const [commentsCountData, setCommentsCountData] = useState<any>();
+  const [likesData, setLikesData] = useState<any>(null);
   const [likesCountData, setLikesCountData] = useState<any>();
   const [content, setContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
     if (communityDetailData) {
@@ -55,11 +62,13 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
 
   const fetchData = async () => {
     const communityData = await getCommunityDetail(postId);
+    const photoData = await getPhotos(postId);
     const commentData = await getComment(postId);
     const commentCountData = await getCommentCount(postId);
     const likeCountData = await getLikesCount(postId);
 
     setCommunityDetailData(communityData);
+    setPhotosData(photoData);
     setCommentsData(commentData);
     setCommentsCountData(commentCountData);
     setLikesCountData(likeCountData);
@@ -71,7 +80,18 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
 
   // 좋아요 달기
   const handleLikes = async () => {
-    await getLikes(postId);
+    const like = await getLikes(postId, userData.id);
+    setLikesData(like);
+
+    const updatedLikesCount = await getLikesCount(postId);
+    setLikesCountData(updatedLikesCount);
+  };
+
+  // 좋아요 취소
+  const handleLikesCancel = async () => {
+    const like = await getLikesCancel(postId);
+    setLikesData(like);
+
     const updatedLikesCount = await getLikesCount(postId);
     setLikesCountData(updatedLikesCount);
   };
@@ -149,6 +169,20 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // 캐러셀 - 이전 이미지로 이동하는 함수
+  const goToPreviousImage = () => {
+    setCurrentImage((prevIndex) =>
+      prevIndex === 0 ? photosData.length - 1 : prevIndex - 1
+    );
+  };
+
+  // 캐러셀 - 다음 이미지로 이동하는 함수
+  const goToNextImage = () => {
+    setCurrentImage((prevIndex) =>
+      prevIndex === photosData.length - 1 ? 0 : prevIndex + 1
+    );
+  };
 
   return (
     <>
@@ -271,17 +305,54 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                   </div>
                 </div>
               </div>
-              <div
-                className="h-[258px] w-full rounded-xl bg-black"
-                style={{
-                  backgroundImage: `url('${communityDetailData.writerPhoto}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              />
-              <div className="flex w-full justify-center pb-2 pt-1">
-                <BlackDot />
-              </div>
+
+              {photosData.length > 0 ? (
+                <>
+                  <div className="relative flex h-[258px] w-full overflow-hidden transition-transform duration-300 ease-in-out">
+                    {photosData &&
+                      photosData.map((item: any, index: number) => (
+                        <div
+                          key={item.id}
+                          className={`absolute top-0 h-full w-full rounded-xl  transition-transform duration-300 ease-in-out  ${
+                            index === currentImage ? 'left-0' : 'left-full'
+                          }`}
+                        >
+                          <img
+                            src={item.path}
+                            alt={item.originName}
+                            className="h-full w-full rounded-xl object-cover"
+                          />
+                        </div>
+                      ))}
+                    <button
+                      className="absolute bottom-0 left-0 top-0 ml-2 w-1/2"
+                      onClick={goToPreviousImage}
+                    >
+                      <BackSpaceArrow />
+                    </button>
+                    <button
+                      className="absolute bottom-0 right-0 top-0 mr-2 w-1/2 rotate-180 transform"
+                      onClick={goToNextImage}
+                    >
+                      <BackSpaceArrow />
+                    </button>
+                  </div>
+                  <div className="flex w-full justify-center pb-2 pt-1">
+                    {photosData &&
+                      photosData.map((item: any, index: number) => (
+                        <div className="mx-[2px]" key={item.id}>
+                          <BlackDot
+                            active={index === currentImage}
+                            onClick={() => setCurrentImage(index)}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+
               {isEditing ? (
                 <input
                   type="text"
@@ -302,12 +373,22 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                     {commentsCountData}
                   </p>
                 </div>
-                <div onClick={handleLikes} className="flex gap-1">
-                  <EmptyLike />
-                  <p className="font-regular font-noto text-[13.36px] text-[#F44B4B]">
-                    {likesCountData}
-                  </p>
-                </div>
+
+                {likesData && likesData.userId === userData.id ? (
+                  <div onClick={handleLikesCancel} className="flex gap-1">
+                    <FillLike width={21} />
+                    <p className="font-regular font-noto text-[13.36px] text-[#F44B4B]">
+                      {likesCountData}
+                    </p>
+                  </div>
+                ) : (
+                  <div onClick={handleLikes} className="flex gap-1">
+                    <EmptyLike />
+                    <p className="font-regular font-noto text-[13.36px] text-[#F44B4B]">
+                      {likesCountData}
+                    </p>
+                  </div>
+                )}
               </div>
               {commentsData &&
                 commentsData

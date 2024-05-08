@@ -38,7 +38,7 @@ const CommunityListItem = ({
         <Box className="mb-4 flex w-[328px] flex-col justify-center gap-2 rounded-[6px] bg-[#f3f3f3] p-2 font-noto">
           <h1 className="text-[13px] font-semibold text-black">{title}</h1>
           <p className="font-regular text-[11px] text-black">{content}</p>
-          <div className="font-regular flex items-center justify-between font-noto text-[11px] text-[#c1c1c1]">
+          <div className="font-reguladr flex items-center justify-between font-noto text-[11px] text-[#c1c1c1]">
             <p>
               {createdDate.substring(2, 10).replaceAll('-', '.')} | {writer}
             </p>
@@ -50,7 +50,7 @@ const CommunityListItem = ({
                 </p>
               </div>
               <div className="flex gap-1">
-                <Like />
+                <Like width={11} height={11} />
                 <p className="font-regular font-noto text-[7px] text-[#F44B4B]">
                   {likesCountData}
                 </p>
