@@ -11,7 +11,8 @@ import Box from '@/components/Box/Box';
 import Camera from '@/svgs/ChatCamera.svg';
 import { useEffect, useState } from 'react';
 import BasicTextArea from '@/components/Input/BasicTextarea';
-import { post } from '@/apis/api';
+import { getPostPhotos, post } from '@/apis/api';
+import AddTrainerPhotoVideoTab from '@/components/pages/write-trainer-detail/AddTrainerPhotoVideoTab';
 
 type Props = {};
 
@@ -19,6 +20,8 @@ const Page = (props: Props) => {
   const router = useRouter();
   const [titleValue, setTitleValue] = useState<string>('');
   const [contentValue, setContentValue] = useState<string>('');
+  const [profileImages, setProfileImages] = useState<File[]>([]);
+  const [additionalImages, setAdditionalImages] = useState<File[]>([]);
 
   const date = `${new Date().getFullYear()}.${
     new Date().getMonth() + 1
@@ -44,8 +47,34 @@ const Page = (props: Props) => {
     }
     setTitleValue(value);
   };
+
   const handleContent = (value: string) => {
+    if (value.length > 20) {
+      value = value.slice(0, 20);
+    }
     setContentValue(value);
+  };
+
+  const handleWrite = async () => {
+    const profileResponse = await post(titleValue, contentValue);
+    const id = profileResponse.id;
+
+    await uploadProfileImages(id);
+    router.push('/community');
+  };
+
+  const handleAdditionalImagesChange = (images: File[]) => {
+    setAdditionalImages(images);
+  };
+
+  const uploadProfileImages = async (id: string) => {
+    if (profileImages.length > 0) {
+      const formData = new FormData();
+      profileImages.forEach((image, index) => {
+        formData.append('photos', image);
+      });
+      await getPostPhotos(id, formData);
+    }
   };
 
   return (
@@ -67,9 +96,7 @@ const Page = (props: Props) => {
       _bottomNode={
         <div className="flex justify-center px-14">
           <Button
-            onClick={() => {
-              post(titleValue, contentValue);
-            }}
+            onClick={handleWrite}
             ring="none"
             background="primary-400"
             color="white"
@@ -126,14 +153,18 @@ const Page = (props: Props) => {
             <p>3/5</p>
           </div>
         </Box>
-        <div className="grid w-full grid-cols-3 gap-4 pt-2">
+        {/* <div className="grid w-full grid-cols-3 gap-4 pt-2">
           <div
             className="flex aspect-square justify-end overflow-hidden rounded-2xl bg-black p-2"
             style={{ position: 'relative' }}
           >
             <Mask />
           </div>
-        </div>
+        </div> */}
+        <AddTrainerPhotoVideoTab
+          profileImages={additionalImages}
+          onImagesChange={handleAdditionalImagesChange}
+        />
       </div>
     </TopBottomBarTemplate>
   );

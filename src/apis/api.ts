@@ -234,13 +234,52 @@ export const post = async (titleValue: string, contentValue: string) => {
       );
 
       alert('정상적으로 글이 저장되었습니다.');
-      Router.push('/community');
       return response.data.data;
     } catch (error) {
       console.log(error);
     }
   } else {
     alert('제목과 내용은 비어있을 수 없습니다.');
+  }
+};
+
+// write-community (사진 게시)
+export const getPostPhotos = async (postId: string, photos: FormData) => {
+  try {
+    const response = await axios.post(
+      `https://${BASE_URL}/community/posts/${postId}/photos`,
+      photos,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// write-community (게시된 사진 조회)
+export const getPhotos = async (postId: string) => {
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/community/posts/${postId}/photos`,
+
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -286,6 +325,49 @@ export const getLikesCount = async (postId: string) => {
 export const getCommunityDetail = async (postId: string) => {
   try {
     const response = await axios.get(
+      `https://${BASE_URL}/community/posts/${postId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (게시글 수정)
+export const getCommunityUpdate = async (
+  postId: string,
+  title: string,
+  content: string
+) => {
+  try {
+    const response = await axios.patch(
+      `https://${BASE_URL}/community/posts/${postId}`,
+      { title: title, content: content },
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (게시글 삭제)
+export const getCommunityDelete = async (postId: string) => {
+  try {
+    const response = await axios.delete(
       `https://${BASE_URL}/community/posts/${postId}`,
       {
         headers: {
@@ -384,9 +466,31 @@ export const getComment = async (postId: string) => {
 };
 
 // community-detail (좋아요 게시)
-export const getLikes = async (postId: string) => {
+export const getLikes = async (postId: string, userId: string) => {
   try {
     const response = await axios.post(
+      `https://${BASE_URL}/community/posts/${postId}/likes`,
+      {
+        userId: userId,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (좋아요 취소)
+export const getLikesCancel = async (postId: string) => {
+  try {
+    const response = await axios.delete(
       `https://${BASE_URL}/community/posts/${postId}/likes`,
       {
         headers: {

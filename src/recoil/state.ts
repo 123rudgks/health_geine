@@ -227,3 +227,17 @@ export const communityListContentState = atom<ICommunityListContent>({
   },
   effects_UNSTABLE: [persistAtom],
 });
+
+export const communityDetailState = atom<ICommunityListContent>({
+  key: 'communityDetailState',
+  default: {
+    id: 0,
+    createdDate: '',
+    lastModifiedDate: '',
+    title: '',
+    content: '',
+    writer: '',
+    writerPhoto: null,
+  },
+  effects_UNSTABLE: [persistAtom],
+});

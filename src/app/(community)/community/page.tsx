@@ -14,11 +14,13 @@ import { KEY_COMMUNITY_LIST } from '@/utils/queryKey';
 import { getCommunityList } from '@/apis/api';
 import Fab from '@/components/FAB/Fab';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 type Props = {};
 
 const Page = (props: Props) => {
   const router = useRouter();
+
   const [communityListData, setCommunityListData] =
     useRecoilState(communityListState);
 
@@ -58,7 +60,7 @@ const Page = (props: Props) => {
             </h1>
           </div>
           <div className="flex items-end gap-1">
-            <Like />
+            <Like width={11} height={11} />
             <span className="font-regular font-noto text-[7px] text-[#F44B4B]">
               37
             </span>

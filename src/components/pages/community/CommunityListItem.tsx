@@ -4,6 +4,8 @@ import Box from '@/components/Box/Box';
 import Like from '@/svgs/FillLike.svg';
 import FillChat from '@/svgs/FillChatting.svg';
 import { ICommunityListContent } from '@/recoil/state';
+import { useEffect, useState } from 'react';
+import { getCommentCount, getLikesCount } from '@/apis/api';
 
 const CommunityListItem = ({
   id,
@@ -15,7 +17,20 @@ const CommunityListItem = ({
   ICommunityListContent,
   'id' | 'createdDate' | 'title' | 'content' | 'writer'
 >) => {
-  const router = useRouter();
+  const [commentsCountData, setCommentsCountData] = useState<any>();
+  const [likesCountData, setLikesCountData] = useState<any>();
+
+  const fetchData = async () => {
+    const commentCountData = await getCommentCount(String(id));
+    const likeCountData = await getLikesCount(String(id));
+
+    setCommentsCountData(commentCountData);
+    setLikesCountData(likeCountData);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [id]);
 
   return (
     <>
@@ -23,21 +38,21 @@ const CommunityListItem = ({
         <Box className="mb-4 flex w-[328px] flex-col justify-center gap-2 rounded-[6px] bg-[#f3f3f3] p-2 font-noto">
           <h1 className="text-[13px] font-semibold text-black">{title}</h1>
           <p className="font-regular text-[11px] text-black">{content}</p>
-          <div className="font-regular flex items-center justify-between font-noto text-[11px] text-[#c1c1c1]">
+          <div className="font-reguladr flex items-center justify-between font-noto text-[11px] text-[#c1c1c1]">
             <p>
-              {createdDate} | {writer}
+              {createdDate.substring(2, 10).replaceAll('-', '.')} | {writer}
             </p>
             <div className="flex gap-2">
               <div className="flex gap-1">
                 <FillChat width={11} height={11} />
                 <p className="font-regular font-noto text-[7px] text-primary-400">
-                  12
+                  {commentsCountData}
                 </p>
               </div>
               <div className="flex gap-1">
-                <Like />
+                <Like width={11} height={11} />
                 <p className="font-regular font-noto text-[7px] text-[#F44B4B]">
-                  15
+                  {likesCountData}
                 </p>
               </div>
             </div>

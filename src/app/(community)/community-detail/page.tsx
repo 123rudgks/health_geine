@@ -1,55 +1,97 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import CommunityCalendar from '@/svgs/CommunituCalendar.svg';
 import CommunityClock from '@/svgs/CommunityClock.svg';
 import Chatting from '@/svgs/FillChatting.svg';
+import FillLike from '@/svgs/FillLike.svg';
 import EmptyLike from '@/svgs/EmptyLike.svg';
 import BlackDot from '@/svgs/BlackDot.svg';
 import { useRouter } from 'next/navigation';
 import BasicInput from '@/components/Input/BasicInput';
 import ChatSend from '@/svgs/ChatSend.svg';
-import { useEffect, useState } from 'react';
+import SettingDot from '@/svgs/SettingDot.svg';
+import { useEffect, useRef, useState } from 'react';
 import {
   getComment,
   getCommentCount,
   getCommentPost,
+  getCommunityDelete,
   getCommunityDetail,
+  getCommunityUpdate,
   getLikes,
+  getLikesCancel,
   getLikesCount,
+  getPhotos,
 } from '@/apis/api';
 import CommentsListItem from '@/components/pages/community/CommentsListItem';
-import { ICommentList } from '@/recoil/state';
+import { ICommentList, userState } from '@/recoil/state';
+import Box from '@/components/Box/Box';
+import Button from '@/components/Button/Button';
+import { useRecoilState } from 'recoil';
 
 type Props = {};
 
 const Page = ({ searchParams }: { searchParams: { id: string } }) => {
   const router = useRouter();
   const postId = searchParams.id;
+
+  const outsideRef = useRef<HTMLDivElement>(null);
+
+  const [userData, setUserData] = useRecoilState(userState);
+  const [isEditing, setIsEditing] = useState(false);
   const [communityDetailData, setCommunityDetailData] = useState<any>();
+  const [editedTitle, setEditedTitle] = useState('');
+  const [editedContent, setEditedContent] = useState('');
+  const [photosData, setPhotosData] = useState<any>();
   const [commentsData, setCommentsData] = useState<any>();
   const [commentsCountData, setCommentsCountData] = useState<any>();
+  const [likesData, setLikesData] = useState<any>(null);
   const [likesCountData, setLikesCountData] = useState<any>();
   const [content, setContent] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const communityData = await getCommunityDetail(postId);
-      const commentData = await getComment(postId);
-      const commentCountData = await getCommentCount(postId);
-      const likeCountData = await getLikesCount(postId);
+    if (communityDetailData) {
+      setEditedContent(communityDetailData.content || '');
+      setEditedTitle(communityDetailData.title || '');
+    }
+  }, [communityDetailData]);
 
-      setCommunityDetailData(communityData);
-      setCommentsData(commentData);
-      setCommentsCountData(commentCountData);
-      setLikesCountData(likeCountData);
-    };
+  const fetchData = async () => {
+    const communityData = await getCommunityDetail(postId);
+    const photoData = await getPhotos(postId);
+    const commentData = await getComment(postId);
+    const commentCountData = await getCommentCount(postId);
+    const likeCountData = await getLikesCount(postId);
 
+    setCommunityDetailData(communityData);
+    setPhotosData(photoData);
+    setCommentsData(commentData);
+    setCommentsCountData(commentCountData);
+    setLikesCountData(likeCountData);
+  };
+
+  useEffect(() => {
     fetchData();
   }, [postId]);
 
+  // 좋아요 달기
   const handleLikes = async () => {
-    await getLikes(postId);
+    const like = await getLikes(postId, userData.id);
+    setLikesData(like);
+
+    const updatedLikesCount = await getLikesCount(postId);
+    setLikesCountData(updatedLikesCount);
+  };
+
+  // 좋아요 취소
+  const handleLikesCancel = async () => {
+    const like = await getLikesCancel(postId);
+    setLikesData(like);
+
     const updatedLikesCount = await getLikesCount(postId);
     setLikesCountData(updatedLikesCount);
   };
@@ -74,14 +116,82 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
     setCommentsData(updatedCommentData);
   };
 
+  // 수정하기
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleTitleEditChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.value.length > 20) {
+      event.target.value = event.target.value.slice(0, 20);
+    }
+    setEditedTitle(event.target.value);
+  };
+
+  const handleContentEditChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.value.length > 20) {
+      event.target.value = event.target.value.slice(0, 20);
+    }
+    setEditedContent(event.target.value);
+  };
+
+  // 삭제하기
+  const handleDelete = async () => {
+    alert('정말 삭제하시겠습니까?');
+    await getCommunityDelete(postId);
+    router.back();
+  };
+
+  // 작성자에게만 수정, 삭제 뜸
+  const handleSettingDot = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleClickOutside = (event: any) => {
+    if (outsideRef.current && !outsideRef.current.contains(event.target)) {
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleEditSave = async () => {
+    await getCommunityUpdate(postId, editedTitle, editedContent);
+    setIsEditing(false);
+    fetchData();
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // 캐러셀 - 이전 이미지로 이동하는 함수
+  const goToPreviousImage = () => {
+    setCurrentImage((prevIndex) =>
+      prevIndex === 0 ? photosData.length - 1 : prevIndex - 1
+    );
+  };
+
+  // 캐러셀 - 다음 이미지로 이동하는 함수
+  const goToNextImage = () => {
+    setCurrentImage((prevIndex) =>
+      prevIndex === photosData.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
   return (
     <>
       {communityDetailData && (
         <div key={communityDetailData.id}>
           <TopBottomBarTemplate
             _topNode={
-              <div className="relative flex h-full w-full items-center bg-white">
-                <div className="absolute left-[22px]">
+              <div className="flex h-full w-full items-center justify-between bg-white">
+                <div className="ml-[22px] hover:cursor-pointer">
                   <BackSpaceArrow
                     onClick={() => {
                       router.back();
@@ -91,6 +201,50 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                 <div className="flex flex-1 justify-center font-noto text-[18px] font-bold text-black">
                   글 상세보기
                 </div>
+
+                {userData.nickname === communityDetailData.writer ? (
+                  isEditing ? (
+                    <Button
+                      ring="none"
+                      color="white"
+                      background="primary-400"
+                      className="font-regular mr-[22px] rounded-full px-4 py-1 font-noto text-[14px]"
+                      onClick={handleEditSave}
+                    >
+                      저장
+                    </Button>
+                  ) : (
+                    <div className="mr-[22px] hover:cursor-pointer">
+                      <SettingDot onClick={handleSettingDot} />
+                    </div>
+                  )
+                ) : (
+                  <></>
+                )}
+
+                {isModalOpen && (
+                  <div className="relative">
+                    <div className="absolute right-0 top-0 w-[100px]">
+                      <div ref={outsideRef}>
+                        <Box className="font-regular flex flex-col items-center justify-center bg-white py-2 font-noto text-[14px] text-black shadow-lg">
+                          <p
+                            onClick={handleEdit}
+                            className="hover:cursor-pointer"
+                          >
+                            수정하기
+                          </p>
+                          <div className="h-0 w-full border-b border-[#c1c1c1]" />
+                          <p
+                            onClick={handleDelete}
+                            className="hover:cursor-pointer"
+                          >
+                            삭제하기
+                          </p>
+                        </Box>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             }
             _bottomNode={
@@ -124,9 +278,18 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                 </h1>
               </div>
               <div className="gap-1">
-                <h1 className="font-noto text-[18px] font-semibold text-black">
-                  {communityDetailData.title}
-                </h1>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editedTitle}
+                    onChange={handleTitleEditChange}
+                    className="font-noto text-[18px] font-semibold text-black outline-none"
+                  />
+                ) : (
+                  <h1 className="font-noto text-[18px] font-semibold text-black">
+                    {communityDetailData.title}
+                  </h1>
+                )}
                 <div className="font-regular flex gap-2 font-noto text-[13.51px] text-[#434343]">
                   <div className="flex items-center justify-center gap-1">
                     <CommunityCalendar />
@@ -142,20 +305,66 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                   </div>
                 </div>
               </div>
-              <div
-                className="h-[258px] w-full rounded-xl bg-black"
-                style={{
-                  backgroundImage: `url('${communityDetailData.writerPhoto}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              />
-              <div className="flex w-full justify-center pb-2 pt-1">
-                <BlackDot />
-              </div>
-              <p className="font-regular font-noto text-[13px]">
-                {communityDetailData.content}
-              </p>
+
+              {photosData.length > 0 ? (
+                <>
+                  <div className="relative flex h-[258px] w-full overflow-hidden transition-transform duration-300 ease-in-out">
+                    {photosData &&
+                      photosData.map((item: any, index: number) => (
+                        <div
+                          key={item.id}
+                          className={`absolute top-0 h-full w-full rounded-xl  transition-transform duration-300 ease-in-out  ${
+                            index === currentImage ? 'left-0' : 'left-full'
+                          }`}
+                        >
+                          <img
+                            src={item.path}
+                            alt={item.originName}
+                            className="h-full w-full rounded-xl object-cover"
+                          />
+                        </div>
+                      ))}
+                    <button
+                      className="absolute bottom-0 left-0 top-0 ml-2 w-1/2"
+                      onClick={goToPreviousImage}
+                    >
+                      <BackSpaceArrow />
+                    </button>
+                    <button
+                      className="absolute bottom-0 right-0 top-0 mr-2 w-1/2 rotate-180 transform"
+                      onClick={goToNextImage}
+                    >
+                      <BackSpaceArrow />
+                    </button>
+                  </div>
+                  <div className="flex w-full justify-center pb-2 pt-1">
+                    {photosData &&
+                      photosData.map((item: any, index: number) => (
+                        <div className="mx-[2px]" key={item.id}>
+                          <BlackDot
+                            active={index === currentImage}
+                            onClick={() => setCurrentImage(index)}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={editedContent}
+                  onChange={handleContentEditChange}
+                  className="font-regular w-full font-noto text-[13px] outline-none"
+                />
+              ) : (
+                <p className="font-regular font-noto text-[13px]">
+                  {communityDetailData.content}
+                </p>
+              )}
               <div className="h-2 w-full border-b border-[#c1c1c1]" />
               <div className="flex gap-2">
                 <div className="flex gap-1">
@@ -164,12 +373,22 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                     {commentsCountData}
                   </p>
                 </div>
-                <div onClick={handleLikes} className="flex gap-1">
-                  <EmptyLike />
-                  <p className="font-regular font-noto text-[13.36px] text-[#F44B4B]">
-                    {likesCountData}
-                  </p>
-                </div>
+
+                {likesData && likesData.userId === userData.id ? (
+                  <div onClick={handleLikesCancel} className="flex gap-1">
+                    <FillLike width={21} />
+                    <p className="font-regular font-noto text-[13.36px] text-[#F44B4B]">
+                      {likesCountData}
+                    </p>
+                  </div>
+                ) : (
+                  <div onClick={handleLikes} className="flex gap-1">
+                    <EmptyLike />
+                    <p className="font-regular font-noto text-[13.36px] text-[#F44B4B]">
+                      {likesCountData}
+                    </p>
+                  </div>
+                )}
               </div>
               {commentsData &&
                 commentsData
