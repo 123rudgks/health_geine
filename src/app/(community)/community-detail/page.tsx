@@ -9,45 +9,67 @@ import BlackDot from '@/svgs/BlackDot.svg';
 import { useRouter } from 'next/navigation';
 import BasicInput from '@/components/Input/BasicInput';
 import ChatSend from '@/svgs/ChatSend.svg';
-import { useEffect, useState } from 'react';
+import SettingDot from '@/svgs/SettingDot.svg';
+import { useEffect, useRef, useState } from 'react';
 import {
   getComment,
   getCommentCount,
   getCommentPost,
+  getCommunityDelete,
   getCommunityDetail,
+  getCommunityUpdate,
   getLikes,
   getLikesCount,
 } from '@/apis/api';
 import CommentsListItem from '@/components/pages/community/CommentsListItem';
-import { ICommentList } from '@/recoil/state';
+import { ICommentList, userState } from '@/recoil/state';
+import Box from '@/components/Box/Box';
+import Button from '@/components/Button/Button';
+import { useRecoilState } from 'recoil';
 
 type Props = {};
 
 const Page = ({ searchParams }: { searchParams: { id: string } }) => {
   const router = useRouter();
   const postId = searchParams.id;
+
+  const outsideRef = useRef<HTMLDivElement>(null);
+
+  const [userData, setUserData] = useRecoilState(userState);
+  const [isEditing, setIsEditing] = useState(false);
   const [communityDetailData, setCommunityDetailData] = useState<any>();
+  const [editedTitle, setEditedTitle] = useState('');
+  const [editedContent, setEditedContent] = useState('');
   const [commentsData, setCommentsData] = useState<any>();
   const [commentsCountData, setCommentsCountData] = useState<any>();
   const [likesCountData, setLikesCountData] = useState<any>();
   const [content, setContent] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const communityData = await getCommunityDetail(postId);
-      const commentData = await getComment(postId);
-      const commentCountData = await getCommentCount(postId);
-      const likeCountData = await getLikesCount(postId);
+    if (communityDetailData) {
+      setEditedContent(communityDetailData.content || '');
+      setEditedTitle(communityDetailData.title || '');
+    }
+  }, [communityDetailData]);
 
-      setCommunityDetailData(communityData);
-      setCommentsData(commentData);
-      setCommentsCountData(commentCountData);
-      setLikesCountData(likeCountData);
-    };
+  const fetchData = async () => {
+    const communityData = await getCommunityDetail(postId);
+    const commentData = await getComment(postId);
+    const commentCountData = await getCommentCount(postId);
+    const likeCountData = await getLikesCount(postId);
 
+    setCommunityDetailData(communityData);
+    setCommentsData(commentData);
+    setCommentsCountData(commentCountData);
+    setLikesCountData(likeCountData);
+  };
+
+  useEffect(() => {
     fetchData();
   }, [postId]);
 
+  // 좋아요 달기
   const handleLikes = async () => {
     await getLikes(postId);
     const updatedLikesCount = await getLikesCount(postId);
@@ -74,14 +96,68 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
     setCommentsData(updatedCommentData);
   };
 
+  // 수정하기
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleTitleEditChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.value.length > 20) {
+      event.target.value = event.target.value.slice(0, 20);
+    }
+    setEditedTitle(event.target.value);
+  };
+
+  const handleContentEditChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.value.length > 20) {
+      event.target.value = event.target.value.slice(0, 20);
+    }
+    setEditedContent(event.target.value);
+  };
+
+  // 삭제하기
+  const handleDelete = async () => {
+    alert('정말 삭제하시겠습니까?');
+    await getCommunityDelete(postId);
+    router.back();
+  };
+
+  // 작성자에게만 수정, 삭제 뜸
+  const handleSettingDot = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleClickOutside = (event: any) => {
+    if (outsideRef.current && !outsideRef.current.contains(event.target)) {
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleEditSave = async () => {
+    await getCommunityUpdate(postId, editedTitle, editedContent);
+    setIsEditing(false);
+    fetchData();
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       {communityDetailData && (
         <div key={communityDetailData.id}>
           <TopBottomBarTemplate
             _topNode={
-              <div className="relative flex h-full w-full items-center bg-white">
-                <div className="absolute left-[22px]">
+              <div className="flex h-full w-full items-center justify-between bg-white">
+                <div className="ml-[22px] hover:cursor-pointer">
                   <BackSpaceArrow
                     onClick={() => {
                       router.back();
@@ -91,6 +167,50 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                 <div className="flex flex-1 justify-center font-noto text-[18px] font-bold text-black">
                   글 상세보기
                 </div>
+
+                {userData.nickname === communityDetailData.writer ? (
+                  isEditing ? (
+                    <Button
+                      ring="none"
+                      color="white"
+                      background="primary-400"
+                      className="font-regular mr-[22px] rounded-full px-4 py-1 font-noto text-[14px]"
+                      onClick={handleEditSave}
+                    >
+                      저장
+                    </Button>
+                  ) : (
+                    <div className="mr-[22px] hover:cursor-pointer">
+                      <SettingDot onClick={handleSettingDot} />
+                    </div>
+                  )
+                ) : (
+                  <></>
+                )}
+
+                {isModalOpen && (
+                  <div className="relative">
+                    <div className="absolute right-0 top-0 w-[100px]">
+                      <div ref={outsideRef}>
+                        <Box className="font-regular flex flex-col items-center justify-center bg-white py-2 font-noto text-[14px] text-black shadow-lg">
+                          <p
+                            onClick={handleEdit}
+                            className="hover:cursor-pointer"
+                          >
+                            수정하기
+                          </p>
+                          <div className="h-0 w-full border-b border-[#c1c1c1]" />
+                          <p
+                            onClick={handleDelete}
+                            className="hover:cursor-pointer"
+                          >
+                            삭제하기
+                          </p>
+                        </Box>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             }
             _bottomNode={
@@ -124,9 +244,18 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                 </h1>
               </div>
               <div className="gap-1">
-                <h1 className="font-noto text-[18px] font-semibold text-black">
-                  {communityDetailData.title}
-                </h1>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editedTitle}
+                    onChange={handleTitleEditChange}
+                    className="font-noto text-[18px] font-semibold text-black outline-none"
+                  />
+                ) : (
+                  <h1 className="font-noto text-[18px] font-semibold text-black">
+                    {communityDetailData.title}
+                  </h1>
+                )}
                 <div className="font-regular flex gap-2 font-noto text-[13.51px] text-[#434343]">
                   <div className="flex items-center justify-center gap-1">
                     <CommunityCalendar />
@@ -153,9 +282,18 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
               <div className="flex w-full justify-center pb-2 pt-1">
                 <BlackDot />
               </div>
-              <p className="font-regular font-noto text-[13px]">
-                {communityDetailData.content}
-              </p>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={editedContent}
+                  onChange={handleContentEditChange}
+                  className="font-regular w-full font-noto text-[13px] outline-none"
+                />
+              ) : (
+                <p className="font-regular font-noto text-[13px]">
+                  {communityDetailData.content}
+                </p>
+              )}
               <div className="h-2 w-full border-b border-[#c1c1c1]" />
               <div className="flex gap-2">
                 <div className="flex gap-1">

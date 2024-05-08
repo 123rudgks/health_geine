@@ -10,3 +10,4 @@ export const KEY_TRAINERPROFILE = ['query_trainerprofile'];
 export const KEY_CHAT = ['query_chat'];
 export const KEY_TOKEN = ['query_token'];
 export const KEY_COMMUNITY_LIST = ['query_community_list'];
+export const KEY_COMMUNITY_DETAIL = ['query_community_detail'];

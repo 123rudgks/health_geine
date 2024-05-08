@@ -301,6 +301,49 @@ export const getCommunityDetail = async (postId: string) => {
   }
 };
 
+// community-detail (게시글 수정)
+export const getCommunityUpdate = async (
+  postId: string,
+  title: string,
+  content: string
+) => {
+  try {
+    const response = await axios.patch(
+      `https://${BASE_URL}/community/posts/${postId}`,
+      { title: title, content: content },
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// community-detail (게시글 삭제)
+export const getCommunityDelete = async (postId: string) => {
+  try {
+    const response = await axios.delete(
+      `https://${BASE_URL}/community/posts/${postId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // community-detail (댓글 작성)
 export const getCommentPost = async (postId: string, content: string) => {
   try {
