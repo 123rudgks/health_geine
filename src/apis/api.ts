@@ -429,7 +429,7 @@ export const getComment = async (postId: string) => {
 // community-detail (좋아요 게시)
 export const getLikes = async (postId: string) => {
   try {
-    const response = await axios.post(
+    const response = await axios.delete(
       `https://${BASE_URL}/community/posts/${postId}/likes`,
       {
         headers: {

@@ -19,9 +19,9 @@ type Props = {};
 
 const Page = (props: Props) => {
   const router = useRouter();
+
   const [communityListData, setCommunityListData] =
     useRecoilState(communityListState);
-
   const { data: communityDataQuery } = useQuery(
     KEY_COMMUNITY_LIST,
     getCommunityList,
