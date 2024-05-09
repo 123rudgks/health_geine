@@ -161,6 +161,7 @@ const Page = (props: Props) => {
           </div> */}
         </Box>
         <AddTrainerPhotoVideoTab
+          imageGrid={3}
           profileImages={additionalImages}
           onImagesChange={handleAdditionalImagesChange}
         />

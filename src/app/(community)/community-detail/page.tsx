@@ -423,6 +423,7 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                     className="font-regular w-full font-noto text-[13px] outline-none"
                   />
                   <AddTrainerPhotoVideoTab
+                    imageGrid={3}
                     profileImages={additionalImages}
                     onImagesChange={handleAdditionalImagesChange}
                   />

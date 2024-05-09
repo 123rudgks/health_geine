@@ -300,6 +300,7 @@ const WriteTrainerDetailPage = (props: Props) => {
             )}
             {currentTab === '사진/동영상' && (
               <AddTrainerPhotoVideoTab
+                imageGrid={2}
                 profileImages={additionalImages}
                 onImagesChange={handleAdditionalImagesChange}
               />
