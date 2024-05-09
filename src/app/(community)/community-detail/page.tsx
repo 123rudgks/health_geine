@@ -181,10 +181,6 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
   };
 
   const handleEditSave = async () => {
-    // await getCommunityUpdate(postId, editedTitle, editedContent);
-    // setIsEditing(false);
-    // fetchData();
-
     try {
       const response = await getCommunityUpdate(
         postId,

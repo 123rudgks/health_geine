@@ -16,6 +16,7 @@ import { useRecoilState } from 'recoil';
 import { twMerge } from 'tailwind-merge';
 import { BASE_URL } from '@/utils/routePath';
 import Image from 'next/image';
+import { getTrainerPostPhotos, getTrainerProfile } from '@/apis/api';
 
 type Props = {};
 type WriteTrainerDetailTab = '상세내용' | '사진/동영상';
@@ -24,7 +25,6 @@ const WRITE_TRAINER_DETAIL_TABS: WriteTrainerDetailTab[] = [
   '사진/동영상',
 ];
 const WriteTrainerDetailPage = (props: Props) => {
-  const ACCESS_TOKEN = localStorage.getItem('accessToken');
   const router = useRouter();
   const [userData, setUserData] = useRecoilState(userState);
   const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
@@ -41,8 +41,8 @@ const WriteTrainerDetailPage = (props: Props) => {
     university: '',
   });
   const [profileImages, setProfileImages] = useState<File[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState<string | null>(null);
   const [currentTab, setCurrentTab] =
     useState<WriteTrainerDetailTab>('상세내용');
   const [infoTabData, setInfoTabData] = useState(profileData);
@@ -55,13 +55,13 @@ const WriteTrainerDetailPage = (props: Props) => {
     }));
   };
 
+  const handleImagesChange = (images: File[]) => {
+    setProfileImages(images);
+  };
+
   const handlePhotoChange = (newPhoto: File) => {
     const newProfileImages = [newPhoto];
     setProfileImages(newProfileImages);
-  };
-
-  const handleImagesChange = (images: File[]) => {
-    setProfileImages(images);
   };
 
   const handleAdditionalImagesChange = (images: File[]) => {
@@ -70,46 +70,39 @@ const WriteTrainerDetailPage = (props: Props) => {
 
   const uploadProfileImages = async (id: string) => {
     try {
-      if (profileImages.length > 0) {
+      if (profileImages.length > 0 && additionalImages.length > 0) {
+        const profileFormData = new FormData();
+        profileImages.forEach((image) => {
+          profileFormData.append('photos', image);
+        });
+        profileFormData.append('purpose', 'PROFILE');
+
+        const additionalFormData = new FormData();
+        additionalImages.forEach((image) => {
+          additionalFormData.append('photos', image);
+        });
+        additionalFormData.append('purpose', 'ETC');
+
+        await Promise.all([
+          getTrainerPostPhotos(id, profileFormData),
+          getTrainerPostPhotos(id, additionalFormData),
+        ]);
+      } else if (profileImages.length > 0) {
         const formData = new FormData();
-        profileImages.forEach((image, index) => {
+        profileImages.forEach((image) => {
           formData.append('photos', image);
         });
-
         formData.append('purpose', 'PROFILE');
 
-        await axios.post(
-          `https://${BASE_URL}/trainers/profiles/${id}/photos`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Access-Control-Allow-Origin': '*',
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
-          }
-        );
-      }
-
-      if (additionalImages.length > 0) {
+        await getTrainerPostPhotos(id, formData);
+      } else if (additionalImages.length > 0) {
         const formData = new FormData();
-        additionalImages.forEach((image, index) => {
+        additionalImages.forEach((image) => {
           formData.append('photos', image);
         });
-
         formData.append('purpose', 'ETC');
 
-        await axios.post(
-          `https://${BASE_URL}/trainers/profiles/${id}/photos`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Access-Control-Allow-Origin': '*',
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
-          }
-        );
+        await getTrainerPostPhotos(id, formData);
       }
     } catch (error) {
       console.error('프로필 이미지 업로드 중 에러:', error);
@@ -118,10 +111,8 @@ const WriteTrainerDetailPage = (props: Props) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      setLoading(true);
-
-      const dataToSend = {
+    if (profileData.university && profileData.name !== null) {
+      const profile = {
         name: profileData.name,
         startTime: profileData.startTime,
         endTime: profileData.endTime,
@@ -134,30 +125,23 @@ const WriteTrainerDetailPage = (props: Props) => {
         university: profileData.university,
       };
 
-      const profileResponse = await axios.post(
-        `https://${BASE_URL}/trainers/profiles`,
-        dataToSend,
-        {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
+      try {
+        const response = await getTrainerProfile(profile);
+
+        const id = response.id;
+        if (id) {
+          if (additionalImages.length > 0) {
+            await uploadProfileImages(id);
+          }
+          router.push(`/trainer-detail?id=${id}&userId=${userData.id}`);
+        } else {
+          console.error('id가 없습니다.', response);
         }
-      );
-
-      const id = profileResponse.data.data.id;
-
-      await uploadProfileImages(id);
-
-      alert('프로필이 성공적으로 작성되었습니다.');
-      setLoading(false);
-      setError(null);
-      router.push('/trainer-list');
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-      setError('에러가 발생했습니다.');
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      alert('소속 대학 입력은 필수입니다.');
     }
   };
 
@@ -182,9 +166,9 @@ const WriteTrainerDetailPage = (props: Props) => {
               background={'primary-400'}
               className="h-full w-full"
               onClick={handleSubmit}
-              disabled={loading}
+              // disabled={loading}
             >
-              {loading ? '저장 중...' : '완료'}
+              완료
             </Button>
           </div>
         </div>
@@ -209,6 +193,7 @@ const WriteTrainerDetailPage = (props: Props) => {
                 <NoProfile />
               </div>
             )}
+
             <div className="flex flex-col items-start justify-end pb-4 pl-6">
               <p className="font-noto text-[15px] font-medium text-white">
                 트레이너
@@ -224,7 +209,6 @@ const WriteTrainerDetailPage = (props: Props) => {
                 background={'primary-400'}
                 className="h-[20px] w-[75px] rounded-[4px] bg-opacity-50 text-[10px] font-light ring-opacity-50"
                 onClick={() => document.getElementById('photoInput')?.click()}
-                disabled={loading}
               >
                 사진 바꾸기
               </Button>
@@ -238,6 +222,7 @@ const WriteTrainerDetailPage = (props: Props) => {
             </div>
           </div>
         </div>
+
         <div className="flex w-full flex-col gap-2 p-[22px]">
           <div className="flex h-[18px] gap-[14px]">
             <Building />

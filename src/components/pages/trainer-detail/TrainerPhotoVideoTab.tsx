@@ -2,13 +2,20 @@ import ModalBackground from '@/components/Modal/ModalBackground';
 import ModalPortal from '@/components/Modal/ModalPortal';
 import Cancel from '@/svgs/ImagePreviewCancel.svg';
 import Image from 'next/image';
+import Delete from '@/svgs/InputDelete.svg';
 import { useState } from 'react';
 
 type Props = {
   trainerImageData: any;
+  editing: string;
+  handlePhotoDelete: () => void;
 };
 
-const TrainerPhotoVideoTab = ({ trainerImageData }: Props) => {
+const TrainerPhotoVideoTab = ({
+  trainerImageData,
+  editing,
+  handlePhotoDelete,
+}: Props) => {
   const [modal, setModal] = useState(false);
   const [clickedImage, setClickedImage] = useState<string | null>(null);
 
@@ -72,6 +79,14 @@ const TrainerPhotoVideoTab = ({ trainerImageData }: Props) => {
                     objectFit="cover"
                     objectPosition="center"
                   />
+                  {editing === 'on' ? (
+                    <button
+                      className="z-5 absolute right-0 top-0 m-2"
+                      onClick={handlePhotoDelete}
+                    >
+                      <Delete />
+                    </button>
+                  ) : null}
                 </div>
               )
           )

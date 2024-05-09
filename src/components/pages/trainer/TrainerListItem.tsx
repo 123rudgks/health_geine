@@ -37,7 +37,7 @@ const TrainerListItem = ({
       onClick={onClick}
     >
       <div className="relative h-[110px] w-[110px] basis-[110px] overflow-hidden rounded-xl">
-        <Image src={photoPaths} alt="trainer image" fill />
+        <Image src={photoPaths[0]} alt="trainer image" fill />
       </div>
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center justify-between">
