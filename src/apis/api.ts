@@ -282,6 +282,25 @@ export const getPhotos = async (postId: string) => {
   }
 };
 
+// write-community (사진 삭제)
+export const getPhotosDelete = async (postId: string) => {
+  try {
+    const response = await axios.delete(
+      `https://${BASE_URL}/community/posts/${postId}/photos`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // comments count (댓글 개수)
 export const getCommentCount = async (postId: string) => {
   try {
