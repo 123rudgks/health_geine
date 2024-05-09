@@ -6,11 +6,16 @@ import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 type Props = {
+  imageGrid: number;
   profileImages: File[];
   onImagesChange: (images: File[]) => void;
 };
 
-const AddTrainerPhotoVideoTab = ({ profileImages, onImagesChange }: Props) => {
+const AddTrainerPhotoVideoTab = ({
+  imageGrid,
+  profileImages,
+  onImagesChange,
+}: Props) => {
   const [modal, setModal] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [clickedImage, setClickedImage] = useState<string | null>(null);
@@ -76,7 +81,7 @@ const AddTrainerPhotoVideoTab = ({ profileImages, onImagesChange }: Props) => {
         </ModalPortal>
       )}
 
-      <div className="grid w-full grid-cols-2 gap-4">
+      <div className={`grid-cols-${imageGrid} grid w-full gap-4`}>
         <div
           onClick={handleClick}
           className="flex aspect-square items-center justify-center rounded-2xl border-2 border-dashed border-[#c1c1c1]"

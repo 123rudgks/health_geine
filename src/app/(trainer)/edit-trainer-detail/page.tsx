@@ -1,5 +1,4 @@
 'use client';
-import axios from 'axios';
 import Button from '@/components/Button/Button';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import InputMediumText from '@/components/Text/InputMediumText';
@@ -8,12 +7,21 @@ import TrainerPhotoVideoTab from '@/components/pages/trainer-detail/TrainerPhoto
 import TrainerReviewTab from '@/components/pages/trainer-detail/TrainerReviewTab';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import Building from '@/svgs/Building.svg';
+import NoProfile from '@/svgs/NoProfile.svg';
 import Clock from '@/svgs/Clock.svg';
 import Star from '@/svgs/Star.svg';
-import { BASE_URL, ACCESS_TOKEN } from '@/utils/routePath';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import {
+  getDeleteTrainerPhoto,
+  getDeleteTrainerProfileListDetail,
+  getEditTrainerProfileListDetail,
+  getPhotoResponse,
+  getTrainerPostPhotos,
+  getTrainerProfileListDetail,
+} from '@/apis/api';
+import AddTrainerPhotoVideoTab from '@/components/pages/write-trainer-detail/AddTrainerPhotoVideoTab';
 
 type Props = {};
 type TrainerDetailTab = '상세내용' | '사진/동영상' | '후기';
@@ -31,11 +39,19 @@ const EditTrainerDetailPage = ({
   const trainerProfileId = searchParams.id;
   const trainerId = searchParams.userId;
   const [trainerProfileData, setTrainerProfileData] = useState<any>();
+  const [trainerImageData, setTrainerImageData] = useState<any>();
   const [currentTab, setCurrentTab] = useState<TrainerDetailTab>('상세내용');
-  const [loading, setLoading] = useState(false);
+  const [profileImages, setProfileImages] = useState<File[]>([]);
   const [editedTrainerProfileData, setEditedTrainerProfileData] = useState<any>(
     {}
   );
+
+  const [additionalImages, setAdditionalImages] = useState<File[]>([]);
+
+  const handlePhotoChange = (newPhoto: File) => {
+    const newProfileImages = [newPhoto];
+    setProfileImages(newProfileImages);
+  };
 
   const handleInputChange = (key: string, value: string) => {
     setEditedTrainerProfileData({
@@ -44,96 +60,86 @@ const EditTrainerDetailPage = ({
     });
   };
 
-  const trainerProfileList = async () => {
-    try {
-      const response = await axios.get(
-        `https://${BASE_URL}/trainers/profiles/details/${trainerProfileId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      const data = response.data.data;
-
-      if (data && Object.keys(data).length > 0) {
-        return data;
-      } else {
-        throw new Error('데이터가 없습니다.');
-      }
-    } catch (error) {
-      console.error('데이터를 불러오는 중 에러가 발생했습니다.', error);
-      throw error;
-    }
+  const fetchData = async () => {
+    const data = await getTrainerProfileListDetail(trainerProfileId);
+    const imageData = await getPhotoResponse(trainerProfileId);
+    setTrainerProfileData(data);
+    setTrainerImageData(imageData);
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await trainerProfileList();
-      setTrainerProfileData(data);
-    };
-
     fetchData();
-  }, [trainerId]);
+  }, [trainerProfileId]);
 
-  const handleSubmit = async () => {
+  const handleDelete = async () => {
+    alert('정말 삭제하시겠습니까?');
+    await getDeleteTrainerProfileListDetail(trainerProfileId);
+    await getDeleteTrainerPhoto(trainerProfileId);
+    router.push('/trainer-list');
+  };
+
+  const handlePhotoDelete = async () => {
+    alert('게시된 전체 사진이 삭제됩니다. 정말 삭제하시겠습니까?');
+    await getDeleteTrainerPhoto(trainerProfileId);
+    await getPhotoResponse(trainerProfileId);
+  };
+
+  const handleAdditionalImagesChange = (images: File[]) => {
+    setAdditionalImages(images);
+  };
+
+  const uploadProfileImages = async (id: string) => {
     try {
-      const editProfileData = {
-        ...editedTrainerProfileData,
-        name: editedTrainerProfileData.name || trainerProfileData.name,
-        university:
-          editedTrainerProfileData.university || trainerProfileData.university,
-      };
+      if (profileImages.length > 0) {
+        const formData = new FormData();
+        profileImages.forEach((image, index) => {
+          formData.append('photos', image);
+        });
+        formData.append('purpose', 'PROFILE');
 
-      setLoading(true);
-      const response = await axios.patch(
-        `https://${BASE_URL}/trainers/profiles/${trainerProfileId}`,
-        editProfileData,
-        {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+        await getTrainerPostPhotos(id, formData);
+      }
 
-      const data = response.data.data;
-      if (data && Object.keys(data).length > 0) {
-        alert('프로필이 성공적으로 수정되었습니다.');
-        setLoading(false);
-        router.back();
-      } else {
-        throw new Error('데이터가 없습니다.');
+      if (additionalImages.length > 0) {
+        const formData = new FormData();
+        additionalImages.forEach((image, index) => {
+          formData.append('photos', image);
+        });
+        formData.append('purpose', 'ETC');
+
+        await getTrainerPostPhotos(id, formData);
       }
     } catch (error) {
-      setLoading(false);
-      console.error('프로필 수정 중 에러가 발생했습니다.', error);
+      console.error('프로필 이미지 업로드 중 에러:', error);
+      throw new Error('프로필 이미지 업로드 중 에러가 발생했습니다.');
     }
   };
 
-  const handleDelete = async () => {
+  const handleSubmit = async () => {
+    const editProfileData = {
+      ...editedTrainerProfileData,
+      name: editedTrainerProfileData.name || trainerProfileData.name,
+      university:
+        editedTrainerProfileData.university || trainerProfileData.university,
+    };
+
     try {
-      alert('정말 삭제하시겠습니까?');
-      const response = await axios.delete(
-        `https://${BASE_URL}/trainers/profiles/${trainerProfileId}`,
-
-        {
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        }
+      const response = await getEditTrainerProfileListDetail(
+        trainerProfileId,
+        editProfileData
       );
+      const id = response.id;
 
-      //  const data = response.data.data;
-      router.push('/trainer-list');
+      if (id) {
+        if (additionalImages.length > 0) {
+          await uploadProfileImages(id);
+        }
+        router.push(`/trainer-detail?id=${id}&userId=${trainerId}`);
+      } else {
+        console.error('id가 없습니다.', response);
+      }
     } catch (error) {
-      console.error('프로필 수정 중 에러가 발생했습니다.', error);
+      console.error('프로필 수정에 실패하였습니다.', error);
     }
   };
 
@@ -143,16 +149,22 @@ const EditTrainerDetailPage = ({
         <div key={trainerProfileData.id}>
           <TopBottomBarTemplate
             _topNode={
-              <div className="relative flex h-full w-full items-center">
-                <div className="absolute left-[22px]">
+              <div className="relative flex h-full w-full items-center justify-between">
+                <div className="ml-[22px]">
                   <BackSpaceArrow onClick={() => router.back()} />
                 </div>
-                <div className="flex flex-1 justify-center font-noto text-[18px] font-bold text-primary-400">
+                <div className="flex flex-1 justify-center pl-6 font-noto text-[18px] font-bold text-primary-400">
                   {trainerProfileData.name} 트레이너
                 </div>
-                <div onClick={handleDelete} className="absolute right-[22px]">
+                <Button
+                  ring="none"
+                  color="white"
+                  background="none"
+                  className="font-regular mr-[22px] rounded-full bg-[#FF8181] px-4 py-1 font-noto text-[14px]"
+                  onClick={handleDelete}
+                >
                   삭제
-                </div>
+                </Button>
               </div>
             }
             _bottomNode={
@@ -164,9 +176,9 @@ const EditTrainerDetailPage = ({
                     background={'primary-400'}
                     className="h-full w-full"
                     onClick={handleSubmit}
-                    disabled={loading}
+                    // disabled={loading}
                   >
-                    {loading ? '저장 중...' : '수정하기'}
+                    수정하기
                   </Button>
                 </div>
               </div>
@@ -175,25 +187,161 @@ const EditTrainerDetailPage = ({
           >
             <div className="w-full">
               <div className="relative w-full pb-[50%]">
-                <div
-                  className="absolute inset-0 flex"
-                  style={{
-                    backgroundImage: `url('${trainerProfileData.photoPaths}')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                >
+                <div className="absolute inset-0 flex bg-[#dbdbdb]">
+                  {/* {profileImages.length > 0 && ? (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Image
+                        src={URL.createObjectURL(profileImages[0])}
+                        alt="트레이너 프로필 사진"
+                        layout="fill"
+                        objectFit="cover"
+                        objectPosition="center"
+                      />
+                    </div>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <NoProfile />
+                    </div>
+                  )} */}
+                  {trainerImageData &&
+                    trainerImageData.map((item: any) =>
+                      item.purpose === 'PROFILE' ? (
+                        <div
+                          key={item.id}
+                          style={{
+                            backgroundImage: `url('${
+                              profileImages.length > 0
+                                ? URL.createObjectURL(profileImages[0])
+                                : item.path
+                            }')`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                          }}
+                        >
+                          <div>
+                            {profileImages.length === 0 && (
+                              <div>
+                                <NoProfile />
+                              </div>
+                            )}
+                            <div>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) =>
+                                  handlePhotoChange(e.target.files![0])
+                                }
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ) : null
+                    )}
+
+                  {/* {trainerImageData &&
+                    trainerImageData.every(
+                      (item: any) => item.purpose !== 'PROFILE'
+                    ) && (
+                      <div
+                        className="absolute inset-0 flex bg-[#b1b1b1]"
+                        style={{
+                          backgroundImage:
+                            profileImages.length > 0
+                              ? `url('${URL.createObjectURL(
+                                  profileImages[0]
+                                )}')`
+                              : `url('')`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                        }}
+                      >
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <NoProfile />
+                        </div>
+                      </div>
+                    )} */}
                   <div className="flex flex-col items-start justify-end pb-4 pl-6">
                     <p className="font-noto text-[15px] font-medium text-white">
                       트레이너
                     </p>
-                    <span className="font-noto text-[25px] font-bold text-white">
+                    <h1 className="font-noto text-[25px] font-bold text-white">
                       {trainerProfileData.name}
-                    </span>
+                    </h1>
                   </div>
-                  {/* <div className="absolute inset-0 flex items-center justify-center"></div> */}
+                  <div className="absolute inset-0 flex items-end justify-end pb-4 pr-6">
+                    <Button
+                      ring={'primary-400'}
+                      color={'white'}
+                      background={'primary-400'}
+                      className="h-[20px] w-[75px] rounded-[4px] bg-opacity-50 text-[10px] font-light ring-opacity-50"
+                      onClick={() =>
+                        document.getElementById('photoInput')?.click()
+                      }
+                    >
+                      사진 바꾸기
+                    </Button>
+                    <input
+                      id="photoInput"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        handlePhotoChange(e.target.files![0]);
+                        setProfileImages([e.target.files![0]]);
+                      }}
+                    />
+                  </div>
                 </div>
+
+                {/* {trainerImageData &&
+                  trainerImageData.map((item: any) =>
+                    item.purpose === 'PROFILE' ? (
+                      <div
+                        key={item.id}
+                        className="absolute inset-0 flex"
+                        style={{
+                          backgroundImage: `url('${item.path}')`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                        }}
+                      >
+                        <div className="flex flex-col items-start justify-end pb-4 pl-6">
+                          <p className="font-noto text-[15px] font-medium text-white">
+                            트레이너
+                          </p>
+                          <span className="font-noto text-[25px] font-bold text-white">
+                            {trainerProfileData.name}
+                          </span>
+                        </div>
+                        <div className="absolute inset-0 flex items-end justify-end pb-4 pr-6">
+                          <Button
+                            ring={'primary-400'}
+                            color={'white'}
+                            background={'primary-400'}
+                            className="h-[20px] w-[75px] rounded-[4px] bg-opacity-50 text-[10px] font-light ring-opacity-50"
+                            onClick={() =>
+                              document.getElementById('photoInput')?.click()
+                            }
+                          >
+                            사진 바꾸기
+                          </Button>
+                          <input
+                            id="photoInput"
+                            type="file"
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            onChange={(e) =>
+                              handlePhotoChange(e.target.files![0])
+                            }
+                          />
+                        </div>
+                      </div>
+                    ) : null
+                  )}
+
+               */}
               </div>
+
               <div className="flex w-full flex-col gap-2 p-[22px]">
                 <div className="flex h-[18px] items-center gap-[14px]">
                   <Building />
@@ -271,7 +419,23 @@ const EditTrainerDetailPage = ({
                       onChange={handleInputChange}
                     />
                   )}
-                  {currentTab === '사진/동영상' && <TrainerPhotoVideoTab />}
+                  {currentTab === '사진/동영상' && (
+                    <>
+                      {trainerImageData && (
+                        <TrainerPhotoVideoTab
+                          handlePhotoDelete={handlePhotoDelete}
+                          editing="on"
+                          trainerImageData={trainerImageData}
+                        />
+                      )}
+                      <AddTrainerPhotoVideoTab
+                        imageGrid={2}
+                        profileImages={additionalImages}
+                        onImagesChange={handleAdditionalImagesChange}
+                      />
+                    </>
+                  )}
+
                   {currentTab === '후기' && <TrainerReviewTab />}
                 </div>
               </div>

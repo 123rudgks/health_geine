@@ -1,11 +1,9 @@
 'use client';
-import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import CommunityCalendar from '@/svgs/CommunituCalendar.svg';
 import { useRouter } from 'next/navigation';
 import BasicInput from '@/components/Input/BasicInput';
-import Mask from '@/svgs/InputDelete.svg';
 import Button from '@/components/Button/Button';
 import Box from '@/components/Box/Box';
 import Camera from '@/svgs/ChatCamera.svg';
@@ -20,7 +18,6 @@ const Page = (props: Props) => {
   const router = useRouter();
   const [titleValue, setTitleValue] = useState<string>('');
   const [contentValue, setContentValue] = useState<string>('');
-  const [profileImages, setProfileImages] = useState<File[]>([]);
   const [additionalImages, setAdditionalImages] = useState<File[]>([]);
 
   const date = `${new Date().getFullYear()}.${
@@ -55,25 +52,39 @@ const Page = (props: Props) => {
     setContentValue(value);
   };
 
-  const handleWrite = async () => {
-    const profileResponse = await post(titleValue, contentValue);
-    const id = profileResponse.id;
-
-    await uploadProfileImages(id);
-    router.push('/community');
-  };
-
   const handleAdditionalImagesChange = (images: File[]) => {
     setAdditionalImages(images);
   };
 
   const uploadProfileImages = async (id: string) => {
-    if (profileImages.length > 0) {
-      const formData = new FormData();
-      profileImages.forEach((image, index) => {
-        formData.append('photos', image);
-      });
-      await getPostPhotos(id, formData);
+    try {
+      if (additionalImages.length > 0) {
+        const formData = new FormData();
+        additionalImages.forEach((image) => {
+          formData.append('photos', image);
+        });
+        await getPostPhotos(id, formData);
+      }
+    } catch (error) {
+      console.error('Error uploading profile images:', error);
+    }
+  };
+
+  const handleWrite = async () => {
+    try {
+      const profileResponse = await post(titleValue, contentValue);
+      const id = profileResponse.id;
+
+      if (id) {
+        if (additionalImages.length > 0) {
+          await uploadProfileImages(id);
+        }
+        router.push('/community');
+      } else {
+        console.error('Post response does not contain ID:', profileResponse);
+      }
+    } catch (error) {
+      console.error('Error in handleWrite:', error);
     }
   };
 
@@ -133,12 +144,6 @@ const Page = (props: Props) => {
           _onChange={handleTitle}
         />
         <Box className="flex w-full flex-col rounded-[6px] border border-[#c1c1c1] p-0">
-          {/* <textarea
-            value={contentValue}
-            onChange={handleContent}
-            className="m-2 h-[200px] w-full resize-none p-2 font-noto text-[16px] text-black placeholder:text-black"
-            placeholder="내용을 입력해주세요."
-          /> */}
           <BasicTextArea
             _wrapperClasses="px-4 ring-0"
             _value={contentValue}
@@ -146,22 +151,17 @@ const Page = (props: Props) => {
             className="h-[200px] w-full font-noto text-[16px] text-black placeholder:text-black"
             placeholder="내용을 입력해주세요."
           />
-          <div className="h-0 w-full border-b border-[#c1c1c1]" />
-          <div className="flex items-center justify-center p-4 font-noto text-[14px] font-semibold">
+          {/* <div className="h-0 w-full border-b border-[#c1c1c1]" />
+          <div
+            className="flex items-center justify-center p-4 font-noto text-[14px] font-semibold"
+          >
             <Camera />
             <p className="pl-2">사진 선택하기</p>
-            <p>3/5</p>
-          </div>
+            <p>1/3</p>
+          </div> */}
         </Box>
-        {/* <div className="grid w-full grid-cols-3 gap-4 pt-2">
-          <div
-            className="flex aspect-square justify-end overflow-hidden rounded-2xl bg-black p-2"
-            style={{ position: 'relative' }}
-          >
-            <Mask />
-          </div>
-        </div> */}
         <AddTrainerPhotoVideoTab
+          imageGrid={3}
           profileImages={additionalImages}
           onImagesChange={handleAdditionalImagesChange}
         />

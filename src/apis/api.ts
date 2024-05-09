@@ -163,8 +163,6 @@ export const getPhotoResponse = async (trainerProfileId: string) => {
 
     if (data && Object.keys(data).length > 0) {
       return data;
-    } else {
-      throw new Error('데이터가 없습니다.');
     }
   } catch (error) {
     console.error('데이터를 불러오는 중 에러가 발생했습니다.', error);
@@ -195,6 +193,124 @@ export const getTrainerProfileListDetail = async (trainerProfileId: string) => {
   } catch (error) {
     console.error('데이터를 불러오는 중 에러가 발생했습니다.', error);
     throw error;
+  }
+};
+
+// write-trainer-detail , edit-trainer-detail (사진 게시)
+export const getTrainerPostPhotos = async (id: string, photos: FormData) => {
+  try {
+    const response = await axios.post(
+      `https://${BASE_URL}/trainers/profiles/${id}/photos`,
+      photos,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// edit-trainer-detail (사진 삭제)
+export const getDeleteTrainerPhoto = async (trainerProfileId: string) => {
+  try {
+    const response = await axios.delete(
+      `https://${BASE_URL}/trainers/profiles/${trainerProfileId}/photos`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+
+    Router.push('/trainer-list');
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// write-trainer-detail (트레이너 프로필 게시)
+export const getTrainerProfile = async (profile: {}) => {
+  try {
+    const response = await axios.post(
+      `https://${BASE_URL}/trainers/profiles`,
+      profile,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+
+    alert('프로필이 성공적으로 게시되었습니다.');
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// edit-trainer-detail (게시글 수정)
+export const getEditTrainerProfileListDetail = async (
+  trainerProfileId: string,
+  editProfileData: {}
+) => {
+  try {
+    const response = await axios.patch(
+      `https://${BASE_URL}/trainers/profiles/${trainerProfileId}`,
+      editProfileData,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      }
+    );
+
+    const data = response.data.data;
+
+    if (data && Object.keys(data).length > 0) {
+      alert('프로필이 성공적으로 수정되었습니다.');
+      return data;
+    } else {
+      throw new Error('데이터가 없습니다.');
+    }
+  } catch (error) {
+    console.error('데이터를 불러오는 중 에러가 발생했습니다.', error);
+    throw error;
+  }
+};
+
+// edit-trainer-detail (트레이너 프로필 삭제)
+export const getDeleteTrainerProfileListDetail = async (
+  trainerProfileId: string
+) => {
+  try {
+    const response = await axios.delete(
+      `https://${BASE_URL}/trainers/profiles/${trainerProfileId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+
+    Router.push('/trainer-list');
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -251,7 +367,7 @@ export const getPostPhotos = async (postId: string, photos: FormData) => {
       photos,
       {
         headers: {
-          'Content-Type': 'application/json;charset=utf-8',
+          'Content-Type': 'multipart/form-data',
           'Access-Control-Allow-Origin': '*',
           Authorization: `Bearer ` + ACCESS_TOKEN,
         },
@@ -268,7 +384,25 @@ export const getPhotos = async (postId: string) => {
   try {
     const response = await axios.get(
       `https://${BASE_URL}/community/posts/${postId}/photos`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
+// write-community (사진 삭제)
+export const getPhotosDelete = async (postId: string) => {
+  try {
+    const response = await axios.delete(
+      `https://${BASE_URL}/community/posts/${postId}/photos`,
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',

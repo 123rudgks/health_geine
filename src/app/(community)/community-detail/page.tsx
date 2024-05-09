@@ -24,12 +24,16 @@ import {
   getLikesCancel,
   getLikesCount,
   getPhotos,
+  getPhotosDelete,
+  getPostPhotos,
 } from '@/apis/api';
 import CommentsListItem from '@/components/pages/community/CommentsListItem';
 import { ICommentList, userState } from '@/recoil/state';
 import Box from '@/components/Box/Box';
 import Button from '@/components/Button/Button';
 import { useRecoilState } from 'recoil';
+import Delete from '@/svgs/InputDelete.svg';
+import AddTrainerPhotoVideoTab from '@/components/pages/write-trainer-detail/AddTrainerPhotoVideoTab';
 
 type Props = {};
 
@@ -52,6 +56,7 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
   const [content, setContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
+  const [additionalImages, setAdditionalImages] = useState<File[]>([]);
 
   useEffect(() => {
     if (communityDetailData) {
@@ -157,10 +162,52 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
     }
   };
 
+  const handleAdditionalImagesChange = (images: File[]) => {
+    setAdditionalImages(images);
+  };
+
+  const uploadProfileImages = async (id: string) => {
+    try {
+      if (additionalImages.length > 0) {
+        const formData = new FormData();
+        additionalImages.forEach((image) => {
+          formData.append('photos', image);
+        });
+        await getPostPhotos(id, formData);
+      }
+    } catch (error) {
+      console.error('Error uploading profile images:', error);
+    }
+  };
+
   const handleEditSave = async () => {
-    await getCommunityUpdate(postId, editedTitle, editedContent);
-    setIsEditing(false);
-    fetchData();
+    try {
+      const response = await getCommunityUpdate(
+        postId,
+        editedTitle,
+        editedContent
+      );
+      const id = response.id;
+
+      if (id) {
+        if (additionalImages.length > 0) {
+          await uploadProfileImages(id);
+        }
+        setIsEditing(false);
+        fetchData();
+        router.push('/community');
+      } else {
+        console.error('Post response does not contain ID:', response);
+      }
+    } catch (error) {
+      console.error('Error in handleWrite:', error);
+    }
+  };
+
+  const handlePhotoDelete = async () => {
+    alert('게시된 전체 사진이 삭제됩니다. 정말 삭제하시겠습니까?');
+    await getPhotosDelete(postId);
+    await getPhotos(postId);
   };
 
   useEffect(() => {
@@ -336,6 +383,16 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                     >
                       <BackSpaceArrow />
                     </button>
+                    {isEditing ? (
+                      <button
+                        className="z-5 absolute right-0 top-0 m-2"
+                        onClick={handlePhotoDelete}
+                      >
+                        <Delete />
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                   <div className="flex w-full justify-center pb-2 pt-1">
                     {photosData &&
@@ -354,12 +411,19 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
               )}
 
               {isEditing ? (
-                <input
-                  type="text"
-                  value={editedContent}
-                  onChange={handleContentEditChange}
-                  className="font-regular w-full font-noto text-[13px] outline-none"
-                />
+                <>
+                  <input
+                    type="text"
+                    value={editedContent}
+                    onChange={handleContentEditChange}
+                    className="font-regular w-full font-noto text-[13px] outline-none"
+                  />
+                  <AddTrainerPhotoVideoTab
+                    imageGrid={3}
+                    profileImages={additionalImages}
+                    onImagesChange={handleAdditionalImagesChange}
+                  />
+                </>
               ) : (
                 <p className="font-regular font-noto text-[13px]">
                   {communityDetailData.content}
