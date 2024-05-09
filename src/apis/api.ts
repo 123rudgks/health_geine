@@ -251,7 +251,7 @@ export const getPostPhotos = async (postId: string, photos: FormData) => {
       photos,
       {
         headers: {
-          'Content-Type': 'application/json;charset=utf-8',
+          'Content-Type': 'multipart/form-data',
           'Access-Control-Allow-Origin': '*',
           Authorization: `Bearer ` + ACCESS_TOKEN,
         },
@@ -268,7 +268,6 @@ export const getPhotos = async (postId: string) => {
   try {
     const response = await axios.get(
       `https://${BASE_URL}/community/posts/${postId}/photos`,
-
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
