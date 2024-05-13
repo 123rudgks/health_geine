@@ -21,6 +21,7 @@ import {
   getCommunityDetail,
   getCommunityUpdate,
   getLikes,
+  getLikesBoolean,
   getLikesCancel,
   getLikesCount,
   getPhotos,
@@ -52,6 +53,7 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
   const [commentsData, setCommentsData] = useState<any>();
   const [commentsCountData, setCommentsCountData] = useState<any>();
   const [likesData, setLikesData] = useState<any>(null);
+  const [likesBoolean, setLikesBoolean] = useState<Boolean>(false);
   const [likesCountData, setLikesCountData] = useState<any>();
   const [content, setContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,12 +73,14 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
     const commentData = await getComment(postId);
     const commentCountData = await getCommentCount(postId);
     const likeCountData = await getLikesCount(postId);
+    const likesBoolean = await getLikesBoolean(postId);
 
     setCommunityDetailData(communityData);
     setPhotosData(photoData);
     setCommentsData(commentData);
     setCommentsCountData(commentCountData);
     setLikesCountData(likeCountData);
+    setLikesBoolean(likesBoolean);
   };
 
   useEffect(() => {
@@ -88,6 +92,9 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
     const like = await getLikes(postId, userData.id);
     setLikesData(like);
 
+    const likesBoolean = await getLikesBoolean(postId);
+    setLikesBoolean(likesBoolean);
+
     const updatedLikesCount = await getLikesCount(postId);
     setLikesCountData(updatedLikesCount);
   };
@@ -96,6 +103,9 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
   const handleLikesCancel = async () => {
     const like = await getLikesCancel(postId);
     setLikesData(like);
+
+    const likesBoolean = await getLikesBoolean(postId);
+    setLikesBoolean(likesBoolean);
 
     const updatedLikesCount = await getLikesCount(postId);
     setLikesCountData(updatedLikesCount);
@@ -438,16 +448,16 @@ const Page = ({ searchParams }: { searchParams: { id: string } }) => {
                   </p>
                 </div>
 
-                {likesData && likesData.userId === userData.id ? (
-                  <div onClick={handleLikesCancel} className="flex gap-1">
-                    <FillLike width={21} />
+                {likesBoolean === false ? (
+                  <div onClick={handleLikes} className="flex gap-1">
+                    <EmptyLike />
                     <p className="font-regular font-noto text-[13.36px] text-[#F44B4B]">
                       {likesCountData}
                     </p>
                   </div>
                 ) : (
-                  <div onClick={handleLikes} className="flex gap-1">
-                    <EmptyLike />
+                  <div onClick={handleLikesCancel} className="flex gap-1">
+                    <FillLike width={21} />
                     <p className="font-regular font-noto text-[13.36px] text-[#F44B4B]">
                       {likesCountData}
                     </p>

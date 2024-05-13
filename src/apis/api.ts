@@ -436,6 +436,25 @@ export const getCommentCount = async (postId: string) => {
   }
 };
 
+// likes boolean (좋아요 true or false)
+export const getLikesBoolean = async (postId: string) => {
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/community/posts/${postId}/likes`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // likes count (좋아요 개수)
 export const getLikesCount = async (postId: string) => {
   try {
