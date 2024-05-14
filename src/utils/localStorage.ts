@@ -1,24 +1,20 @@
 class LocalStorage {
-  constructor() {}
+  constructor() {
+    if (typeof window === 'undefined') {
+      throw new Error('LocalStorage cannot be used in server-side rendering.');
+    }
+  }
 
   static setItem(key: string, value: string) {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(key, value);
-    }
+    localStorage.setItem(key, value);
   }
 
   static getItem(key: string) {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(key);
-    }
-
-    return null;
+    return localStorage.getItem(key);
   }
 
   static removeItem(key: string) {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(key);
-    }
+    localStorage.removeItem(key);
   }
 }
 
