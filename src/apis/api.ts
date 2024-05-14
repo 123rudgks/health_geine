@@ -2,8 +2,9 @@
 import axios from 'axios';
 import { BASE_URL } from '@/utils/routePath';
 import Router from 'next/router';
+import LocalStorage from '@/utils/localStorage';
 
-const ACCESS_TOKEN = localStorage.getItem('accessToken');
+const ACCESS_TOKEN = LocalStorage.getItem('accessToken');
 const OAUTH_ACCESS_TOKEN = localStorage.getItem('oauthAccessToken');
 
 // trainer-select
