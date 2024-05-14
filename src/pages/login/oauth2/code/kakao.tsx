@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { RecoilRoot } from 'recoil';
+import LocalStorage from '@/utils/localStorage';
 
 const Kakao = () => {
   const router = useRouter();
@@ -28,8 +29,8 @@ const Kakao = () => {
       );
       const data = response.data.data;
       setUser(data);
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('oauthAccessToken', data.oauthAccessToken);
+      LocalStorage.setItem('accessToken', data.accessToken);
+      LocalStorage.setItem('oauthAccessToken', data.oauthAccessToken);
 
       if (data.role === 'ROLE_EMPTY') {
         router.push('/trainer-select');
