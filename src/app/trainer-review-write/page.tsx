@@ -57,6 +57,7 @@ const Page = () => {
             <BasicTextArea
               className="px-4 text-[13px] font-[500] placeholder:text-[#000] "
               placeholder="내용을 입력해주세요."
+              _value=""
             />
           </div>
           <Box className="flex flex-col justify-start bg-gray-100">
