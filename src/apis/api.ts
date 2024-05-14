@@ -5,7 +5,7 @@ import Router from 'next/router';
 import LocalStorage from '@/utils/localStorage';
 
 const ACCESS_TOKEN = LocalStorage.getItem('accessToken');
-const OAUTH_ACCESS_TOKEN = localStorage.getItem('oauthAccessToken');
+const OAUTH_ACCESS_TOKEN = LocalStorage.getItem('oauthAccessToken');
 
 // trainer-select
 export const getUser = async (role: string) => {
