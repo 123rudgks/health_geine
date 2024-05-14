@@ -60,6 +60,7 @@ const Page = () => {
               placeholder="오늘도 너무 친절하게 잘 알려주셔서, 감사했습니다. 하지만
                 트레이너님 팔뚝을 볼때 마다 너무 무서워서 헬스에 집중하기가
                 어려웠네요 ㅠ 그래서 별점 1개 깎았습니다."
+              _value=""
             />
           </div>
           <Box className="flex flex-col justify-start bg-gray-100">
