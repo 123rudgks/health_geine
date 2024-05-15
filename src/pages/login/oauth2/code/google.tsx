@@ -4,6 +4,7 @@ import { BASE_URL } from '@/utils/routePath';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { RecoilRoot, useRecoilState } from 'recoil';
+import LocalStorage from '@/utils/localStorage';
 
 const Google = () => {
   const router = useRouter();
@@ -27,8 +28,8 @@ const Google = () => {
       );
       const data = response.data.data;
       setUser(data);
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('oauthAccessToken', data.oauthAccessToken);
+      LocalStorage.setItem('accessToken', data.accessToken);
+      LocalStorage.setItem('oauthAccessToken', data.oauthAccessToken);
 
       if (data.role === 'ROLE_EMPTY') {
         router.push('/trainer-select');

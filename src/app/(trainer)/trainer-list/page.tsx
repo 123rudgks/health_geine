@@ -23,6 +23,7 @@ import { useRecoilState } from 'recoil';
 import { BASE_URL } from '@/utils/routePath';
 import { useState } from 'react';
 import { getTrainerProfileList } from '@/apis/api';
+import Fab from '@/components/FAB/Fab';
 
 const TrainerListPage = () => {
   const router = useRouter();
@@ -131,6 +132,12 @@ const TrainerListPage = () => {
                 </div>
               ))}
           </div>
+          <Fab
+            _imageName="chat"
+            _onClick={() => {
+              router.push('/chatting/list');
+            }}
+          />
         </div>
       </div>
     </TopBottomBarTemplate>

@@ -17,6 +17,7 @@ import { trainerProfileState, userState } from '@/recoil/state';
 import { KEY_CHAT } from '@/utils/queryKey';
 import { useEffect, useRef, useState } from 'react';
 import { BASE_URL } from '@/utils/routePath';
+import LocalStorage from '@/utils/localStorage';
 
 type Props = {};
 interface ChatHistoryProps {
@@ -34,7 +35,8 @@ interface PrevHistoryProps {
 }
 
 const ChattingRoom = (props: any) => {
-  const ACCESS_TOKEN = localStorage.getItem('accessToken');
+  const ACCESS_TOKEN = LocalStorage.getItem('accessToken');
+
   const params = new URLSearchParams(document.location.search);
 
   let roomId: string = '';
@@ -157,6 +159,16 @@ const ChattingRoom = (props: any) => {
       );
     }
     setMessage('');
+
+    room()
+      .then((roomId) => {
+        history(roomId).then((data) => {
+          setPrevMessages(data);
+        });
+      })
+      .catch((error) => {
+        console.error('Error while fetching room data:', error);
+      });
   };
 
   useEffect(() => {

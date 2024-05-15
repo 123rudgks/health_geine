@@ -2,9 +2,10 @@
 import axios from 'axios';
 import { BASE_URL } from '@/utils/routePath';
 import Router from 'next/router';
+import LocalStorage from '@/utils/localStorage';
 
-const ACCESS_TOKEN = localStorage.getItem('accessToken');
-const OAUTH_ACCESS_TOKEN = localStorage.getItem('oauthAccessToken');
+const ACCESS_TOKEN = LocalStorage.getItem('accessToken');
+const OAUTH_ACCESS_TOKEN = LocalStorage.getItem('oauthAccessToken');
 
 // trainer-select
 export const getUser = async (role: string) => {
@@ -661,12 +662,19 @@ export const getLikesCancel = async (postId: string) => {
 
 // chatting/list
 export const getChatList = async () => {
-  const res = await axios.get(`https://${BASE_URL}/chat/rooms?lastId=&size=`, {
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
-      Authorization: ACCESS_TOKEN,
-    },
-  });
-  return res.data.data;
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/chat/rooms?lastId=&size=`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
 };

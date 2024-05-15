@@ -32,7 +32,7 @@ const EditTrainerDetailInfoTab: React.FC<EditTrainerDetailInfoTabProps> = ({
         <BasicTextArea
           _wrapperClasses="ring-0"
           placeholder="내용을 입력해주세요."
-          value={formData.introduction}
+          _value={formData.introduction}
           onChange={(e) => handleChange('introduction', e.target.value)}
         />
       </div>
