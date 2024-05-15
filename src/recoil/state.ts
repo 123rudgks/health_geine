@@ -44,14 +44,14 @@ interface IMyReview {
   createdAt: string;
 }
 
-interface IChatListContent {
+export interface IChatListContent {
   roomId: number;
   nickname: string;
   role: string;
-  profilePhoto?: string | null;
+  profilePhoto?: string;
 }
 
-interface IChatList {
+export interface IChatList {
   contents: IChatListContent[];
   last: boolean;
 }

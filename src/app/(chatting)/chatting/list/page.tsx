@@ -2,7 +2,7 @@
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import ChatListItem from '@/components/pages/chatting/ChatListItem';
-import { chatListState } from '@/recoil/state';
+import { IChatListContent, chatListState } from '@/recoil/state';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
 import { KEY_CHATLIST } from '@/utils/queryKey';
 import axios from 'axios';
@@ -12,27 +12,14 @@ import { useRecoilState } from 'recoil';
 import ChatListEmpty from '@/svgs/ChatListEmpty.svg';
 import { BASE_URL } from '@/utils/routePath';
 import { getChatList } from '@/apis/api';
+import Link from 'next/link';
 
 type Props = {};
 
 const ChattingList = (props: Props) => {
   const [chatListData, setChatListData] = useRecoilState(chatListState);
 
-  // const handleChatList = async () => {
-  //   const res = await axios.get(
-  //     `https://${BASE_URL}/chat/rooms?lastId=&size=`,
-  //     {
-  //       headers: {
-  //         'Content-Type': 'application/json;charset=utf-8',
-  //         'Access-Control-Allow-Origin': '*',
-  //         Authorization: ACCESS_TOKEN,
-  //       },
-  //     }
-  //   );
-  //   return res.data.data;
-  // };
-
-  const { data } = useQuery(KEY_CHATLIST, getChatList, {
+  const { data: chatListDataQuery } = useQuery(KEY_CHATLIST, getChatList, {
     onSuccess: (data) => setChatListData(data),
   });
 
@@ -52,9 +39,26 @@ const ChattingList = (props: Props) => {
       _contentDivProps={{ className: 'bg-white' }}
     >
       <div>
-        {data && data.contents.length > 0 ? (
+        {chatListDataQuery && chatListDataQuery.contents.length > 0 ? (
           <div className="relative flex h-full w-full flex-col px-5 [&>div]:border-b">
-            <ChatListItem />
+            {chatListDataQuery.contents &&
+              chatListDataQuery.contents.map((item: IChatListContent) => (
+                <div key={item.roomId}>
+                  <Link
+                    href={{
+                      pathname: `/chatting/room`,
+                      query: { userId: item.roomId, name: item.nickname },
+                    }}
+                  >
+                    <ChatListItem
+                      nickname={item.nickname}
+                      profilePhoto={item.profilePhoto}
+                      role={item.role}
+                      roomId={item.roomId}
+                    />
+                  </Link>
+                </div>
+              ))}
           </div>
         ) : (
           <div className="absolute left-1/2 top-1/2 flex w-[184px] -translate-x-1/2 -translate-y-1/2 flex-col items-center">

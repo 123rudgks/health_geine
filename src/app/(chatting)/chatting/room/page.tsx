@@ -159,6 +159,16 @@ const ChattingRoom = (props: any) => {
       );
     }
     setMessage('');
+
+    room()
+      .then((roomId) => {
+        history(roomId).then((data) => {
+          setPrevMessages(data);
+        });
+      })
+      .catch((error) => {
+        console.error('Error while fetching room data:', error);
+      });
   };
 
   useEffect(() => {

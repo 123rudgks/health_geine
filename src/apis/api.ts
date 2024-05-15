@@ -662,12 +662,19 @@ export const getLikesCancel = async (postId: string) => {
 
 // chatting/list
 export const getChatList = async () => {
-  const res = await axios.get(`https://${BASE_URL}/chat/rooms?lastId=&size=`, {
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      'Access-Control-Allow-Origin': '*',
-      Authorization: ACCESS_TOKEN,
-    },
-  });
-  return res.data.data;
+  try {
+    const response = await axios.get(
+      `https://${BASE_URL}/chat/rooms?lastId=&size=`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ` + ACCESS_TOKEN,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
