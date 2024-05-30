@@ -47,7 +47,7 @@ const ChattingList = (props: Props) => {
                   <Link
                     href={{
                       pathname: `/chatting/room`,
-                      query: { userId: item.roomId, name: item.nickname },
+                      query: { roomId: item.roomId, name: item.nickname },
                     }}
                   >
                     <ChatListItem

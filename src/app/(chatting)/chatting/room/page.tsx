@@ -11,10 +11,8 @@ import PtResponseBox from '@/components/pages/chatting/PtResponseBox';
 import ChatCamera from '@/svgs/ChatCamera.svg';
 import ChatSend from '@/svgs/ChatSend.svg';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
-import { trainerProfileState, userState } from '@/recoil/state';
-import { KEY_CHAT } from '@/utils/queryKey';
+import { userState } from '@/recoil/state';
 import { useEffect, useRef, useState } from 'react';
 import { BASE_URL } from '@/utils/routePath';
 import LocalStorage from '@/utils/localStorage';
@@ -36,14 +34,13 @@ interface PrevHistoryProps {
 
 const ChattingRoom = (props: any) => {
   const ACCESS_TOKEN = LocalStorage.getItem('accessToken');
-
   const params = new URLSearchParams(document.location.search);
 
-  let roomId: string = '';
   const anotherId = params.get('userId');
   const anotherName = params.get('name');
+  const roomNum = params.get('roomId');
 
-  const [trainerData, setTrainerData] = useRecoilState(trainerProfileState);
+  const [roomId, setRoomId] = useState<string | null>(roomNum || null);
   const [senderData, setSenderData] = useRecoilState(userState);
   const [message, setMessage] = useState('');
   const [sentMessages, setSentMessages] = useState<string[]>([]);
@@ -56,6 +53,7 @@ const ChattingRoom = (props: any) => {
   const [prevMessages, setPrevMessages] = useState<PrevHistoryProps[]>([]);
 
   const room = async () => {
+    if (roomId) return roomId;
     try {
       const response = await axios.post(
         `https://${BASE_URL}/chat/rooms`,
@@ -68,24 +66,19 @@ const ChattingRoom = (props: any) => {
           },
         }
       );
-      roomId = String(response.data.data.roomId);
-
-      return roomId;
-      return response.data.data;
+      const newRoomId = String(response.data.data.roomId);
+      setRoomId(newRoomId);
+      return newRoomId;
     } catch (error) {
-      console.error('Error while fetching room data:', error);
+      console.error('채팅방 생성에 문제가 발생했습니다.', error);
       throw error;
     }
   };
 
-  const { data: trainerProfileDataQuery } = useQuery(KEY_CHAT, room, {
-    onSuccess: (data) => setTrainerData(data),
-  });
-
-  const history = async (roomId: any) => {
+  const history = async (currentRoomId: string) => {
     try {
       const response = await axios.get(
-        `https://${BASE_URL}/chat/${roomId}/messages`,
+        `https://${BASE_URL}/chat/${currentRoomId}/messages`,
         {
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
@@ -96,26 +89,37 @@ const ChattingRoom = (props: any) => {
       );
       return response.data.data;
     } catch (error) {
-      console.error('Error while fetching chat history:', error);
+      console.error('채팅 기록에 문제가 발생했습니다.', error);
       throw error;
     }
   };
 
   useEffect(() => {
-    room()
-      .then((roomId) => {
-        history(roomId).then((data) => {
+    const fetchChatHistory = async () => {
+      if (roomNum) {
+        try {
+          const data = await history(roomNum);
           setPrevMessages(data);
-        });
-      })
-      .catch((error) => {
-        console.error('Error while fetching room data:', error);
-      });
-  }, [ACCESS_TOKEN, anotherId, senderData.id, roomId]);
+        } catch (error) {
+          console.error('채팅 기록에 문제가 발생했습니다.', error);
+        }
+      } else if (ACCESS_TOKEN && anotherId && !roomId) {
+        try {
+          const currentRoomId = await room();
+          const data = await history(currentRoomId);
+          setPrevMessages(data);
+        } catch (error) {
+          console.error('채팅방 생성에 문제가 발생했습니다.', error);
+        }
+      }
+    };
+
+    fetchChatHistory();
+  }, [ACCESS_TOKEN, anotherId, senderData.id, roomId, roomNum]);
 
   // socket 구현
   const client = useRef<CompatClient | null>(null);
-  const connectHandler = () => {
+  const connectHandler = (currentRoomId: string) => {
     const socket = new SockJS(`https://${BASE_URL}/ws`);
     client.current = Stomp.over(socket);
     client.current.connect(
@@ -125,7 +129,7 @@ const ChattingRoom = (props: any) => {
       },
       () => {
         client.current?.subscribe(
-          `/sub/chat/${roomId}`,
+          `/sub/chat/${currentRoomId}`,
           (message) => {
             setIsChatHistory((prevHistory) => {
               return prevHistory
@@ -143,12 +147,27 @@ const ChattingRoom = (props: any) => {
   };
 
   useEffect(() => {
-    connectHandler();
+    if (roomId && !client.current) {
+      connectHandler(roomId);
+    }
   }, [ACCESS_TOKEN, roomId]);
+
+  useEffect(() => {
+    if (isChatHistory && isChatHistory.length > 0) {
+      setReceivedMessages((prevMessages) => {
+        const newReceivedMessage = isChatHistory.filter(
+          (msg) => msg.senderId !== anotherId
+        )[0];
+        return newReceivedMessage
+          ? [...prevMessages, newReceivedMessage]
+          : prevMessages;
+      });
+    }
+  }, [isChatHistory]);
 
   const sendHandler = (message: string) => {
     if (client.current && client.current.connected) {
-      setSentMessages([...sentMessages, message]);
+      setSentMessages((prevMessages) => [...prevMessages, message]);
       client.current.send(
         `/pub/chat/${roomId}`,
         {},
@@ -170,15 +189,6 @@ const ChattingRoom = (props: any) => {
         console.error('Error while fetching room data:', error);
       });
   };
-
-  useEffect(() => {
-    if (isChatHistory) {
-      const newReceivedMessages = isChatHistory.filter(
-        (msg) => msg.senderId !== anotherId
-      );
-      setReceivedMessages([...receivedMessages, ...newReceivedMessages]);
-    }
-  }, [isChatHistory]);
 
   const onChangeMessage = (message: string) => {
     setMessage(message);
@@ -212,11 +222,13 @@ const ChattingRoom = (props: any) => {
               _value={message}
               _onChange={onChangeMessage}
             />
-            <ChatSend
-              onClick={() => {
-                sendHandler(message);
-              }}
-            />
+            <div className="hover:cursor-pointer">
+              <ChatSend
+                onClick={() => {
+                  sendHandler(message);
+                }}
+              />
+            </div>
           </div>
         </div>
       }
