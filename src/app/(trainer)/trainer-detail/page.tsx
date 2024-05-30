@@ -16,6 +16,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { getPhotoResponse, getTrainerProfileListDetail } from '@/apis/api';
+import { userState } from '@/recoil/state';
+import { useRecoilState } from 'recoil';
 
 type Props = {};
 type TrainerDetailTab = '상세내용' | '사진/동영상' | '후기';
@@ -30,6 +32,7 @@ const TrainerDetailPage = ({
   searchParams: { id: string };
 }) => {
   const router = useRouter();
+  const [userData, setUserData] = useRecoilState(userState);
   const trainerProfileId = searchParams.id;
   const [trainerProfileData, setTrainerProfileData] = useState<any>();
   const [trainerImageData, setTrainerImageData] = useState<any>();
@@ -66,25 +69,29 @@ const TrainerDetailPage = ({
               </div>
             }
             _bottomNode={
-              <div className="px-[21px] pb-[46px] pt-[10px]">
-                <div className="relative h-[43px] w-full overflow-hidden rounded-[18px] rounded-bl-none">
-                  <Button
-                    onClick={() =>
-                      router.push(
-                        `/chatting/room?userId=${trainerProfileData.userId}&name=${trainerProfileData.name}`
-                      )
-                    }
-                    ring={'primary-400'}
-                    color={'white'}
-                    background={'primary-400'}
-                    className="h-full w-full "
-                  >
-                    트레이너에게 채팅 보내기
-                  </Button>
-                  <div className="absolute bottom-0 left-0 h-0 w-0 border-8 border-b-[#7596FA] border-l-[#7596FA] border-r-transparent border-t-transparent"></div>
-                  <div className="absolute bottom-0 left-0 h-0 w-0 border-4 border-b-[#D1DDFF] border-l-[#D1DDFF] border-r-transparent border-t-transparent"></div>
-                </div>
-              </div>
+              <>
+                {userData.role === 'ROLE_USER' && (
+                  <div className="px-[21px] pb-[46px] pt-[10px]">
+                    <div className="relative h-[43px] w-full overflow-hidden rounded-[18px] rounded-bl-none">
+                      <Button
+                        onClick={() =>
+                          router.push(
+                            `/chatting/room?userId=${trainerProfileData.userId}&name=${trainerProfileData.name}`
+                          )
+                        }
+                        ring={'primary-400'}
+                        color={'white'}
+                        background={'primary-400'}
+                        className="h-full w-full "
+                      >
+                        트레이너에게 채팅 보내기
+                      </Button>
+                      <div className="absolute bottom-0 left-0 h-0 w-0 border-8 border-b-[#7596FA] border-l-[#7596FA] border-r-transparent border-t-transparent"></div>
+                      <div className="absolute bottom-0 left-0 h-0 w-0 border-4 border-b-[#D1DDFF] border-l-[#D1DDFF] border-r-transparent border-t-transparent"></div>
+                    </div>
+                  </div>
+                )}
+              </>
             }
             _contentDivProps={{ className: 'bg-white' }}
           >
