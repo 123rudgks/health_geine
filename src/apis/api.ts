@@ -678,3 +678,23 @@ export const getChatList = async () => {
     console.log(error);
   }
 };
+
+// chatting/list -> 마지막 채팅 내용
+export const getChatListMessage = async (roomIds: string[]) => {
+  try {
+    const queryRoomIds = roomIds.map((roomId) => `roomIds=${roomId}`).join('&');
+    const response = await axios.get(
+      `https://${BASE_URL}/chat/lastMessages?${queryRoomIds}`,
+      {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
