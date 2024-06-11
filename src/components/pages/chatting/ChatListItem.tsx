@@ -10,6 +10,7 @@ const ChatListItem = ({
   profilePhoto,
   role,
   roomId,
+  lastMessage,
 }: IChatListContent) => {
   const router = useRouter();
 
@@ -25,7 +26,7 @@ const ChatListItem = ({
           <div className="font-noto text-[15px] font-bold">{nickname}</div>
           <div className="font-noto text-[8px] text-[#8E8E8E]">1시간 전</div>
         </div>
-        <div className="font-noto text-[13px]">오늘도 좋은 아침 입니다!</div>
+        <div className="font-noto text-[13px]">{lastMessage}</div>
         {/* <span className="absolute right-0 top-0 flex h-[25px] w-[25px] translate-y-full items-center justify-center rounded-full bg-primary-400 text-xs font-bold text-white">
           1
         </span> */}

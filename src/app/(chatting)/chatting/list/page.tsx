@@ -2,26 +2,47 @@
 import BottomNavigationBar from '@/components/BottomNavigationBar/BottomNavigationBar';
 import TopBottomBarTemplate from '@/components/Template/TopBottomBarPage';
 import ChatListItem from '@/components/pages/chatting/ChatListItem';
-import { IChatListContent, chatListState } from '@/recoil/state';
+import {
+  IChatListContent,
+  chatListMessageState,
+  chatListState,
+} from '@/recoil/state';
 import BackSpaceArrow from '@/svgs/BackSpaceArrow.svg';
-import { KEY_CHATLIST } from '@/utils/queryKey';
+import { KEY_CHATLIST, KEY_CHATMESSAGE } from '@/utils/queryKey';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useRecoilState } from 'recoil';
 import ChatListEmpty from '@/svgs/ChatListEmpty.svg';
 import { BASE_URL } from '@/utils/routePath';
-import { getChatList } from '@/apis/api';
+import { getChatList, getChatListMessage } from '@/apis/api';
 import Link from 'next/link';
+import { useState } from 'react';
 
 type Props = {};
 
 const ChattingList = (props: Props) => {
   const [chatListData, setChatListData] = useRecoilState(chatListState);
+  const [chatListMessageData, setChatListMessageData] =
+    useRecoilState(chatListMessageState);
+  const [roomIds, setRoomIds] = useState<string[]>([]);
 
   const { data: chatListDataQuery } = useQuery(KEY_CHATLIST, getChatList, {
-    onSuccess: (data) => setChatListData(data),
+    onSuccess: (data) => {
+      setChatListData(data);
+      const ids = data.contents.map((item: IChatListContent) => item.roomId);
+      setRoomIds(ids);
+    },
   });
+
+  const { data: chatListMessageDataQuery } = useQuery(
+    [KEY_CHATMESSAGE, roomIds],
+    () => getChatListMessage(roomIds),
+    {
+      enabled: roomIds.length > 0,
+      onSuccess: (data) => setChatListMessageData(data),
+    }
+  );
 
   return (
     <TopBottomBarTemplate
@@ -39,26 +60,35 @@ const ChattingList = (props: Props) => {
       _contentDivProps={{ className: 'bg-white' }}
     >
       <div>
-        {chatListDataQuery && chatListDataQuery.contents.length > 0 ? (
+        {chatListMessageData &&
+        chatListDataQuery &&
+        chatListDataQuery.contents.length > 0 ? (
           <div className="relative flex h-full w-full flex-col px-5 [&>div]:border-b">
             {chatListDataQuery.contents &&
-              chatListDataQuery.contents.map((item: IChatListContent) => (
-                <div key={item.roomId}>
-                  <Link
-                    href={{
-                      pathname: `/chatting/room`,
-                      query: { roomId: item.roomId, name: item.nickname },
-                    }}
-                  >
-                    <ChatListItem
-                      nickname={item.nickname}
-                      profilePhoto={item.profilePhoto}
-                      role={item.role}
-                      roomId={item.roomId}
-                    />
-                  </Link>
-                </div>
-              ))}
+              chatListDataQuery.contents.map((item: IChatListContent) => {
+                const lastMessage = chatListMessageData.find(
+                  (msg: any) => msg.roomId === item.roomId
+                )?.lastMessage;
+
+                return (
+                  <div key={item.roomId}>
+                    <Link
+                      href={{
+                        pathname: `/chatting/room`,
+                        query: { roomId: item.roomId, name: item.nickname },
+                      }}
+                    >
+                      <ChatListItem
+                        nickname={item.nickname}
+                        profilePhoto={item.profilePhoto}
+                        role={item.role}
+                        roomId={item.roomId}
+                        lastMessage={lastMessage || ''}
+                      />
+                    </Link>
+                  </div>
+                );
+              })}
           </div>
         ) : (
           <div className="absolute left-1/2 top-1/2 flex w-[184px] -translate-x-1/2 -translate-y-1/2 flex-col items-center">

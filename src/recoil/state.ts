@@ -49,13 +49,17 @@ export interface IChatListContent {
   nickname: string;
   role: string;
   profilePhoto?: string;
+  lastMessage: string;
 }
 
 export interface IChatList {
   contents: IChatListContent[];
   last: boolean;
 }
-
+export interface IChatListMessage {
+  roomId: string;
+  lastMessage: string;
+}
 export interface ITrainerProfile {
   id: string;
   userId: string;
@@ -163,6 +167,11 @@ export const chatListState = atom<IChatList>({
     last: false,
   },
   effects_UNSTABLE: [persistAtom],
+});
+
+export const chatListMessageState = atom<IChatListMessage[]>({
+  key: 'chatListMessageState',
+  default: [],
 });
 
 export const trainerProfileState = atom<ITrainerProfile>({
